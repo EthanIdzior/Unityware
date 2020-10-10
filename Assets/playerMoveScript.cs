@@ -7,6 +7,11 @@ public class playerMoveScript : MonoBehaviour
 {
     public int movementFactor = 1;
     public int jumpFactor = 1;
+    public Boolean moveLeft = true;
+    public Boolean moveRight = true;
+    public Boolean moveUp = true;
+    public Boolean moveDown = true;
+    public Boolean canJump = false;
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +43,7 @@ public class playerMoveScript : MonoBehaviour
 
         // If W or up arrow is pressed move up
         // Note this does not currently work if key is held
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && moveUp)
         {
 
             transform.position += new Vector3(0, stepSize * movementFactor, 0);
@@ -51,7 +56,7 @@ public class playerMoveScript : MonoBehaviour
 
         // If A or Left Arrow is pressed move Left
         // Note this does not currently work if key is held
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && moveLeft)
         {
 
             transform.position += new Vector3(-1 * (stepSize * movementFactor), 0, 0);
@@ -64,7 +69,7 @@ public class playerMoveScript : MonoBehaviour
 
         // If S or Down Arrow is pressed move Down
         // Note this does not currently work if key is held
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && moveDown)
         {
 
             transform.position += new Vector3(0, -1 * (stepSize * movementFactor), 0);
@@ -77,7 +82,7 @@ public class playerMoveScript : MonoBehaviour
 
         // If D or Right Arrow is pressed move Left
         // Note this does not currently work if key is held
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && moveRight)
         {
 
             transform.position += new Vector3(stepSize * movementFactor, 0, 0);
@@ -91,7 +96,7 @@ public class playerMoveScript : MonoBehaviour
         // If Space is pressed move Jump
         // Note this does not currently work if key is held
         // #TODO
-        else if (Input.GetKeyDown(KeyCode.Space))
+        else if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             // Check to see if on the ground or an object. If valid, not a valid jump.
             transform.position += new Vector3(0, -1 * (stepSize * movementFactor), 0);
