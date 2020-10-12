@@ -213,7 +213,6 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
-  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -229,18 +228,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
---- !u!114 &519420030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdcce66759aaddc4da890e6e6b25c531, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -390,7 +377,6 @@ GameObject:
   - component: {fileID: 1132821002}
   - component: {fileID: 1132821003}
   - component: {fileID: 1132821004}
-  - component: {fileID: 1132821005}
   m_Layer: 0
   m_Name: testingObject
   m_TagString: Untagged
@@ -446,18 +432,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDraggable: 0
   mouseOver: 0
---- !u!114 &1132821005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1132821001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11f9bc97edcd61b41bd34925f54742a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 1437997045}
+  objectSprites: []
 --- !u!1 &1437997044
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,12 +492,13 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 64020762c539aa648aba9eb3c1c6eb75, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 6530179738444782934, guid: 250af742f118afa4b923dcb392c570d8,
+    type: 3}
+  m_Color: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.04, y: 0.04}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -555,6 +532,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDraggable: 0
   mouseOver: 0
+  spriteRenderer: {fileID: 1437997045}
+  objectSprites: []
 --- !u!65 &1437997048
 BoxCollider:
   m_ObjectHideFlags: 0

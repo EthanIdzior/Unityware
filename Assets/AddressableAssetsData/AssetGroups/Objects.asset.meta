@@ -1,10 +1,11 @@
 fileFormatVersion: 2
-guid: afb014620339b8b488ac0a962fd836c0
+guid: 8e8fa4cdfa53ef94eaa0f4a068602ddf
 labels:
-- Advanced
-folderAsset: yes
-DefaultImporter:
+- Character
+- Prop
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

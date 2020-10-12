@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: afb014620339b8b488ac0a962fd836c0
+guid: 53b39752f8db99042ba6354bf2892564
 labels:
-- Advanced
-folderAsset: yes
-DefaultImporter:
+- Sky
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

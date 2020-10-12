@@ -1,10 +1,8 @@
 fileFormatVersion: 2
-guid: afb014620339b8b488ac0a962fd836c0
-labels:
-- Advanced
-folderAsset: yes
-DefaultImporter:
+guid: 1f4fcb22b9cec18429e6039b8f4bfdae
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
