@@ -9,27 +9,28 @@ public class gameMechanics : MonoBehaviour
     public Boolean isLose = false;
     public Boolean hasTimer = false;
     public Boolean hasPoints = false;
+    private Boolean showText = false;
     public float timerStart = 0;
-    private float timeLeft = 0;
+    public float timeLeft = 0;
     private float lastTime = 0;
     private Boolean timeSet = false;
     private int pointVal = 0;
+    public Boolean playingGame = false;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        // if win is reached, win
-
-        // if lose happens, lose
 
         // if there is a timer, set a timer.
-        if (hasTimer)
+        if (hasTimer && playingGame)
         {
             // If the timer has not been set, do that.
             if (!timeSet)
@@ -50,12 +51,40 @@ public class gameMechanics : MonoBehaviour
             }
         }
 
+        if (!showText && playingGame) 
+        {
+            
+        }
+
         // if there are points, set points.
-        if (hasPoints)
+        if (hasPoints && playingGame)
         {
             pointVal = 0;
 
             // Code for when events happen
         }
+    }
+
+    /*
+     * triggerWin
+     * Call to trigger a win instantly
+     */
+    public void triggerWin()
+    {
+
+    }
+
+    /*
+     * playInstructions
+     * On start play level instructions
+     */
+    public void playInstructions(String instructions)
+    {
+        
+    }
+
+    public void resetTimer()
+    {
+        timeLeft = timerStart;
     }
 }
