@@ -15,6 +15,12 @@ public class objectDrag : MonoBehaviour
     public bool mouseOver;
     Vector2 mousePos;
 
+    // Variables related to audio
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
+    private int audioClipIndex = 0;
+    public bool hasSound = false;
+
     // Create an array to hold the sprites
     public SpriteRenderer spriteRenderer;
     public Sprite[] objectSprites;
@@ -30,6 +36,9 @@ public class objectDrag : MonoBehaviour
         // Load all sprites from the sprite sheet
         AsyncOperationHandle<Sprite[]> spriteHandle = Addressables.LoadAssetAsync<Sprite[]>("Assets/Graphics/Objects/sheet.png");
         spriteHandle.Completed += LoadSpritesWhenReady;
+
+        // Add audio
+        audioSource = gameObject.GetComponent<AudioSource>();
     }
 
     // Helper method to load sprites
@@ -57,12 +66,9 @@ public class objectDrag : MonoBehaviour
         if (menuOpen)
        {
             mousePos = Input.mousePosition; 
-            GUILayout.BeginArea(new Rect(-10, 4, 300, 200), GUI.skin.box);
-            GUILayout.Label("The Current Value of Draggable is " + isDraggable);
-            if (GUILayout.Button("Set Draggable"))
-            {
-                isDraggable = !isDraggable;
-            }
+            GUILayout.BeginArea(new Rect(0, 4, 300, 200), GUI.skin.box);
+            GUILayout.Label("Object Properties");
+            isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
 
             // Change Sprites
             GUILayout.BeginHorizontal("box");
@@ -114,6 +120,36 @@ public class objectDrag : MonoBehaviour
                 spriteRenderer.color = colors[colorIndex];
             }
             GUILayout.EndHorizontal();
+
+            
+            // Change sound effect
+            hasSound = GUILayout.Toggle(hasSound, "Sound Effects");
+            if (hasSound)
+            {
+                // Add sound to objects
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Previous Sound"))
+                {
+                    audioClipIndex--;
+                    if (audioClipIndex <= -1)
+                    {
+                        audioClipIndex = audioClips.Length - 1;
+                    }
+                    audioSource.clip = audioClips[audioClipIndex];
+                    audioSource.Play();
+                }
+                if (GUILayout.Button("Next Sound"))
+                {
+                    audioClipIndex++;
+                    if (audioClipIndex >= audioClips.Length)
+                    {
+                        audioClipIndex = 0;
+                    }
+                    audioSource.clip = audioClips[audioClipIndex];
+                    audioSource.Play();
+                }
+                GUILayout.EndHorizontal();
+            }
 
             if (GUILayout.Button("Close"))
             {
