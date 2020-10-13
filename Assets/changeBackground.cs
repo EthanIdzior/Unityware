@@ -14,8 +14,14 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class changeBackground : MonoBehaviour
 {
     // Variables related to the menu itself
-    int height = 75;
+    int height = 150;
     int width = 200;
+
+    // Variables related to audio
+    public AudioSource audioSource;
+    public AudioClip[] backgroundMusic;
+    private int backgroundMusicIndex = 0;
+    public bool hasSound = false;
 
     // Create an array to hold the sprites
     public SpriteRenderer spriteRenderer;
@@ -32,6 +38,9 @@ public class changeBackground : MonoBehaviour
         // Load all sprites from the sprite sheet
         AsyncOperationHandle<Sprite[]> spriteHandle = Addressables.LoadAssetAsync<Sprite[]>("Assets/Graphics/Backgrounds/backgroundSheet.png");
         spriteHandle.Completed += LoadSpritesWhenReady;
+
+        // Add audio
+        audioSource = gameObject.GetComponent<AudioSource>();
     }
 
     // Helper method to load sprites
@@ -45,61 +54,91 @@ public class changeBackground : MonoBehaviour
 
     private void OnGUI()
     {
-            GUILayout.BeginArea(new Rect(Screen.width - width, Screen.height - height, width, height), GUI.skin.box);
+       GUILayout.BeginArea(new Rect(Screen.width - width, Screen.height - height, width, height), GUI.skin.box);
 
+        GUILayout.Label("Background Properties");
 
-            // Change Sprites
-            GUILayout.BeginHorizontal("box");
-            if (GUILayout.Button("Previous Sprite"))
+        // Change Sprites
+        GUILayout.BeginHorizontal("box");
+        if (GUILayout.Button("Previous Sprite"))
+        {
+        backgroundSpriteIndex--;
+        // If the index has gone below the bounds of the array
+        if (backgroundSpriteIndex <= -1)
+        {
+            // Go to the last element
+            backgroundSpriteIndex = backgroundSprites.Length - 1;
+        }
+        // Render the previous sprite
+        spriteRenderer.sprite = backgroundSprites[backgroundSpriteIndex];
+        }
+        if (GUILayout.Button("Next Sprite"))
+        {
+            backgroundSpriteIndex++;
+            // If the index has gone over the array, reset to zero
+            if (backgroundSpriteIndex >= backgroundSprites.Length)
             {
-                backgroundSpriteIndex--;
-                // If the index has gone below the bounds of the array
-                if (backgroundSpriteIndex <= -1)
-                {
-                    // Go to the last element
-                    backgroundSpriteIndex = backgroundSprites.Length - 1;
-                }
-                // Render the previous sprite
-                spriteRenderer.sprite = backgroundSprites[backgroundSpriteIndex];
+                backgroundSpriteIndex = 0;
             }
-            if (GUILayout.Button("Next Sprite"))
+            // Render the next sprite
+            spriteRenderer.sprite = backgroundSprites[backgroundSpriteIndex];
+        }
+        GUILayout.EndHorizontal();
+
+        // Change colors
+        GUILayout.BeginHorizontal("box");
+        if (GUILayout.Button("Previous Color"))
+        {
+            colorIndex--;
+            if (colorIndex <= -1)
             {
-                backgroundSpriteIndex++;
-                // If the index has gone over the array, reset to zero
-                if (backgroundSpriteIndex >= backgroundSprites.Length)
+                // Go to the last element
+                colorIndex = colors.Length - 1;
+            }
+            spriteRenderer.color = colors[colorIndex];
+        }
+        if (GUILayout.Button("Next Color"))
+        {
+            colorIndex++;
+            if (colorIndex >= colors.Length)
+            {
+                // Go to the first element
+                colorIndex = 0;
+            }
+            spriteRenderer.color = colors[colorIndex];
+        }
+
+        GUILayout.EndHorizontal();
+
+        // Change Background Music
+        hasSound = GUILayout.Toggle(hasSound, "Background Music");
+        if (hasSound)
+        {
+            // Add sound to objects
+            GUILayout.BeginHorizontal("box");
+            if (GUILayout.Button("Previous Track"))
+            {
+                backgroundMusicIndex--;
+                if (backgroundMusicIndex <= -1)
                 {
-                    backgroundSpriteIndex = 0;
+                    backgroundMusicIndex = backgroundMusic.Length - 1;
                 }
-                // Render the next sprite
-                spriteRenderer.sprite = backgroundSprites[backgroundSpriteIndex];
+                audioSource.clip = backgroundMusic[backgroundMusicIndex];
+                audioSource.Play();
+            }
+            if (GUILayout.Button("Next Track"))
+            {
+                backgroundMusicIndex++;
+                if (backgroundMusicIndex >= backgroundMusic.Length)
+                {
+                    backgroundMusicIndex = 0;
+                }
+                audioSource.clip = backgroundMusic[backgroundMusicIndex];
+                audioSource.Play();
             }
             GUILayout.EndHorizontal();
+        }
 
-            // Change colors
-            GUILayout.BeginHorizontal("box");
-            if (GUILayout.Button("Previous Color"))
-            {
-                colorIndex--;
-                if (colorIndex <= -1)
-                {
-                    // Go to the last element
-                    colorIndex = colors.Length - 1;
-                }
-                spriteRenderer.color = colors[colorIndex];
-            }
-            if (GUILayout.Button("Next Color"))
-            {
-                colorIndex++;
-                if (colorIndex >= colors.Length)
-                {
-                    // Go to the first element
-                    colorIndex = 0;
-                }
-                spriteRenderer.color = colors[colorIndex];
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndArea();
-        
+        GUILayout.EndArea();
     }
 }
