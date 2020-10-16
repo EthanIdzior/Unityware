@@ -121,6 +121,10 @@ public class changeBackground : MonoBehaviour
             }
             GUILayout.EndHorizontal();
         }
+        else
+        {
+            audioSource.Stop();
+        }
 
 
         GUILayout.EndArea();
