@@ -17,7 +17,10 @@ public class GUIscript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (controller.playingGame == false && buttonSymbol == "| |")
+        {
+            buttonSymbol = "▶";
+        }
     }
 
     void OnGUI()
@@ -36,6 +39,7 @@ public class GUIscript : MonoBehaviour
                 buttonSymbol = "▶";
                 controller.playingGame = false;
             }
+
         }
 
         if (controller.hasTimer && controller.playingGame)
