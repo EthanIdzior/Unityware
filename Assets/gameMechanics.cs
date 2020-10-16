@@ -16,6 +16,7 @@ public class gameMechanics : MonoBehaviour
     private Boolean timeSet = false;
     private int pointVal = 0;
     public Boolean playingGame = false;
+    private Boolean winMarker = false;
 
 
 
@@ -63,6 +64,7 @@ public class gameMechanics : MonoBehaviour
 
             // Code for when events happen
         }
+
     }
 
     /*
@@ -71,8 +73,10 @@ public class gameMechanics : MonoBehaviour
      */
     public void triggerWin()
     {
-
+        playingGame = 0;
+        winMarker = 1;
     }
+
 
     /*
      * playInstructions
@@ -86,5 +90,19 @@ public class gameMechanics : MonoBehaviour
     public void resetTimer()
     {
         timeLeft = timerStart;
+    }
+
+    void OnCollisionEnter(Collider other)
+    {
+        if (isWin)
+            triggerWin();
+    }
+
+    void OnGUI()
+    {
+        if (winMarker)
+        {
+            // Set to actually win
+        }
     }
 }

@@ -17,7 +17,7 @@ public class GUIscript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnGUI()
