@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Required for sprites
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-
 /**
  * Yaqirah Rice
  * Shows a menu that allows the background object's properties to be changed
@@ -35,21 +31,8 @@ public class changeBackground : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        // Load all sprites from the sprite sheet
-        AsyncOperationHandle<Sprite[]> spriteHandle = Addressables.LoadAssetAsync<Sprite[]>("Assets/Graphics/Backgrounds/backgroundSheet.png");
-        spriteHandle.Completed += LoadSpritesWhenReady;
-
         // Add audio
         audioSource = gameObject.GetComponent<AudioSource>();
-    }
-
-    // Helper method to load sprites
-    void LoadSpritesWhenReady(AsyncOperationHandle<Sprite[]> handleToCheck)
-    {
-        if (handleToCheck.Status == AsyncOperationStatus.Succeeded)
-        {
-            backgroundSprites = handleToCheck.Result;
-        }
     }
 
     private void OnGUI()
@@ -138,6 +121,7 @@ public class changeBackground : MonoBehaviour
             }
             GUILayout.EndHorizontal();
         }
+
 
         GUILayout.EndArea();
     }
