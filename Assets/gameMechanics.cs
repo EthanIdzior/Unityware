@@ -73,8 +73,8 @@ public class gameMechanics : MonoBehaviour
      */
     public void triggerWin()
     {
-        playingGame = 0;
-        winMarker = 1;
+        playingGame = false;
+        winMarker = true;
     }
 
 
@@ -90,12 +90,6 @@ public class gameMechanics : MonoBehaviour
     public void resetTimer()
     {
         timeLeft = timerStart;
-    }
-
-    void OnCollisionEnter(Collider other)
-    {
-        if (isWin)
-            triggerWin();
     }
 
     void OnGUI()
