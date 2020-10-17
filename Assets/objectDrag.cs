@@ -9,9 +9,13 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class objectDrag : MonoBehaviour
 {
+    //Variables for menu and properties
     private bool isDragging;
+    KeyCode kbInput = KeyCode.Space;
+    public bool isClickable = false;
     bool menuOpen = false;
     public bool isDraggable = false;
+    public bool kbInputOn = false;
     public bool mouseOver;
     Vector2 mousePos;
 
@@ -59,16 +63,18 @@ public class objectDrag : MonoBehaviour
     {
         mouseOver = false;
     }
-    
+
     private void OnGUI()
     {
         
         if (menuOpen)
        {
             mousePos = Input.mousePosition; 
-            GUILayout.BeginArea(new Rect(0, 4, 300, 200), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(0, 4, 200, 300), GUI.skin.box);
             GUILayout.Label("Object Properties");
             isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
+            isClickable = GUILayout.Toggle(isClickable, "Clickable");
+            kbInputOn = GUILayout.Toggle(kbInputOn, "Space Does Action");
 
             // Change Sprites
             GUILayout.BeginHorizontal("box");
@@ -179,14 +185,26 @@ public class objectDrag : MonoBehaviour
 
     void Update()
     {
+        //right click on object opens editor menu
         if (mouseOver && Input.GetMouseButton(1))
         {
             menuOpen = true;
         }
-            if (isDragging && isDraggable )
+        //what happens with isDraggable
+        if (isDragging && isDraggable )
         {
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             transform.Translate(mousePos);
+        }
+        //What happens if clickable and left click
+        if (isClickable && Input.GetMouseButton(0))
+        {
+            menuOpen = true;
+        }
+
+        if (Input.GetKey(kbInput) && kbInputOn)
+        {
+            //What will happen with the KB input
         }
     }
 }
