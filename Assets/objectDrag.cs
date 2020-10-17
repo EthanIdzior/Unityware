@@ -34,6 +34,9 @@ public class objectDrag : MonoBehaviour
     private Color[] colors = { /* Black: */ new Color(0, 0, 0, 1),  /* White: */ new Color(1, 1, 1, 1), /* Magenta: */ new Color(1, 0, 1, 1), /* Red: */ new Color(1, 0, 0, 1), /* Yellow: */ new Color(1, 1, 0, 1), /* Green: */ new Color(0, 1, 0, 1), /* Cyan: */ new Color(0, 1, 1, 1), /* Blue: */ new Color(0, 0, 1, 1) };
     private int colorIndex = 0;
 
+    // GUIscript contains the variables for playing
+    GUIscript playGUI;
+
     // Start called on the first frame update
     private void Start()
     {
@@ -43,6 +46,10 @@ public class objectDrag : MonoBehaviour
 
         // Add audio
         audioSource = gameObject.GetComponent<AudioSource>();
+
+        // Load in the main camera that oversees variables
+        GameObject mainCamera = GameObject.Find("Main Camera");
+        playGUI = mainCamera.GetComponent<GUIscript>();
     }
 
     // Helper method to load sprites
@@ -67,7 +74,7 @@ public class objectDrag : MonoBehaviour
     private void OnGUI()
     {
         
-        if (menuOpen)
+        if (menuOpen && !playGUI.controller.playingGame)
        {
             mousePos = Input.mousePosition; 
             GUILayout.BeginArea(new Rect(0, 4, 200, 300), GUI.skin.box);

@@ -62,6 +62,10 @@ public class gameMechanics : MonoBehaviour
                 {
                     lastTime = Time.time;
                     timeLeft--;
+                    if (timeLeft == 290)
+                    {
+                        triggerWin();
+                    }
                 }
             }
         }
@@ -78,7 +82,7 @@ public class gameMechanics : MonoBehaviour
         // Show the win animation win a win is triggered.
         if (winMarker)
         {
-            if (Time.time - winSeconds > 3)
+            if (Time.time - winSeconds > .5)
                 winMarker = false;
         }
     }
@@ -123,12 +127,12 @@ public class gameMechanics : MonoBehaviour
     {
         if (winMarker)
         {
-            GUI.Box(new Rect( 270, 100, winImage.width, winImage.height), winImage);
+            GUI.Box(new Rect((Screen.width/2) - (winImage.width / 2), (Screen.height / 2) - (winImage.height / 2), winImage.width, winImage.height), winImage);
         }
 
         if (loseMarker)
         {
-            GUI.Box(new Rect(270, 100, winImage.width, winImage.height), loseImage);
+            GUI.Box(new Rect((Screen.width / 2) - (loseImage.width / 2), (Screen.height / 2) - (loseImage.height / 2), loseImage.width, loseImage.height), loseImage);
         }
     }
 

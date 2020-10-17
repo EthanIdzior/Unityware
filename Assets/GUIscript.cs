@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GUIscript : MonoBehaviour
 {
-    gameMechanics controller;
+    public gameMechanics controller;
     string buttonSymbol = "▶";
     bool trackReset = false;
 
@@ -25,7 +25,7 @@ public class GUIscript : MonoBehaviour
 
     void OnGUI()
     {
-        if (GUI.Button (new Rect(0, 0, 80, 20), buttonSymbol))
+        if (GUI.Button (new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
         {
             // Change from edit to play
             if (buttonSymbol == "▶") {
@@ -44,7 +44,7 @@ public class GUIscript : MonoBehaviour
 
         if (controller.hasTimer && controller.playingGame)
         {
-            GUI.Label(new Rect(0, 30, 80, 20), (controller.timeLeft).ToString());
+            GUI.Label(new Rect(Screen.width - 100, 20, 80, 20), (controller.timeLeft).ToString());
             trackReset = true;
         }
 

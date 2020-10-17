@@ -13,10 +13,14 @@ public class playerMoveScript : MonoBehaviour
     public Boolean moveDown = true;
     public Boolean canJump = false;
 
+    GUIscript playGUI;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        // Find the main camera
+        GameObject mainCamera = GameObject.Find("Main Camera");
+        playGUI = mainCamera.GetComponent<GUIscript>();
     }
 
     // Update is called once per frame
@@ -41,94 +45,100 @@ public class playerMoveScript : MonoBehaviour
          * Currently not working because the jump runs too fast to see, it needs to run once every frame.
          */
 
-        // If W or up arrow is pressed move up
-        // Note this does not currently work if key is held
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && moveUp)
+        // Only work if playing the game
+        if (playGUI.controller.playingGame)
         {
-
-            transform.position += new Vector3(0, stepSize * movementFactor, 0);
-
-            if (!IsValidMove())
+            // If W or up arrow is pressed move up
+            // Note this does not currently work if key is held
+            if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && moveUp)
             {
-                transform.position -= new Vector3(0, stepSize * movementFactor, 0);
-            }
-        }
 
-        // If A or Left Arrow is pressed move Left
-        // Note this does not currently work if key is held
-        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && moveLeft)
-        {
-
-            transform.position += new Vector3(-1 * (stepSize * movementFactor), 0, 0);
-
-            if (!IsValidMove())
-            {
-                transform.position -= new Vector3(-1 * (stepSize * movementFactor), 0, 0);
-            }
-        }
-
-        // If S or Down Arrow is pressed move Down
-        // Note this does not currently work if key is held
-        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && moveDown)
-        {
-
-            transform.position += new Vector3(0, -1 * (stepSize * movementFactor), 0);
-
-            if (!IsValidMove())
-            {
-                transform.position -= new Vector3(0, -1 * (stepSize * movementFactor), 0);
-            }
-        }
-
-        // If D or Right Arrow is pressed move Left
-        // Note this does not currently work if key is held
-        else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && moveRight)
-        {
-
-            transform.position += new Vector3(stepSize * movementFactor, 0, 0);
-
-            if (!IsValidMove())
-            {
-                transform.position -= new Vector3(stepSize * movementFactor, 0, 0);
-            }
-        }
-
-        // If Space is pressed move Jump
-        // Note this does not currently work if key is held
-        // #TODO
-        else if (Input.GetKeyDown(KeyCode.Space) && canJump)
-        {
-            // Check to see if on the ground or an object. If valid, not a valid jump.
-            transform.position += new Vector3(0, -1 * (stepSize * movementFactor), 0);
-            if (IsValidMove())
-            {
                 transform.position += new Vector3(0, stepSize * movementFactor, 0);
-                return;
-            }
-            
-            // Reset the position for the original check
-            transform.position += new Vector3(0, stepSize * movementFactor, 0);
-
-            // Move up
-            for (int i = 0; i < 10; i++)
-            {
-                transform.position += new Vector3(0, (jumpSize * jumpFactor)/10, 0);
 
                 if (!IsValidMove())
                 {
-                    transform.position += new Vector3(0, -1 * ((jumpSize * jumpFactor)/10), 0);
+                    transform.position -= new Vector3(0, stepSize * movementFactor, 0);
                 }
             }
 
-            // Move down until colliding with an object.
-            while (IsValidMove())
+            // If A or Left Arrow is pressed move Left
+            // Note this does not currently work if key is held
+            else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && moveLeft)
             {
-                transform.position += new Vector3(0, -1 * (jumpSize * jumpFactor), 0);
+
+                transform.position += new Vector3(-1 * (stepSize * movementFactor), 0, 0);
+
+                if (!IsValidMove())
+                {
+                    transform.position -= new Vector3(-1 * (stepSize * movementFactor), 0, 0);
+                }
             }
 
-            transform.position += new Vector3(0, jumpSize * jumpFactor, 0);
+            // If S or Down Arrow is pressed move Down
+            // Note this does not currently work if key is held
+            else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && moveDown)
+            {
 
+                transform.position += new Vector3(0, -1 * (stepSize * movementFactor), 0);
+
+                if (!IsValidMove())
+                {
+                    transform.position -= new Vector3(0, -1 * (stepSize * movementFactor), 0);
+                }
+            }
+
+            // If D or Right Arrow is pressed move Left
+            // Note this does not currently work if key is held
+            else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && moveRight)
+            {
+
+                transform.position += new Vector3(stepSize * movementFactor, 0, 0);
+
+                if (!IsValidMove())
+                {
+                    transform.position -= new Vector3(stepSize * movementFactor, 0, 0);
+                }
+            }
+
+            // If Space is pressed move Jump
+            // Note this does not currently work if key is held
+            // #TODO
+            else if (Input.GetKeyDown(KeyCode.Space) && canJump)
+            {
+                // Check to see if on the ground or an object. If valid, not a valid jump.
+                transform.position += new Vector3(0, -1 * (stepSize * movementFactor), 0);
+                if (IsValidMove())
+                {
+                    transform.position += new Vector3(0, stepSize * movementFactor, 0);
+                    return;
+                }
+
+                // Reset the position for the original check
+                transform.position += new Vector3(0, stepSize * movementFactor, 0);
+
+                // Move up
+                for (int i = 0; i < 10; i++)
+                {
+                    transform.position += new Vector3(0, (jumpSize * jumpFactor) / 10, 0);
+
+                    if (!IsValidMove())
+                    {
+                        transform.position += new Vector3(0, -1 * ((jumpSize * jumpFactor) / 10), 0);
+                    }
+                }
+
+                // Move down until colliding with an object.
+                while (IsValidMove())
+                {
+                    transform.position += new Vector3(0, -1 * (jumpSize * jumpFactor), 0);
+                }
+
+                transform.position += new Vector3(0, jumpSize * jumpFactor, 0);
+
+            }
         }
+
+        
     }
 
     // isIsValidMove()

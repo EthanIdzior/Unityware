@@ -213,6 +213,8 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -228,6 +230,27 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
+--- !u!114 &519420030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c279225d2ff73d640a1719f967c4d875, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWin: 0
+  isLose: 0
+  hasTimer: 1
+  hasPoints: 0
+  timerStart: 300
+  timeLeft: 0
+  playingGame: 0
+  winImage: {fileID: 2800000, guid: 923c214e687a9ce4da8e4debd8c3973d, type: 3}
+  loseImage: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -285,6 +308,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e13482d5739799f4896ccc8c3e40a15d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
 --- !u!1 &996398511
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,6 +428,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0c49ca82d650e2c4da6c236fc1f3651b, type: 3}
   - {fileID: 21300000, guid: dece15dc179d6474da32fc92985d48d4, type: 3}
   - {fileID: 21300000, guid: 7eac11f67dc59754eb3b12bd669416ea, type: 3}
+  playGUI: {fileID: 0}
 --- !u!82 &996398515
 AudioSource:
   m_ObjectHideFlags: 0
@@ -636,7 +673,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38bf2bac56433754ca2e3f470b447d83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isClickable: 0
   isDraggable: 0
+  kbInputOn: 0
   mouseOver: 0
   audioSource: {fileID: 0}
   audioClips:
