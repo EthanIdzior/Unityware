@@ -163,6 +163,11 @@ public class objectDrag : MonoBehaviour
                 }
                 GUILayout.EndHorizontal();
             }
+            else
+            {
+                audioSource.Stop();
+                audioClipIndex = 0; // reset index
+            }
 
             if (GUILayout.Button("Close"))
             {

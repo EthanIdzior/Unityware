@@ -24,6 +24,8 @@ public class changeBackground : MonoBehaviour
     public Sprite[] backgroundSprites;
     private int backgroundSpriteIndex = 0;
 
+    bool soundToggled = false;
+
     // Create an array with preset colors
     private Color[] colors = {/* White: */ new Color(1, 1, 1, 1), /* Magenta: */ new Color(1, 0, 1, 1), /* Red: */ new Color(1, 0, 0, 1), /* Yellow: */ new Color(1, 1, 0, 1), /* Green: */ new Color(0, 1, 0, 1), /* Cyan: */ new Color(0, 1, 1, 1), /* Blue: */ new Color(0, 0, 1, 1), /* Black: */ new Color(0, 0, 0, 1) };
     private int colorIndex = 0;
@@ -104,6 +106,12 @@ public class changeBackground : MonoBehaviour
             hasSound = GUILayout.Toggle(hasSound, "Background Music");
             if (hasSound)
             {
+                if (!soundToggled)
+                {
+                    audioSource.clip = backgroundMusic[backgroundMusicIndex];
+                    audioSource.Play();
+                    soundToggled = true;
+                }
                 // Add sound to objects
                 GUILayout.BeginHorizontal("box");
                 if (GUILayout.Button("Previous Track"))
@@ -131,6 +139,8 @@ public class changeBackground : MonoBehaviour
             else
             {
                 audioSource.Stop();
+                backgroundMusicIndex = 0; // reset index
+                soundToggled = false;
             }
 
 
