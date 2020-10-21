@@ -31,6 +31,10 @@ public class GUIscript : MonoBehaviour
 
     void OnGUI()
     {
+        if (GUI.Button(new Rect(10, Screen.height - 30, 80, 20), "Add Object"))
+        {
+
+        }
         if (GUI.Button (new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
         {
             // Change from edit to play

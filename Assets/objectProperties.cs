@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class objectDrag : MonoBehaviour
+public class objectProperties : MonoBehaviour
 {
     //Variables for menu and properties
     private bool isDragging;
