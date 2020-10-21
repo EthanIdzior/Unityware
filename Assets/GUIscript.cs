@@ -8,10 +8,16 @@ public class GUIscript : MonoBehaviour
     string buttonSymbol = "▶";
     bool trackReset = false;
 
+    // Variables related to retrieving the background music
+    private GameObject background;
+    private bool hasSound = false;
+    private AudioSource audioSource;
+
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<gameMechanics>();
+        background = GameObject.Find("background");
     }
 
     // Update is called once per frame
@@ -31,6 +37,15 @@ public class GUIscript : MonoBehaviour
             if (buttonSymbol == "▶") {
                 buttonSymbol = "| |";
                 controller.playingGame = true;
+
+                // Refresh the background music
+                audioSource = background.GetComponent<AudioSource>();
+                hasSound = background.GetComponent<changeBackground>().hasSound;
+
+                if (hasSound)
+                {
+                    audioSource.Play();
+                }
             }
 
             // Change from play to edit
@@ -38,6 +53,11 @@ public class GUIscript : MonoBehaviour
             {
                 buttonSymbol = "▶";
                 controller.playingGame = false;
+
+                if (hasSound)
+                {
+                    audioSource.Pause();
+                }
             }
 
         }
