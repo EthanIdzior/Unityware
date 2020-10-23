@@ -7,11 +7,11 @@ public class playerMoveScript : MonoBehaviour
 {
     public int movementFactor = 1;
     public int jumpFactor = 1;
-    public Boolean moveLeft = true;
-    public Boolean moveRight = true;
-    public Boolean moveUp = true;
-    public Boolean moveDown = true;
-    public Boolean canJump = false;
+    public Boolean moveLeft;
+    public Boolean moveRight;
+    public Boolean moveUp;
+    public Boolean moveDown;
+    public Boolean canJump;
 
     GUIscript playGUI;
 

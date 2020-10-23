@@ -249,7 +249,8 @@ MonoBehaviour:
   timerStart: 300
   timeLeft: 0
   playingGame: 0
-  winImage: {fileID: 2800000, guid: 923c214e687a9ce4da8e4debd8c3973d, type: 3}
+  objectCount: 0
+  winImage: {fileID: 2800000, guid: 4dec7d1c3b3fc1d489e27d75f5077650, type: 3}
   loseImage: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!20 &519420031
 Camera:
@@ -320,6 +321,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e13482d5739799f4896ccc8c3e40a15d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Object: {fileID: 1132821001}
   controller: {fileID: 0}
 --- !u!1 &996398511
 GameObject:
@@ -536,7 +538,7 @@ GameObject:
   - component: {fileID: 1132821002}
   - component: {fileID: 1132821003}
   m_Layer: 0
-  m_Name: testingObject
+  m_Name: Object0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -571,10 +573,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementFactor: 1
   jumpFactor: 1
-  moveLeft: 1
-  moveRight: 1
-  moveUp: 1
-  moveDown: 1
+  moveLeft: 0
+  moveRight: 0
+  moveUp: 0
+  moveDown: 0
   canJump: 0
 --- !u!1 &1437997044
 GameObject:
@@ -590,7 +592,7 @@ GameObject:
   - component: {fileID: 1437997048}
   - component: {fileID: 1437997049}
   m_Layer: 0
-  m_Name: testSquare
+  m_Name: objectSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -655,7 +657,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437997044}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.85, y: -0.87, z: 0}
+  m_LocalPosition: {x: 9, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1132821002}
@@ -676,6 +678,7 @@ MonoBehaviour:
   isClickable: 0
   isDraggable: 0
   kbInputOn: 0
+  controllable: 0
   mouseOver: 0
   audioSource: {fileID: 0}
   audioClips:
@@ -684,6 +687,7 @@ MonoBehaviour:
   hasSound: 0
   spriteRenderer: {fileID: 1437997045}
   objectSprites: []
+  mechanics: {fileID: 0}
 --- !u!65 &1437997048
 BoxCollider:
   m_ObjectHideFlags: 0

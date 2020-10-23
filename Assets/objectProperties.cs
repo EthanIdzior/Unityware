@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Security.Cryptography;
 using UnityEngine;
 
 // Required for sprites
@@ -16,8 +17,11 @@ public class objectProperties : MonoBehaviour
     bool menuOpen = false;
     public bool isDraggable = false;
     public bool kbInputOn = false;
+    public bool controllable = false;
     public bool mouseOver;
     Vector2 mousePos;
+
+    private playerMoveScript movement;
 
     // Variables related to audio
     public AudioSource audioSource;
@@ -37,9 +41,13 @@ public class objectProperties : MonoBehaviour
     // GUIscript contains the variables for playing
     GUIscript playGUI;
 
+    // Contains game variables
+    public gameMechanics mechanics;
+
     // Start called on the first frame update
     private void Start()
     {
+        movement = (transform.root.gameObject).GetComponent<playerMoveScript>();
         // Load all sprites from the sprite sheet
         AsyncOperationHandle<Sprite[]> spriteHandle = Addressables.LoadAssetAsync<Sprite[]>("Assets/Graphics/Objects/sheet.png");
         spriteHandle.Completed += LoadSpritesWhenReady;
@@ -50,6 +58,7 @@ public class objectProperties : MonoBehaviour
         // Load in the main camera that oversees variables
         GameObject mainCamera = GameObject.Find("Main Camera");
         playGUI = mainCamera.GetComponent<GUIscript>();
+        mechanics = mainCamera.GetComponent<gameMechanics>();
     }
 
     // Helper method to load sprites
@@ -82,6 +91,23 @@ public class objectProperties : MonoBehaviour
             isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
             isClickable = GUILayout.Toggle(isClickable, "Clickable");
             kbInputOn = GUILayout.Toggle(kbInputOn, "Space Does Action");
+
+            // toggles movement properties
+            controllable = GUILayout.Toggle(controllable, "Controllable");
+            if (controllable)
+            {
+                movement.moveLeft = true;
+                movement.moveRight = true;
+                movement.moveUp = true;
+                movement.moveDown = true;
+            }
+            else
+            {
+                movement.moveLeft = false;
+                movement.moveRight = false;
+                movement.moveUp = false;
+                movement.moveDown = false;
+            }
 
             // Change Sprites
             GUILayout.BeginHorizontal("box");
@@ -168,6 +194,10 @@ public class objectProperties : MonoBehaviour
                 audioSource.Stop();
                 audioClipIndex = 0; // reset index
             }
+            if (GUILayout.Button("Delete Object"))
+            {
+                deleteObject();
+            }
 
             if (GUILayout.Button("Close"))
             {
@@ -181,6 +211,15 @@ public class objectProperties : MonoBehaviour
         
     }
     
+    /* 
+     * Helper method to delete the current object.
+     */
+    void deleteObject()
+    {
+        menuOpen = false; // close menu as the object no longer exists
+        mechanics.objectCount--;
+        Destroy(transform.root.gameObject);
+    }
 
     public void OnMouseDown()
     {

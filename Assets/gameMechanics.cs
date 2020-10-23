@@ -27,6 +27,7 @@ public class gameMechanics : MonoBehaviour
     private float winSeconds = 0;
     private Boolean loseMarker = false;
     private float loseSeconds = 0;
+    public int objectCount = 0;
 
     // Image Variables
     public Texture2D winImage;
