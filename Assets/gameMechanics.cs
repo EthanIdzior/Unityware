@@ -27,7 +27,12 @@ public class gameMechanics : MonoBehaviour
     private float winSeconds = 0;
     private Boolean loseMarker = false;
     private float loseSeconds = 0;
-    public int objectCount = 0;
+
+    // variables related to objects
+    public int objectTotal = 0; // the total number of objects, keeps counting so each object has a unique name
+    public List<GameObject> objectList;
+    public int maxWidth;
+    public int maxHeight;
 
     // Image Variables
     public Texture2D winImage;
@@ -41,6 +46,8 @@ public class gameMechanics : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        objectList = new List<GameObject>();
+
         // retrieve the background object to control background music later
         background = GameObject.Find("background");
     }
