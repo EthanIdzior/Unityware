@@ -37,7 +37,7 @@ public class GUIscript : MonoBehaviour
     /**
      * Helper method to add an object
      */
-    void createObject()
+    public void createObject()
     {
         // if the canvas can fit more objects
         if (controller.objectList.Count <= (controller.maxWidth * controller.maxHeight))
@@ -79,21 +79,25 @@ public class GUIscript : MonoBehaviour
     }
     void OnGUI()
     {
-        if (objectError)
+        if (!controller.playingGame)
         {
-            GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 210, 60), GUI.skin.box);
-            GUILayout.Label("ERROR: Object capacity reached");
-            if (GUILayout.Button("Close"))
+            if (objectError)
             {
-                objectError = false;
-            }
-            GUILayout.EndArea();
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 210, 60), GUI.skin.box);
+                GUILayout.Label("ERROR: Object capacity reached");
+                if (GUILayout.Button("Close"))
+                {
+                    objectError = false;
+                }
+                GUILayout.EndArea();
 
+            }
+            if (GUI.Button(new Rect(10, Screen.height - 30, 80, 20), "Add Object"))
+            {
+                createObject();
+            }
         }
-        if (GUI.Button(new Rect(10, Screen.height - 30, 80, 20), "Add Object"))
-        {
-            createObject();
-        }
+
         if (GUI.Button (new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
         {
             // Change from edit to play

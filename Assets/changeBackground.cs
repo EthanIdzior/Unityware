@@ -153,7 +153,7 @@ public class changeBackground : MonoBehaviour
 
             GUILayout.EndArea();
         }
-        else
+        else if(!playGUI.controller.playingGame)
         {
             GUILayout.BeginArea(new Rect(Screen.width - 40, Screen.height - 30, 40, 30), GUI.skin.box);
             if (GUILayout.Button("_"))
