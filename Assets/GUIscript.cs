@@ -140,7 +140,7 @@ public class GUIscript : MonoBehaviour
                 }
 
                 GUILayout.Label("Level Time");
-                controller.timerStart = float.Parse(GUILayout.TextField((controller.timerStart).ToString(), 1));
+                controller.timerStart = float.Parse(GUILayout.TextField((controller.timerStart).ToString(), 3));
 
                 GUILayout.EndArea();
             }
