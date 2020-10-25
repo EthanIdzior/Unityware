@@ -76,3 +76,4 @@ Assets/Ludiq/
 Assets/Ludiq.Generated/
 Packages/packages-lock.json
 *.meta
+ProjectSettings/ProjectVersion.txt
