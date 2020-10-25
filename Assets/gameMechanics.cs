@@ -74,10 +74,6 @@ public class gameMechanics : MonoBehaviour
                 {
                     lastTime = Time.time;
                     timeLeft--;
-                    if (timeLeft == 290)
-                    {
-                        triggerWin();
-                    }
                 }
             }
         }

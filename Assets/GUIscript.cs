@@ -108,13 +108,14 @@ public class GUIscript : MonoBehaviour
                 GUILayout.BeginArea(new Rect((Screen.width/2) - (levelMenuWidth/2), (Screen.height/2) - (levelMenuHeight/2), levelMenuWidth, levelMenuHeight), GUI.skin.box);
 
                 GUILayout.BeginHorizontal("box");
-                GUILayout.Label("Win Condition");
+                GUILayout.Label("Level Settings");
                 if (GUILayout.Button("X"))
                 {
                     levelMenuToggle = false;
                 }
                 GUILayout.EndHorizontal();
 
+                GUILayout.Label("Win Conditions");
                 dontMove = GUILayout.Toggle(dontMove, "Don't Move");
                 // Toggle the others
                 if (dontMove)
@@ -131,7 +132,7 @@ public class GUIscript : MonoBehaviour
                     goToTarget = false;
                 }
 
-                goToTarget = GUILayout.Toggle(goToTarget, "Space Does Action");
+                goToTarget = GUILayout.Toggle(goToTarget, "Move to Target");
                 // Toggle the others
                 if (goToTarget)
                 {
@@ -139,8 +140,16 @@ public class GUIscript : MonoBehaviour
                     collectKeys = false;
                 }
 
+                else if (!dontMove && !collectKeys && !goToTarget)
+                {
+                    dontMove = true;
+                }
+
                 GUILayout.Label("Level Time");
                 controller.timerStart = float.Parse(GUILayout.TextField((controller.timerStart).ToString(), 3));
+
+                GUILayout.Label("Level Instruction");
+                instruction = GUILayout.TextField(instruction, 25);
 
                 GUILayout.EndArea();
             }
@@ -193,9 +202,23 @@ public class GUIscript : MonoBehaviour
 
         }
 
+        // Play instruction
+        if (controller.playingGame && (controller.timerStart - controller.timeLeft < 3))
+        {
+            int instrWidth = 100;
+            int instrHeight = 25;
+            var setCentered = GUI.skin.GetStyle("Label");
+            
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (instrWidth / 2), (Screen.height / 2) - (instrHeight / 2), instrWidth, instrHeight), GUI.skin.box);
+            GUILayout.Label(instruction);
+            GUILayout.EndArea();
+        }
+
         if (controller.hasTimer && controller.playingGame)
         {
-            GUI.Label(new Rect(Screen.width - 100, 20, 80, 20), (controller.timeLeft).ToString());
+            GUILayout.BeginArea(new Rect(Screen.width - 100, 25, 80, 20), GUI.skin.box);
+            GUILayout.Label((controller.timeLeft).ToString());
+            GUILayout.EndArea();
             trackReset = true;
         }
 
