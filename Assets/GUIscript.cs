@@ -52,6 +52,9 @@ public class GUIscript : MonoBehaviour
 
             print("Toggled");
         }
+
+        if (controller.timeLeft < 0)
+            controller.playingGame = false;
     }
     /**
      * Helper method to add an object
@@ -203,11 +206,12 @@ public class GUIscript : MonoBehaviour
         }
 
         // Play instruction
-        if (controller.playingGame && (controller.timerStart - controller.timeLeft < 3))
+        if (controller.playingGame && (controller.timerStart - controller.timeLeft < 3) && instruction != "")
         {
-            int instrWidth = 100;
+            int instrWidth = instruction.Length * 8;
             int instrHeight = 25;
             var setCentered = GUI.skin.GetStyle("Label");
+
             
             GUILayout.BeginArea(new Rect((Screen.width / 2) - (instrWidth / 2), (Screen.height / 2) - (instrHeight / 2), instrWidth, instrHeight), GUI.skin.box);
             GUILayout.Label(instruction);
