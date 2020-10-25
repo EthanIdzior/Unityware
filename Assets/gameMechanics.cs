@@ -28,16 +28,28 @@ public class gameMechanics : MonoBehaviour
     private Boolean loseMarker = false;
     private float loseSeconds = 0;
 
+    // variables related to objects
+    public int objectTotal = 0; // the total number of objects, keeps counting so each object has a unique name
+    public List<GameObject> objectList;
+    public int maxWidth;
+    public int maxHeight;
+
     // Image Variables
     public Texture2D winImage;
     public Texture2D loseImage;
 
-
+    // Variables related to retrieving the background music
+    private GameObject background;
+    private bool hasSound = false;
+    private AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
+        objectList = new List<GameObject>();
 
+        // retrieve the background object to control background music later
+        background = GameObject.Find("background");
     }
 
     // Update is called once per frame
@@ -93,7 +105,7 @@ public class gameMechanics : MonoBehaviour
      */
     public void triggerWin()
     {
-        playingGame = false;
+        stopGame();
         winMarker = true;
         winSeconds = Time.time;
     }
@@ -104,7 +116,7 @@ public class gameMechanics : MonoBehaviour
      */
     public void triggerLose()
     {
-        playingGame = false;
+        stopGame();
         loseMarker = true;
         loseSeconds = Time.time;
     }
@@ -135,5 +147,17 @@ public class gameMechanics : MonoBehaviour
             GUI.Box(new Rect((Screen.width / 2) - (loseImage.width / 2), (Screen.height / 2) - (loseImage.height / 2), loseImage.width, loseImage.height), loseImage);
         }
     }
+    private void stopGame()
+    {
+        playingGame = false;
 
+        // retrieve audio variables
+        audioSource = background.GetComponent<AudioSource>();
+        hasSound = background.GetComponent<changeBackground>().hasSound;
+
+        if (hasSound)
+        {
+            audioSource.Stop();
+        }
+    }
 }

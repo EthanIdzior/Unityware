@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using UnityEngine;
 
 // Required for sprites
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class objectDrag : MonoBehaviour
+public class objectProperties : MonoBehaviour
 {
     //Variables for menu and properties
     private bool isDragging;
@@ -16,6 +18,7 @@ public class objectDrag : MonoBehaviour
     bool menuOpen = false;
     public bool isDraggable = false;
     public bool kbInputOn = false;
+    public bool controllable = false;
     public bool mouseOver;
     Vector2 mousePos;
 
@@ -37,9 +40,16 @@ public class objectDrag : MonoBehaviour
     // GUIscript contains the variables for playing
     GUIscript playGUI;
 
+    // Contains game variables
+    public gameMechanics mechanics;
+    private playerMoveScript movement;
+
     // Start called on the first frame update
     private void Start()
     {
+        // retrieve scripts
+        movement = (transform.root.gameObject).GetComponent<playerMoveScript>();
+
         // Load all sprites from the sprite sheet
         AsyncOperationHandle<Sprite[]> spriteHandle = Addressables.LoadAssetAsync<Sprite[]>("Assets/Graphics/Objects/sheet.png");
         spriteHandle.Completed += LoadSpritesWhenReady;
@@ -50,6 +60,7 @@ public class objectDrag : MonoBehaviour
         // Load in the main camera that oversees variables
         GameObject mainCamera = GameObject.Find("Main Camera");
         playGUI = mainCamera.GetComponent<GUIscript>();
+        mechanics = mainCamera.GetComponent<gameMechanics>();
     }
 
     // Helper method to load sprites
@@ -78,10 +89,27 @@ public class objectDrag : MonoBehaviour
        {
             mousePos = Input.mousePosition; 
             GUILayout.BeginArea(new Rect(0, 4, 200, 300), GUI.skin.box);
-            GUILayout.Label("Object Properties");
+            GUILayout.Label("Object Properties for " + transform.root.name);
             isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
             isClickable = GUILayout.Toggle(isClickable, "Clickable");
             kbInputOn = GUILayout.Toggle(kbInputOn, "Space Does Action");
+
+            // toggles movement properties
+            controllable = GUILayout.Toggle(controllable, "Controllable");
+            if (controllable)
+            {
+                movement.moveLeft = true;
+                movement.moveRight = true;
+                movement.moveUp = true;
+                movement.moveDown = true;
+            }
+            else
+            {
+                movement.moveLeft = false;
+                movement.moveRight = false;
+                movement.moveUp = false;
+                movement.moveDown = false;
+            }
 
             // Change Sprites
             GUILayout.BeginHorizontal("box");
@@ -168,6 +196,10 @@ public class objectDrag : MonoBehaviour
                 audioSource.Stop();
                 audioClipIndex = 0; // reset index
             }
+            if (GUILayout.Button("Delete Object"))
+            {
+                deleteObject();
+            }
 
             if (GUILayout.Button("Close"))
             {
@@ -181,6 +213,15 @@ public class objectDrag : MonoBehaviour
         
     }
     
+    /* 
+     * Helper method to delete the current object.
+     */
+    void deleteObject()
+    {
+        menuOpen = false; // close menu as the object no longer exists
+        mechanics.objectList.Remove(transform.root.gameObject);
+        Destroy(transform.root.gameObject);
+    }
 
     public void OnMouseDown()
     {
@@ -200,13 +241,59 @@ public class objectDrag : MonoBehaviour
         //right click on object opens editor menu
         if (mouseOver && Input.GetMouseButton(1))
         {
+            objectProperties otherProperties;
+            // make sure no other property menus are open, if they are then close them
+            foreach (GameObject obj in mechanics.objectList)
+            {
+                otherProperties = (obj.transform.GetChild(0).gameObject).GetComponent<objectProperties>();
+
+                // close any other open menus
+                if (otherProperties.menuOpen)
+                {
+                    otherProperties.menuOpen = false;
+                }
+            }
             menuOpen = true;
         }
         //what happens with isDraggable
-        if (isDragging && isDraggable )
+        /* Allows objects to be dragged in two cases
+         * Case 1: The object is draggable and the game is playing
+         * Case 2: The object is selected during editor mode
+         */
+        if (((isDragging && isDraggable) && mechanics.playingGame) || (isDragging && !mechanics.playingGame))
         {
+            bool overlapping = false; // tracks if the objects are overlapping in editor mode
+
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-            transform.Translate(mousePos);
+            // if in editor mode ensure that it stays along the grid
+            if (!mechanics.playingGame)
+            {
+                // round down to snap to the grid
+                mousePos.x = Mathf.Round(mousePos.x);
+                mousePos.y = Mathf.Round(mousePos.y);
+
+                float originalx = transform.root.transform.position.x;
+                float originaly = transform.root.transform.position.y;
+
+                // make sure objects don't overlap in editor mode
+                foreach (GameObject obj in mechanics.objectList)
+                {    
+                    // if not the same object
+                    if (!string.Equals(transform.root.name, obj.name))
+                    {
+                        // if the current object is overlapping with the object that is moving
+                        if ((originalx + mousePos.x) == obj.transform.position.x && (originaly + mousePos.y) == obj.transform.position.y)
+                        {
+                            overlapping = true;
+                        }
+                    }
+                }
+            }
+            if (!overlapping)
+            {
+                transform.root.transform.Translate(mousePos);
+            }
+        
         }
         //What happens if clickable and left click
         if (isClickable && mouseOver && Input.GetMouseButtonDown(0))

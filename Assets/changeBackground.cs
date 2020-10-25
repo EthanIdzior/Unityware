@@ -24,6 +24,7 @@ public class changeBackground : MonoBehaviour
     public Sprite[] backgroundSprites;
     private int backgroundSpriteIndex = 0;
 
+    private bool menuOpen = true;
     bool soundToggled = false;
 
     // Create an array with preset colors
@@ -44,11 +45,17 @@ public class changeBackground : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!playGUI.controller.playingGame)
+        if (menuOpen && !playGUI.controller.playingGame)
         {
             GUILayout.BeginArea(new Rect(Screen.width - width, Screen.height - height, width, height), GUI.skin.box);
 
+            GUILayout.BeginHorizontal("box");
             GUILayout.Label("Background Properties");
+            if (GUILayout.Button("_"))
+            {
+                menuOpen = false;
+            }
+            GUILayout.EndHorizontal();
 
             // Change Sprites
             GUILayout.BeginHorizontal("box");
@@ -144,6 +151,15 @@ public class changeBackground : MonoBehaviour
             }
 
 
+            GUILayout.EndArea();
+        }
+        else if(!playGUI.controller.playingGame)
+        {
+            GUILayout.BeginArea(new Rect(Screen.width - 40, Screen.height - 30, 40, 30), GUI.skin.box);
+            if (GUILayout.Button("_"))
+            {
+                menuOpen = true;
+            }
             GUILayout.EndArea();
         }
         
