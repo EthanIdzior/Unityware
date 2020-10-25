@@ -13,11 +13,19 @@ public class GUIscript : MonoBehaviour
     string buttonSymbol = "▶";
     bool trackReset = false;
     bool objectError = false;
+    bool levelMenuToggle = false;
 
     // Variables related to retrieving the background music
     private GameObject background;
     private bool hasSound = false;
     private AudioSource audioSource;
+
+    // Types of win
+    private bool dontMove = false;
+    private bool collectKeys = false;
+    private bool goToTarget = false;
+
+    private String instruction = "";
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +40,17 @@ public class GUIscript : MonoBehaviour
         if (controller.playingGame == false && buttonSymbol == "| |")
         {
             buttonSymbol = "▶";
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            if (!levelMenuToggle)
+                levelMenuToggle = true;
+
+            else
+                levelMenuToggle = false;
+
+            print("Toggled");
         }
     }
     /**
@@ -81,6 +100,51 @@ public class GUIscript : MonoBehaviour
     {
         if (!controller.playingGame)
         {
+
+            if (levelMenuToggle)
+            {
+                int levelMenuWidth = 200;
+                int levelMenuHeight = 300;
+                GUILayout.BeginArea(new Rect((Screen.width/2) - (levelMenuWidth/2), (Screen.height/2) - (levelMenuHeight/2), levelMenuWidth, levelMenuHeight), GUI.skin.box);
+
+                GUILayout.BeginHorizontal("box");
+                GUILayout.Label("Win Condition");
+                if (GUILayout.Button("X"))
+                {
+                    levelMenuToggle = false;
+                }
+                GUILayout.EndHorizontal();
+
+                dontMove = GUILayout.Toggle(dontMove, "Don't Move");
+                // Toggle the others
+                if (dontMove)
+                {
+                    collectKeys = false;
+                    goToTarget = false;
+                }
+
+                collectKeys = GUILayout.Toggle(collectKeys, "Collect Keys");
+                // Toggle the others
+                if (collectKeys)
+                {
+                    dontMove = false;
+                    goToTarget = false;
+                }
+
+                goToTarget = GUILayout.Toggle(goToTarget, "Space Does Action");
+                // Toggle the others
+                if (goToTarget)
+                {
+                    dontMove = false;
+                    collectKeys = false;
+                }
+
+                GUILayout.Label("Level Time");
+                controller.timerStart = float.Parse(GUILayout.TextField((controller.timerStart).ToString(), 1));
+
+                GUILayout.EndArea();
+            }
+
             if (objectError)
             {
                 GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 210, 60), GUI.skin.box);
