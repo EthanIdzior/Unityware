@@ -104,6 +104,7 @@ public class GUIscript : MonoBehaviour
         if (!controller.playingGame)
         {
 
+            // Create the level Menu
             if (levelMenuToggle)
             {
                 int levelMenuWidth = 200;
@@ -174,6 +175,7 @@ public class GUIscript : MonoBehaviour
             }
         }
 
+        // Play/Pause Button
         if (GUI.Button (new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
         {
             // Change from edit to play
@@ -218,6 +220,7 @@ public class GUIscript : MonoBehaviour
             GUILayout.EndArea();
         }
 
+        // Create Timer
         if (controller.hasTimer && controller.playingGame)
         {
             GUILayout.BeginArea(new Rect(Screen.width - 100, 25, 80, 20), GUI.skin.box);
@@ -226,6 +229,7 @@ public class GUIscript : MonoBehaviour
             trackReset = true;
         }
 
+        // Reset Timer
         if (!(controller.hasTimer && controller.playingGame) && trackReset)
         {
             controller.resetTimer();
