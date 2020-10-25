@@ -296,14 +296,14 @@ public class objectProperties : MonoBehaviour
         
         }
         //What happens if clickable and left click
-        if (isClickable && Input.GetMouseButton(0))
+        if (isClickable && mouseOver && Input.GetMouseButtonDown(0))
         {
-            menuOpen = true;
+            gameObject.transform.localScale += new Vector3(1, 0, 1);
         }
 
-        if (Input.GetKey(kbInput) && kbInputOn)
+        if (Input.GetKeyDown(kbInput) && kbInputOn)
         {
-            //What will happen with the KB input
+           gameObject.transform.localScale += new Vector3(-1, 0, -1);
         }
     }
 }
