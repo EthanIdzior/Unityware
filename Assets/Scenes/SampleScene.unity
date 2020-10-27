@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Object: {fileID: 1132821001}
-  controller: {fileID: 0}
+  controller: {fileID: 519420030}
 --- !u!1 &996398511
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +352,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0c49ca82d650e2c4da6c236fc1f3651b, type: 3}
   - {fileID: 21300000, guid: dece15dc179d6474da32fc92985d48d4, type: 3}
   - {fileID: 21300000, guid: 7eac11f67dc59754eb3b12bd669416ea, type: 3}
-  playGUI: {fileID: 0}
+  playGUI: {fileID: 519420033}
 --- !u!82 &996398515
 AudioSource:
   m_ObjectHideFlags: 0
@@ -602,14 +602,16 @@ MonoBehaviour:
   kbInputOn: 0
   controllable: 0
   mouseOver: 0
-  audioSource: {fileID: 0}
+  oldPosition: {x: 0, y: 0}
+  oldScale: {x: 0, y: 0, z: 0}
+  audioSource: {fileID: 1437997049}
   audioClips:
   - {fileID: 8300000, guid: 32088ae544d0d334f85ab4f4f56bb88f, type: 3}
   - {fileID: 8300000, guid: ce4f6e4d4c8569c478135a17e1e0971e, type: 3}
   hasSound: 0
   spriteRenderer: {fileID: 1437997045}
   objectSprites: []
-  mechanics: {fileID: 0}
+  mechanics: {fileID: 519420030}
 --- !u!65 &1437997048
 BoxCollider:
   m_ObjectHideFlags: 0
