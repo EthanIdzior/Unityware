@@ -54,7 +54,10 @@ public class GUIscript : MonoBehaviour
         }
 
         if (controller.timeLeft < 0)
+        {
             controller.playingGame = false;
+            resetObjects(); // reset all objects
+        }
     }
     /**
      * Helper method to add an object
@@ -98,6 +101,39 @@ public class GUIscript : MonoBehaviour
             objectError = true;
         }
 
+    }
+    // Save the properties of each object before playing the game
+    void saveObjects()
+    {
+        objectProperties objprop;
+
+        foreach (GameObject obj in controller.objectList)
+        {
+            objprop = obj.transform.GetChild(0).GetComponent<objectProperties>();
+
+            // save the posiitons of all objects
+            objprop.oldPosition.x = obj.transform.position.x;
+            objprop.oldPosition.y = obj.transform.position.y;
+
+            // save the scale of all objects
+            objprop.oldScale = obj.transform.GetChild(0).transform.localScale;
+        }
+    }
+    // resets the position of objects as playinggame is set to false
+    void resetObjects()
+    {
+        objectProperties objProp;
+
+        foreach (GameObject obj in controller.objectList)
+        {
+            objProp = obj.transform.GetChild(0).GetComponent<objectProperties>();
+
+            // move all objects back
+            obj.transform.position = objProp.oldPosition;
+
+            // reset the scale of the objects
+            obj.transform.GetChild(0).transform.localScale = objProp.oldScale;
+        }
     }
     void OnGUI()
     {
@@ -187,6 +223,8 @@ public class GUIscript : MonoBehaviour
                 audioSource = background.GetComponent<AudioSource>();
                 hasSound = background.GetComponent<changeBackground>().hasSound;
 
+                saveObjects();
+
                 if (hasSound)
                 {
                     audioSource.Play();
@@ -198,6 +236,9 @@ public class GUIscript : MonoBehaviour
             {
                 buttonSymbol = "▶";
                 controller.playingGame = false;
+
+                // reset the position of all objects
+                resetObjects();
 
                 if (hasSound)
                 {

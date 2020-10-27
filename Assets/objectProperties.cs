@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -21,6 +22,10 @@ public class objectProperties : MonoBehaviour
     public bool controllable = false;
     public bool mouseOver;
     Vector2 mousePos;
+
+    // store position of the object when in editor mode
+    public Vector2 oldPosition;
+    public Vector3 oldScale;
 
     // Variables related to audio
     public AudioSource audioSource;
@@ -47,6 +52,9 @@ public class objectProperties : MonoBehaviour
     // Start called on the first frame update
     private void Start()
     {
+        oldPosition = new Vector2(0, 0);
+        oldScale = new Vector3(1, 1, 1);
+
         // retrieve scripts
         movement = (transform.root.gameObject).GetComponent<playerMoveScript>();
 
