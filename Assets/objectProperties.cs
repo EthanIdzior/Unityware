@@ -304,14 +304,21 @@ public class objectProperties : MonoBehaviour
         
         }
         //What happens if clickable and left click
-        if (isClickable && mouseOver && Input.GetMouseButtonDown(0))
+        if (mechanics.playingGame)
         {
-            gameObject.transform.localScale += new Vector3(1, 0, 1);
-        }
+            if (isClickable && mouseOver && Input.GetMouseButtonDown(0))
+            {
+                gameObject.transform.localScale += new Vector3(1, 0, 1);
+            }
 
-        if (Input.GetKeyDown(kbInput) && kbInputOn)
-        {
-           gameObject.transform.localScale += new Vector3(-1, 0, -1);
+            if (Input.GetKeyDown(kbInput) && kbInputOn)
+            {
+                // don't allow zero or negative scale
+                if (gameObject.transform.localScale.x > 1 && gameObject.transform.localScale.z > 1)
+                {
+                    gameObject.transform.localScale += new Vector3(-1, 0, -1);
+                }
+            }
         }
     }
 }
