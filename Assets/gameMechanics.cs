@@ -93,6 +93,13 @@ public class gameMechanics : MonoBehaviour
             if (Time.time - winSeconds > .5)
                 winMarker = false;
         }
+
+        // Show the lose animation win a lose is triggered.
+        if (loseMarker)
+        {
+            if (Time.time - loseSeconds > .5)
+                loseMarker = false;
+        }
     }
 
     /*
@@ -115,15 +122,6 @@ public class gameMechanics : MonoBehaviour
         stopGame();
         loseMarker = true;
         loseSeconds = Time.time;
-    }
-
-    /*
-     * playInstructions
-     * On start play level instructions
-     */
-    public void playInstructions(String instructions)
-    {
-        
     }
 
     public void resetTimer()

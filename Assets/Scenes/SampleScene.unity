@@ -172,7 +172,7 @@ MonoBehaviour:
   objectList: []
   maxWidth: 17
   maxHeight: 9
-  winImage: {fileID: 2800000, guid: 4dec7d1c3b3fc1d489e27d75f5077650, type: 3}
+  winImage: {fileID: 2800000, guid: baf875e9ec7f74d4d81e2bba6cd28c28, type: 3}
   loseImage: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!20 &519420031
 Camera:
@@ -495,10 +495,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementFactor: 1
   jumpFactor: 1
-  moveLeft: 1
-  moveRight: 1
-  moveUp: 1
-  moveDown: 1
+  moveLeft: 0
+  moveRight: 0
+  moveUp: 0
+  moveDown: 0
   canJump: 0
 --- !u!1 &1437997044
 GameObject:
@@ -579,7 +579,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437997044}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 17.68, y: 3.2, z: 0}
+  m_LocalPosition: {x: 16, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1132821002}
