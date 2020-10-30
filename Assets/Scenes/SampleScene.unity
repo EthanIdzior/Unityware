@@ -720,7 +720,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   audioClips: []
   hasSound: 0
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 1437997045}
   objectSprites: []
   mechanics: {fileID: 0}
 --- !u!61 &1437997048
