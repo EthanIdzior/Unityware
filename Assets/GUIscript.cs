@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -24,6 +25,10 @@ public class GUIscript : MonoBehaviour
     private bool dontMove = false;
     private bool collectKeys = false;
     private bool goToTarget = false;
+
+    // Dont move variables
+    private bool positionsSaved = false;
+    private List<Vector3> startingLocation = new List<Vector3>();
 
     private String instruction = "";
 
@@ -57,6 +62,60 @@ public class GUIscript : MonoBehaviour
         {
             controller.playingGame = false;
             resetObjects(); // reset all objects
+        }
+
+        // Win condition is not to move
+        if (controller.playingGame == true && dontMove)
+        {
+            if (!positionsSaved)
+            {
+                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                foreach (object o in obj)
+                {
+                    GameObject g = (GameObject)o;
+                    startingLocation.Add(g.transform.position);
+                }
+
+                positionsSaved = true;
+            }
+
+            if (positionsSaved && controller.timeLeft < 1)
+            {
+                controller.triggerWin();
+                positionsSaved = false;
+                startingLocation.Clear();
+            }
+
+            else if (positionsSaved)
+            {
+                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                foreach (object o in obj)
+                {
+                    GameObject g = (GameObject)o;
+                    if (!startingLocation.Contains(g.transform.position))
+                    {
+                        controller.triggerLose();
+                        positionsSaved = false;
+                        startingLocation.Clear();
+                        break;
+                    }
+                        
+                }
+               
+            }
+
+        }
+
+        // Win condition is to go to target
+        if (controller.playingGame == true && goToTarget)
+        {
+
+        }
+
+        // Win condition is to collect keys
+        if (controller.playingGame == true && collectKeys)
+        {
+
         }
     }
     /**
