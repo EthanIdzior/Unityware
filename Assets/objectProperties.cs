@@ -22,9 +22,12 @@ public class objectProperties : MonoBehaviour
     public bool controllable = false;
     public bool mouseOver;
     Vector2 mousePos;
+    public bool hasGravity = false;
+    public bool isSolid = false;
 
     // store position of the object when in editor mode
-    public Vector2 oldPosition;
+    public Vector3 oldPosition;
+    public Vector3 oldPositionSprite;
     public Vector3 oldScale;
 
     // Variables related to audio
@@ -52,7 +55,8 @@ public class objectProperties : MonoBehaviour
     // Start called on the first frame update
     private void Start()
     {
-        oldPosition = new Vector2(0, 0);
+        oldPosition = new Vector3(0, 0, 0);
+        oldPositionSprite = new Vector3(0, 0, 0);
         oldScale = new Vector3(1, 1, 1);
 
         // retrieve scripts
@@ -92,15 +96,50 @@ public class objectProperties : MonoBehaviour
 
     private void OnGUI()
     {
-        
+
         if (menuOpen && !playGUI.controller.playingGame)
-       {
-            mousePos = Input.mousePosition; 
+        {
+            mousePos = Input.mousePosition;
             GUILayout.BeginArea(new Rect(0, 4, 200, 300), GUI.skin.box);
             GUILayout.Label("Object Properties for " + transform.root.name);
             isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
             isClickable = GUILayout.Toggle(isClickable, "Clickable");
             kbInputOn = GUILayout.Toggle(kbInputOn, "Space Does Action");
+
+            // group these two properties as they cannot both be true at the same time
+            GUILayout.BeginHorizontal("box");
+            hasGravity = GUILayout.Toggle(hasGravity, "Gravity");
+            isSolid = GUILayout.Toggle(isSolid, "Solid");
+            GUILayout.EndHorizontal();
+
+            Rigidbody2D body = gameObject.GetComponent<Rigidbody2D>();
+
+            // turn solidity on
+            if (isSolid && !body.isKinematic)
+            {
+                body.isKinematic = true;
+
+                // turn off gravity
+                hasGravity = false;
+            }
+            // turn solidity off
+            else if (!isSolid && body.isKinematic)
+            {
+                body.isKinematic = false;
+            }
+
+            // turn the gravity on/off
+            if (hasGravity && body.gravityScale != 1)
+            {
+                body.gravityScale = 1;
+
+                // turn off solid
+                isSolid = false;
+            }
+            else if (!hasGravity && body.gravityScale != 0)
+            {
+                body.gravityScale = 0;
+            }
 
             // toggles movement properties
             controllable = GUILayout.Toggle(controllable, "Controllable");
@@ -170,7 +209,7 @@ public class objectProperties : MonoBehaviour
             }
             GUILayout.EndHorizontal();
 
-            
+
             // Change sound effect
             hasSound = GUILayout.Toggle(hasSound, "Sound Effects");
             if (hasSound)
@@ -218,9 +257,9 @@ public class objectProperties : MonoBehaviour
 
 
         }
-        
+
     }
-    
+
     /* 
      * Helper method to delete the current object.
      */
@@ -285,7 +324,7 @@ public class objectProperties : MonoBehaviour
 
                 // make sure objects don't overlap in editor mode
                 foreach (GameObject obj in mechanics.objectList)
-                {    
+                {
                     // if not the same object
                     if (!string.Equals(transform.root.name, obj.name))
                     {
@@ -301,7 +340,7 @@ public class objectProperties : MonoBehaviour
             {
                 transform.root.transform.Translate(mousePos);
             }
-        
+
         }
         //What happens if clickable and left click
         if (mechanics.playingGame)

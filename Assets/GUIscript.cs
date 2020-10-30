@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -30,6 +31,9 @@ public class GUIscript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // disable physics during edit mode
+        Physics2D.autoSimulation = false;
+
         controller = GetComponent<gameMechanics>();
         background = GameObject.Find("background");
     }
@@ -56,6 +60,7 @@ public class GUIscript : MonoBehaviour
         if (controller.timeLeft < 0)
         {
             controller.playingGame = false;
+            Physics2D.autoSimulation = false;
             resetObjects(); // reset all objects
         }
     }
@@ -112,8 +117,8 @@ public class GUIscript : MonoBehaviour
             objprop = obj.transform.GetChild(0).GetComponent<objectProperties>();
 
             // save the posiitons of all objects
-            objprop.oldPosition.x = obj.transform.position.x;
-            objprop.oldPosition.y = obj.transform.position.y;
+            objprop.oldPosition = obj.transform.position;
+            objprop.oldPositionSprite = obj.transform.GetChild(0).transform.position;
 
             // save the scale of all objects
             objprop.oldScale = obj.transform.GetChild(0).transform.localScale;
@@ -130,6 +135,13 @@ public class GUIscript : MonoBehaviour
 
             // move all objects back
             obj.transform.position = objProp.oldPosition;
+            obj.transform.GetChild(0).transform.position = objProp.oldPositionSprite;
+
+            // reset rotation
+            obj.transform.GetChild(0).transform.rotation = Quaternion.identity;
+
+            // reset velocity to 0
+            obj.transform.GetChild(0).GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
 
             // reset the scale of the objects
             obj.transform.GetChild(0).transform.localScale = objProp.oldScale;
@@ -145,7 +157,7 @@ public class GUIscript : MonoBehaviour
             {
                 int levelMenuWidth = 200;
                 int levelMenuHeight = 300;
-                GUILayout.BeginArea(new Rect((Screen.width/2) - (levelMenuWidth/2), (Screen.height/2) - (levelMenuHeight/2), levelMenuWidth, levelMenuHeight), GUI.skin.box);
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (levelMenuWidth / 2), (Screen.height / 2) - (levelMenuHeight / 2), levelMenuWidth, levelMenuHeight), GUI.skin.box);
 
                 GUILayout.BeginHorizontal("box");
                 GUILayout.Label("Level Settings");
@@ -212,12 +224,14 @@ public class GUIscript : MonoBehaviour
         }
 
         // Play/Pause Button
-        if (GUI.Button (new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
+        if (GUI.Button(new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
         {
             // Change from edit to play
-            if (buttonSymbol == "▶") {
+            if (buttonSymbol == "▶")
+            {
                 buttonSymbol = "| |";
                 controller.playingGame = true;
+                Physics2D.autoSimulation = true;
 
                 // Refresh the background music
                 audioSource = background.GetComponent<AudioSource>();
@@ -236,6 +250,7 @@ public class GUIscript : MonoBehaviour
             {
                 buttonSymbol = "▶";
                 controller.playingGame = false;
+                Physics2D.autoSimulation = false;
 
                 // reset the position of all objects
                 resetObjects();
@@ -255,7 +270,7 @@ public class GUIscript : MonoBehaviour
             int instrHeight = 25;
             var setCentered = GUI.skin.GetStyle("Label");
 
-            
+
             GUILayout.BeginArea(new Rect((Screen.width / 2) - (instrWidth / 2), (Screen.height / 2) - (instrHeight / 2), instrWidth, instrHeight), GUI.skin.box);
             GUILayout.Label(instruction);
             GUILayout.EndArea();
