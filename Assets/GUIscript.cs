@@ -184,7 +184,7 @@ public class GUIscript : MonoBehaviour
                 controller.triggerWin();
                 goalLocations.Clear();
                 resetObjects();
-            }l
+            }
         }
 
         // Win condition is to collect keys
