@@ -30,10 +30,13 @@ public class GUIscript : MonoBehaviour
     private bool collectKeys = false;
     private bool goToTarget = false;
 
-    // Dont move variables
+    // Win condition variables
     private bool positionsSaved = false;
+    private bool keysSaved = false;
+    private int keyAmount = 0;
     private List<Vector3> startingLocation = new List<Vector3>();
     private List<Vector3> goalLocations = new List<Vector3>();
+    Dictionary<Vector3, GameObject> keyLocations = new Dictionary<Vector3, GameObject>();
 
     // Default Locations to return to
     //List<KeyValuePair<string, Vector3>> defaultLocations = new List<KeyValuePair<string, Vector3>>();
@@ -77,13 +80,15 @@ public class GUIscript : MonoBehaviour
             else
                 levelMenuToggle = false;
 
-            print("Toggled");
         }
 
         if (controller.timeLeft < 0)
         {
             controller.playingGame = false;
             controller.triggerLose();
+            keyLocations.Clear();
+            goalLocations.Clear();
+            startingLocation.Clear();
             Physics2D.autoSimulation = false;
             resetObjects(); // reset all objects
         }
@@ -139,7 +144,6 @@ public class GUIscript : MonoBehaviour
             // Bulid a collection of all of the goal positions
             if (goalLocations.Count == 0)
             {
-                print("Getting Goal Locations");
                 object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
                 foreach (object o in obj)
                 {
@@ -151,7 +155,6 @@ public class GUIscript : MonoBehaviour
                         if ((g.GetComponentsInChildren<objectProperties>())[0].isTarget)
                         {
                             goalLocations.Add(g.transform.position);
-                            print("Added Location");
                         }
                     }
                             
@@ -190,7 +193,59 @@ public class GUIscript : MonoBehaviour
         // Win condition is to collect keys
         if (controller.playingGame == true && collectKeys)
         {
-            
+            // Bulid a collection of all of the goal positions
+            if (keyAmount == 0 && !keysSaved)
+            {
+                keyLocations.Clear();
+                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                foreach (object o in obj)
+                {
+                    GameObject g = (GameObject)o;
+                    string objName = g.name.ToUpper();
+                    // If the object is a gameobject, get the position properties
+                    if (objName.IndexOf("OBJECT") >= 0)
+                    {
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].isKey)
+                        {
+                            keyLocations.Add(g.transform.position, g);
+                            keyAmount = keyAmount + 1;
+                        }
+                    }
+
+                }
+
+                keyAmount = keyAmount / 2;
+
+                keysSaved = true;
+            }
+
+            else
+            {
+                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                foreach (object o in obj)
+                {
+                    GameObject g = (GameObject)o;
+                    string objName = g.name.ToUpper();
+                    // If the object is a gameobject, get the position properties
+                    if (objName.IndexOf("OBJECT") >= 0)
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
+                            if (keyLocations.ContainsKey(g.transform.position))
+                            {
+                                (keyLocations[g.transform.position]).transform.position = new Vector3(-10, -10, 0);
+                                keyLocations.Remove(g.transform.position);
+                                keyAmount = keyAmount - 1;
+                                print(keyAmount);
+                            }
+                }
+            }
+
+            if (keyAmount == 0)
+            {
+                controller.triggerWin();
+                keyLocations.Clear();
+                resetObjects();
+                keysSaved = false;
+            }
         }
     }
     /**
@@ -362,6 +417,11 @@ public class GUIscript : MonoBehaviour
                 controller.playingGame = true;
                 Physics2D.autoSimulation = true;
 
+                // Set game variables
+                keyAmount = 0;
+                keysSaved = false;
+                positionsSaved = false;
+
                 // Refresh the background music
                 audioSource = background.GetComponent<AudioSource>();
                 hasSound = background.GetComponent<changeBackground>().hasSound;
@@ -379,6 +439,7 @@ public class GUIscript : MonoBehaviour
             {
                 goalLocations.Clear();
                 startingLocation.Clear();
+                keyLocations.Clear();
                 buttonSymbol = "▶";
                 controller.playingGame = false;
                 Physics2D.autoSimulation = false;

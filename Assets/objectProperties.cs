@@ -118,10 +118,22 @@ public class objectProperties : MonoBehaviour
             GUILayout.BeginHorizontal("box");
             isTarget = GUILayout.Toggle(isTarget, "Is Goal");
             if (isTarget)
+            {
                 isKey = false;
+                controllable = false;
+                hasGravity = false;
+                isSolid = false;
+            }
+                
             isKey = GUILayout.Toggle(isKey, "Is Key");
             if (isKey)
+            {
                 isTarget = false;
+                controllable = false;
+                hasGravity = false;
+                isSolid = false;
+            }
+                
 
             GUILayout.EndHorizontal();
 
