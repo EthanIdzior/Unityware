@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
+//using System.Runtime.Remoting.Channels;
+//using System.Runtime.Remoting.Channels;
 using UnityEngine;
 
 public class GUIscript : MonoBehaviour
@@ -15,6 +17,8 @@ public class GUIscript : MonoBehaviour
     bool trackReset = false;
     bool objectError = false;
     bool levelMenuToggle = false;
+
+    private objectProperties objProperties;
 
     // Variables related to retrieving the background music
     private GameObject background;
@@ -29,6 +33,10 @@ public class GUIscript : MonoBehaviour
     // Dont move variables
     private bool positionsSaved = false;
     private List<Vector3> startingLocation = new List<Vector3>();
+    private List<Vector3> goalLocations = new List<Vector3>();
+
+    // Default Locations to return to
+    //List<KeyValuePair<string, Vector3>> defaultLocations = new List<KeyValuePair<string, Vector3>>();
 
     private String instruction = "";
 
@@ -40,6 +48,17 @@ public class GUIscript : MonoBehaviour
 
         controller = GetComponent<gameMechanics>();
         background = GameObject.Find("background");
+
+        // Get locations of all objects
+        // Saw that resetPositions was already a thing, keeping as a backup
+        /*
+        object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+        foreach (object o in obj)
+        {
+            GameObject g = (GameObject)o;
+            defaultLocations.Add(new KeyValuePair<string, Vector3>(g.name, g.transform.position));
+        }
+        */
     }
 
     // Update is called once per frame
@@ -64,6 +83,7 @@ public class GUIscript : MonoBehaviour
         if (controller.timeLeft < 0)
         {
             controller.playingGame = false;
+            controller.triggerLose();
             Physics2D.autoSimulation = false;
             resetObjects(); // reset all objects
         }
@@ -86,6 +106,7 @@ public class GUIscript : MonoBehaviour
             if (positionsSaved && controller.timeLeft < 1)
             {
                 controller.triggerWin();
+                resetObjects();
                 positionsSaved = false;
                 startingLocation.Clear();
             }
@@ -99,6 +120,7 @@ public class GUIscript : MonoBehaviour
                     if (!startingLocation.Contains(g.transform.position))
                     {
                         controller.triggerLose();
+                        resetObjects();
                         positionsSaved = false;
                         startingLocation.Clear();
                         break;
@@ -109,17 +131,66 @@ public class GUIscript : MonoBehaviour
             }
 
         }
+        
 
         // Win condition is to go to target
         if (controller.playingGame == true && goToTarget)
         {
+            // Bulid a collection of all of the goal positions
+            if (goalLocations.Count == 0)
+            {
+                print("Getting Goal Locations");
+                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                foreach (object o in obj)
+                {
+                    GameObject g = (GameObject)o;
+                    string objName = g.name.ToUpper();
+                    // If the object is a gameobject, get the position properties
+                    if (objName.IndexOf("OBJECT") >= 0)
+                    {
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].isTarget)
+                        {
+                            goalLocations.Add(g.transform.position);
+                            print("Added Location");
+                        }
+                    }
+                            
+                }
+            }
+            
+            else
+            {
+                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                foreach (object o in obj)
+                {
+                    GameObject g = (GameObject)o;
+                    string objName = g.name.ToUpper();
+                    // If the object is a gameobject, get the position properties
+                    if (objName.IndexOf("OBJECT") >= 0)
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
+                            if (goalLocations.Contains(g.transform.position))
+                            {
+                                controller.triggerWin();
+                                goalLocations.Clear();
+                                resetObjects();
+                            }
+                }
+            }
 
+
+            // Case if there are no goals
+            if (goalLocations.Count == 0)
+            {
+                controller.triggerWin();
+                goalLocations.Clear();
+                resetObjects();
+            }l
         }
 
         // Win condition is to collect keys
         if (controller.playingGame == true && collectKeys)
         {
-
+            
         }
     }
     /**
@@ -306,6 +377,8 @@ public class GUIscript : MonoBehaviour
             // Change from play to edit
             else if (buttonSymbol == "| |")
             {
+                goalLocations.Clear();
+                startingLocation.Clear();
                 buttonSymbol = "▶";
                 controller.playingGame = false;
                 Physics2D.autoSimulation = false;
@@ -350,5 +423,4 @@ public class GUIscript : MonoBehaviour
             trackReset = false;
         }
     }
-
 }
