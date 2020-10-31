@@ -24,6 +24,8 @@ public class objectProperties : MonoBehaviour
     Vector2 mousePos;
     public bool hasGravity = false;
     public bool isSolid = false;
+    public bool isTarget = false;
+    public bool isKey = false;
 
     // store position of the object when in editor mode
     public Vector3 oldPosition;
@@ -100,7 +102,7 @@ public class objectProperties : MonoBehaviour
         if (menuOpen && !playGUI.controller.playingGame)
         {
             mousePos = Input.mousePosition;
-            GUILayout.BeginArea(new Rect(0, 4, 200, 300), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(0, 4, 200, 350), GUI.skin.box);
             GUILayout.Label("Object Properties for " + transform.root.name);
             isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
             isClickable = GUILayout.Toggle(isClickable, "Clickable");
@@ -112,7 +114,19 @@ public class objectProperties : MonoBehaviour
             isSolid = GUILayout.Toggle(isSolid, "Solid");
             GUILayout.EndHorizontal();
 
+            // Win Condition Properties
+            GUILayout.BeginHorizontal("box");
+            isTarget = GUILayout.Toggle(isTarget, "Is Goal");
+            if (isTarget)
+                isKey = false;
+            isKey = GUILayout.Toggle(isKey, "Is Key");
+            if (isKey)
+                isTarget = false;
+
+            GUILayout.EndHorizontal();
+
             Rigidbody2D body = gameObject.GetComponent<Rigidbody2D>();
+
 
             // turn solidity on
             if (isSolid && !body.isKinematic)
