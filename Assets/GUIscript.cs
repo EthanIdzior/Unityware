@@ -199,11 +199,11 @@ public class GUIscript : MonoBehaviour
     public void createObject()
     {
         // if the canvas can fit more objects
-        if (controller.objectList.Count <= (controller.maxWidth * controller.maxHeight))
+        if (controller.objectList.Count <= ((controller.maxWidth - 1) * (controller.maxHeight - 1)))
         {
             GameObject newObject = (GameObject)Instantiate(Object) as GameObject;
-            float x = UnityEngine.Random.Range(-8 - prefabOffset, 9 - prefabOffset);
-            float y = UnityEngine.Random.Range(-4, 5);
+            float x = UnityEngine.Random.Range(0 - 16 + 2 + 1, controller.maxWidth - 16 + 2);
+            float y = UnityEngine.Random.Range(0 - 3 + 1, controller.maxHeight - 3);
 
             // make objects not land on top of each other
             int i = 0;
@@ -214,8 +214,8 @@ public class GUIscript : MonoBehaviour
                 if (obj.transform.position.x == x && obj.transform.position.y == y)
                 {
                     // reroll
-                    x = UnityEngine.Random.Range(-8 - prefabOffset, 9 - prefabOffset);
-                    y = UnityEngine.Random.Range(-4, 5);
+                    x = UnityEngine.Random.Range(0 - 16 + 2 + 1, controller.maxWidth - 16 + 2);
+                    y = UnityEngine.Random.Range(0 - 3 + 1, controller.maxHeight - 3);
 
                     // start over
                     i = 0;
