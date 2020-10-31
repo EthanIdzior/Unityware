@@ -84,7 +84,7 @@ public class objectProperties : MonoBehaviour
         }
     }
 
-    private void OnMouseOver()
+    private void OnMouseEnter()
     {
         mouseOver = true;
     }

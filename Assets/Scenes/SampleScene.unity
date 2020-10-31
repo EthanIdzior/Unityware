@@ -201,7 +201,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.098395
+  orthographic size: 4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -704,7 +704,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1437997044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5e850cf94c82b74da47c4bb48870073, type: 3}
+  m_Script: {fileID: 11500000, guid: 38bf2bac56433754ca2e3f470b447d83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isClickable: 0
@@ -717,8 +717,10 @@ MonoBehaviour:
   oldPosition: {x: 0, y: 0, z: 0}
   oldPositionSprite: {x: 0, y: 0, z: 0}
   oldScale: {x: 0, y: 0, z: 0}
-  audioSource: {fileID: 0}
-  audioClips: []
+  audioSource: {fileID: 1437997049}
+  audioClips:
+  - {fileID: 8300000, guid: 32088ae544d0d334f85ab4f4f56bb88f, type: 3}
+  - {fileID: 8300000, guid: ce4f6e4d4c8569c478135a17e1e0971e, type: 3}
   hasSound: 0
   spriteRenderer: {fileID: 1437997045}
   objectSprites: []
