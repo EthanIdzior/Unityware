@@ -122,7 +122,7 @@ public class objectProperties : MonoBehaviour
                 isKey = false;
                 controllable = false;
                 hasGravity = false;
-                isSolid = false;
+                isSolid = true;
             }
                 
             isKey = GUILayout.Toggle(isKey, "Is Key");
@@ -131,7 +131,7 @@ public class objectProperties : MonoBehaviour
                 isTarget = false;
                 controllable = false;
                 hasGravity = false;
-                isSolid = false;
+                isSolid = true;
             }
                 
 

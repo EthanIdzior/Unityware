@@ -704,7 +704,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1437997044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38bf2bac56433754ca2e3f470b447d83, type: 3}
+  m_Script: {fileID: 11500000, guid: d5e850cf94c82b74da47c4bb48870073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isClickable: 0
@@ -714,13 +714,13 @@ MonoBehaviour:
   mouseOver: 0
   hasGravity: 0
   isSolid: 0
+  isTarget: 0
+  isKey: 0
   oldPosition: {x: 0, y: 0, z: 0}
   oldPositionSprite: {x: 0, y: 0, z: 0}
   oldScale: {x: 0, y: 0, z: 0}
-  audioSource: {fileID: 1437997049}
-  audioClips:
-  - {fileID: 8300000, guid: 32088ae544d0d334f85ab4f4f56bb88f, type: 3}
-  - {fileID: 8300000, guid: ce4f6e4d4c8569c478135a17e1e0971e, type: 3}
+  audioSource: {fileID: 0}
+  audioClips: []
   hasSound: 0
   spriteRenderer: {fileID: 1437997045}
   objectSprites: []

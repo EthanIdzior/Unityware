@@ -26,7 +26,7 @@ public class GUIscript : MonoBehaviour
     private AudioSource audioSource;
 
     // Types of win
-    private bool dontMove = false;
+    private bool dontMove = true;
     private bool collectKeys = false;
     private bool goToTarget = false;
 
@@ -154,7 +154,7 @@ public class GUIscript : MonoBehaviour
                     {
                         if ((g.GetComponentsInChildren<objectProperties>())[0].isTarget)
                         {
-                            goalLocations.Add(g.transform.position);
+                            goalLocations.Add(new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z)));
                         }
                     }
                             
@@ -171,7 +171,7 @@ public class GUIscript : MonoBehaviour
                     // If the object is a gameobject, get the position properties
                     if (objName.IndexOf("OBJECT") >= 0)
                         if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
-                            if (goalLocations.Contains(g.transform.position))
+                            if (goalLocations.Contains(new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z))))
                             {
                                 controller.triggerWin();
                                 goalLocations.Clear();
@@ -207,7 +207,7 @@ public class GUIscript : MonoBehaviour
                     {
                         if ((g.GetComponentsInChildren<objectProperties>())[0].isKey)
                         {
-                            keyLocations.Add(g.transform.position, g);
+                            keyLocations.Add(new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z)), g);
                             keyAmount = keyAmount + 1;
                         }
                     }
@@ -229,10 +229,10 @@ public class GUIscript : MonoBehaviour
                     // If the object is a gameobject, get the position properties
                     if (objName.IndexOf("OBJECT") >= 0)
                         if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
-                            if (keyLocations.ContainsKey(g.transform.position))
+                            if (keyLocations.ContainsKey(new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z))))
                             {
-                                (keyLocations[g.transform.position]).transform.position = new Vector3(-10, -10, 0);
-                                keyLocations.Remove(g.transform.position);
+                                (keyLocations[new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z))]).transform.position = new Vector3(-10, -10, 0);
+                                keyLocations.Remove(new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z)));
                                 keyAmount = keyAmount - 1;
                                 print(keyAmount);
                             }
@@ -294,6 +294,7 @@ public class GUIscript : MonoBehaviour
     // Save the properties of each object before playing the game
     void saveObjects()
     {
+
         objectProperties objprop;
 
         foreach (GameObject obj in controller.objectList)
@@ -414,19 +415,28 @@ public class GUIscript : MonoBehaviour
             if (buttonSymbol == "▶")
             {
                 buttonSymbol = "| |";
-                controller.playingGame = true;
-                Physics2D.autoSimulation = true;
+
+                saveObjects();
 
                 // Set game variables
                 keyAmount = 0;
                 keysSaved = false;
                 positionsSaved = false;
+                goalLocations.Clear();
+                startingLocation.Clear();
+                keyLocations.Clear();
+
+
+                controller.playingGame = true;
+                Physics2D.autoSimulation = true;
+
+                
 
                 // Refresh the background music
                 audioSource = background.GetComponent<AudioSource>();
                 hasSound = background.GetComponent<changeBackground>().hasSound;
 
-                saveObjects();
+                
 
                 if (hasSound)
                 {
@@ -437,9 +447,6 @@ public class GUIscript : MonoBehaviour
             // Change from play to edit
             else if (buttonSymbol == "| |")
             {
-                goalLocations.Clear();
-                startingLocation.Clear();
-                keyLocations.Clear();
                 buttonSymbol = "▶";
                 controller.playingGame = false;
                 Physics2D.autoSimulation = false;
