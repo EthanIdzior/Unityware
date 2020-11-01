@@ -257,6 +257,7 @@ GameObject:
   - component: {fileID: 996398512}
   - component: {fileID: 996398514}
   - component: {fileID: 996398515}
+  - component: {fileID: 996398516}
   m_Layer: 0
   m_Name: background
   m_TagString: Untagged
@@ -449,6 +450,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &996398516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996398511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4c2243a87806b2468bb9d614fe494b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menu: TitleScreen
+  playGUI: {fileID: 0}
 --- !u!1 &1132821001
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,7 +719,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1437997044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5e850cf94c82b74da47c4bb48870073, type: 3}
+  m_Script: {fileID: 11500000, guid: a9817180840930040ba8ff20fadc2cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isClickable: 0
@@ -722,7 +737,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   audioClips: []
   hasSound: 0
-  spriteRenderer: {fileID: 1437997045}
+  spriteRenderer: {fileID: 0}
   objectSprites: []
   mechanics: {fileID: 0}
 --- !u!61 &1437997048
