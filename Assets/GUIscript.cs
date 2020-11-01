@@ -465,7 +465,7 @@ public class GUIscript : MonoBehaviour
         // Play instruction
         if (controller.playingGame && (controller.timerStart - controller.timeLeft < 3) && instruction != "")
         {
-            int instrWidth = instruction.Length * 8;
+            int instrWidth = instruction.Length * 9;
             int instrHeight = 25;
             var setCentered = GUI.skin.GetStyle("Label");
 
