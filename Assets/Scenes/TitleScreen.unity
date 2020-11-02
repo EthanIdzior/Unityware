@@ -460,7 +460,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 322070171}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbd8d07a55864394597eebd6084c9043, type: 3}
+  m_Script: {fileID: 11500000, guid: 40de3fa0234794e4e81e189c3677d6d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelEditor: SampleScene

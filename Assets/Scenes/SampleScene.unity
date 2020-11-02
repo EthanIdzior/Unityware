@@ -172,7 +172,7 @@ MonoBehaviour:
   objectList: []
   maxWidth: 14
   maxHeight: 8
-  winImage: {fileID: 2800000, guid: baf875e9ec7f74d4d81e2bba6cd28c28, type: 3}
+  winImage: {fileID: 2800000, guid: 4dec7d1c3b3fc1d489e27d75f5077650, type: 3}
   loseImage: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!20 &519420031
 Camera:
@@ -459,11 +459,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 996398511}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4c2243a87806b2468bb9d614fe494b2, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b7d3ca440bca9c49a090f305f146222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   menu: TitleScreen
-  playGUI: {fileID: 0}
+  playGUI: {fileID: 519420033}
 --- !u!1 &1132821001
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,7 +489,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1132821001}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: -10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1437997046}
@@ -636,8 +636,8 @@ GameObject:
   - component: {fileID: 1437997045}
   - component: {fileID: 1437997047}
   - component: {fileID: 1437997049}
-  - component: {fileID: 1437997048}
   - component: {fileID: 1437997050}
+  - component: {fileID: 1437997048}
   m_Layer: 0
   m_Name: objectSprite
   m_TagString: Untagged
@@ -704,7 +704,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437997044}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1132821002}
@@ -719,7 +719,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1437997044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9817180840930040ba8ff20fadc2cf7, type: 3}
+  m_Script: {fileID: 11500000, guid: 38bf2bac56433754ca2e3f470b447d83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isClickable: 0
@@ -728,18 +728,20 @@ MonoBehaviour:
   controllable: 0
   mouseOver: 0
   hasGravity: 0
-  isSolid: 0
+  isImmobile: 0
   isTarget: 0
   isKey: 0
   oldPosition: {x: 0, y: 0, z: 0}
   oldPositionSprite: {x: 0, y: 0, z: 0}
   oldScale: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 0}
-  audioClips: []
+  audioClips:
+  - {fileID: 8300000, guid: 32088ae544d0d334f85ab4f4f56bb88f, type: 3}
+  - {fileID: 8300000, guid: ce4f6e4d4c8569c478135a17e1e0971e, type: 3}
   hasSound: 0
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 1437997045}
   objectSprites: []
-  mechanics: {fileID: 0}
+  mechanics: {fileID: 519420030}
 --- !u!61 &1437997048
 BoxCollider2D:
   m_ObjectHideFlags: 0

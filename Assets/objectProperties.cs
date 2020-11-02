@@ -23,7 +23,7 @@ public class objectProperties : MonoBehaviour
     public bool mouseOver;
     Vector2 mousePos;
     public bool hasGravity = false;
-    public bool isSolid = false;
+    public bool isImmobile = false; // object does not move when other objects touch it
     public bool isTarget = false;
     public bool isKey = false;
 
@@ -111,7 +111,7 @@ public class objectProperties : MonoBehaviour
             // group these two properties as they cannot both be true at the same time
             GUILayout.BeginHorizontal("box");
             hasGravity = GUILayout.Toggle(hasGravity, "Gravity");
-            isSolid = GUILayout.Toggle(isSolid, "Solid");
+            isImmobile = GUILayout.Toggle(isImmobile, "Immobile");
             GUILayout.EndHorizontal();
 
             // Win Condition Properties
@@ -122,7 +122,7 @@ public class objectProperties : MonoBehaviour
                 isKey = false;
                 controllable = false;
                 hasGravity = false;
-                isSolid = true;
+                isImmobile = true;
             }
                 
             isKey = GUILayout.Toggle(isKey, "Is Key");
@@ -131,7 +131,7 @@ public class objectProperties : MonoBehaviour
                 isTarget = false;
                 controllable = false;
                 hasGravity = false;
-                isSolid = true;
+                isImmobile = true;
             }
                 
 
@@ -140,16 +140,16 @@ public class objectProperties : MonoBehaviour
             Rigidbody2D body = gameObject.GetComponent<Rigidbody2D>();
 
 
-            // turn solidity on
-            if (isSolid && !body.isKinematic)
+            // turn immobility on
+            if (isImmobile && !body.isKinematic)
             {
                 body.isKinematic = true;
 
                 // turn off gravity
                 hasGravity = false;
             }
-            // turn solidity off
-            else if (!isSolid && body.isKinematic)
+            // turn immobility off
+            else if (!isImmobile && body.isKinematic)
             {
                 body.isKinematic = false;
             }
@@ -159,8 +159,8 @@ public class objectProperties : MonoBehaviour
             {
                 body.gravityScale = 1;
 
-                // turn off solid
-                isSolid = false;
+                // turn off immobile
+                isImmobile = false;
             }
             else if (!hasGravity && body.gravityScale != 0)
             {

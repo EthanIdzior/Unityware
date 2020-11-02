@@ -10,7 +10,6 @@ using UnityEngine;
 public class GUIscript : MonoBehaviour
 {
     public GameObject Object;
-    private int prefabOffset = 9; // Use for math related to spawning objects. Object0 is located out of bounds (look to the right in the scene editor) in order to be usable as a prototype for creating other objects and is not to be controlled/counted with the other objects.
 
     public gameMechanics controller;
     string buttonSymbol = "▶";
@@ -37,6 +36,10 @@ public class GUIscript : MonoBehaviour
     private List<Vector3> startingLocation = new List<Vector3>();
     private List<Vector3> goalLocations = new List<Vector3>();
     Dictionary<Vector3, GameObject> keyLocations = new Dictionary<Vector3, GameObject>();
+
+    // Variables related to object spawn positions
+    private int paddingx = 1;
+    private int paddingy = 1;
 
     // Default Locations to return to
     //List<KeyValuePair<string, Vector3>> defaultLocations = new List<KeyValuePair<string, Vector3>>();
@@ -98,10 +101,8 @@ public class GUIscript : MonoBehaviour
         {
             if (!positionsSaved)
             {
-                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-                foreach (object o in obj)
+                foreach (GameObject g in controller.objectList)
                 {
-                    GameObject g = (GameObject)o;
                     startingLocation.Add(g.transform.position);
                 }
 
@@ -118,10 +119,8 @@ public class GUIscript : MonoBehaviour
 
             else if (positionsSaved)
             {
-                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-                foreach (object o in obj)
+                foreach (GameObject g in controller.objectList)
                 {
-                    GameObject g = (GameObject)o;
                     if (!startingLocation.Contains(g.transform.position))
                     {
                         controller.triggerLose();
@@ -144,10 +143,8 @@ public class GUIscript : MonoBehaviour
             // Bulid a collection of all of the goal positions
             if (goalLocations.Count == 0)
             {
-                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-                foreach (object o in obj)
+                foreach (GameObject g in controller.objectList)
                 {
-                    GameObject g = (GameObject)o;
                     string objName = g.name.ToUpper();
                     // If the object is a gameobject, get the position properties
                     if (objName.IndexOf("OBJECT") >= 0)
@@ -163,10 +160,8 @@ public class GUIscript : MonoBehaviour
             
             else
             {
-                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-                foreach (object o in obj)
+                foreach (GameObject g in controller.objectList)
                 {
-                    GameObject g = (GameObject)o;
                     string objName = g.name.ToUpper();
                     // If the object is a gameobject, get the position properties
                     if (objName.IndexOf("OBJECT") >= 0)
@@ -197,10 +192,8 @@ public class GUIscript : MonoBehaviour
             if (keyAmount == 0 && !keysSaved)
             {
                 keyLocations.Clear();
-                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-                foreach (object o in obj)
+                foreach (GameObject g in controller.objectList)
                 {
-                    GameObject g = (GameObject)o;
                     string objName = g.name.ToUpper();
                     // If the object is a gameobject, get the position properties
                     if (objName.IndexOf("OBJECT") >= 0)
@@ -221,10 +214,8 @@ public class GUIscript : MonoBehaviour
 
             else
             {
-                object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-                foreach (object o in obj)
+                foreach (GameObject g in controller.objectList)
                 {
-                    GameObject g = (GameObject)o;
                     string objName = g.name.ToUpper();
                     // If the object is a gameobject, get the position properties
                     if (objName.IndexOf("OBJECT") >= 0)
@@ -257,8 +248,8 @@ public class GUIscript : MonoBehaviour
         if (controller.objectList.Count <= ((controller.maxWidth - 1) * (controller.maxHeight - 1)))
         {
             GameObject newObject = (GameObject)Instantiate(Object) as GameObject;
-            float x = UnityEngine.Random.Range(0 - 16 + 2 + 1, controller.maxWidth - 16 + 2);
-            float y = UnityEngine.Random.Range(0 - 3 + 1, controller.maxHeight - 3);
+            float x = UnityEngine.Random.Range(0 + 2 + paddingx, controller.maxWidth + 2);
+            float y = UnityEngine.Random.Range(0 + paddingy, controller.maxHeight);
 
             // make objects not land on top of each other
             int i = 0;
@@ -269,8 +260,8 @@ public class GUIscript : MonoBehaviour
                 if (obj.transform.position.x == x && obj.transform.position.y == y)
                 {
                     // reroll
-                    x = UnityEngine.Random.Range(0 - 16 + 2 + 1, controller.maxWidth - 16 + 2);
-                    y = UnityEngine.Random.Range(0 - 3 + 1, controller.maxHeight - 3);
+                    x = UnityEngine.Random.Range(0 + 2 + paddingx, controller.maxWidth + 2);
+                    y = UnityEngine.Random.Range(0 + paddingy, controller.maxHeight);
 
                     // start over
                     i = 0;
