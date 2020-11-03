@@ -24,6 +24,7 @@ public class objectProperties : MonoBehaviour
     Vector2 mousePos;
     public bool hasGravity = false;
     public bool isImmobile = false; // object does not move when other objects touch it
+    public bool isSolid = false; // objects can pass through it
     public bool isTarget = false;
     public bool isKey = false;
 
@@ -112,6 +113,7 @@ public class objectProperties : MonoBehaviour
             GUILayout.BeginHorizontal("box");
             hasGravity = GUILayout.Toggle(hasGravity, "Gravity");
             isImmobile = GUILayout.Toggle(isImmobile, "Immobile");
+            isSolid = GUILayout.Toggle(isSolid, "Solid");
             GUILayout.EndHorizontal();
 
             // Win Condition Properties
@@ -139,6 +141,18 @@ public class objectProperties : MonoBehaviour
 
             Rigidbody2D body = gameObject.GetComponent<Rigidbody2D>();
 
+            // turn the gravity on/off
+            if (hasGravity && body.gravityScale != 1)
+            {
+                body.gravityScale = 1;
+
+                // turn off immobile
+                isImmobile = false;
+            }
+            else if (!hasGravity && body.gravityScale != 0)
+            {
+                body.gravityScale = 0;
+            }
 
             // turn immobility on
             if (isImmobile && !body.isKinematic)
@@ -152,19 +166,6 @@ public class objectProperties : MonoBehaviour
             else if (!isImmobile && body.isKinematic)
             {
                 body.isKinematic = false;
-            }
-
-            // turn the gravity on/off
-            if (hasGravity && body.gravityScale != 1)
-            {
-                body.gravityScale = 1;
-
-                // turn off immobile
-                isImmobile = false;
-            }
-            else if (!hasGravity && body.gravityScale != 0)
-            {
-                body.gravityScale = 0;
             }
 
             // toggles movement properties

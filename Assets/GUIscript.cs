@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 //using System.Runtime.Remoting.Channels;
 //using System.Runtime.Remoting.Channels;
 using UnityEngine;
@@ -44,7 +46,10 @@ public class GUIscript : MonoBehaviour
     // Default Locations to return to
     //List<KeyValuePair<string, Vector3>> defaultLocations = new List<KeyValuePair<string, Vector3>>();
 
+    private String levelName = "";
     private String instruction = "";
+    private String levelID = ""; // unique identifier for the level
+    private int levelIDlength = 25;
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +59,9 @@ public class GUIscript : MonoBehaviour
 
         controller = GetComponent<gameMechanics>();
         background = GameObject.Find("background");
+
+        // generate levelID
+        generateID();
 
         // Get locations of all objects
         // Saw that resetPositions was already a thing, keeping as a backup
@@ -92,7 +100,7 @@ public class GUIscript : MonoBehaviour
             keyLocations.Clear();
             goalLocations.Clear();
             startingLocation.Clear();
-            Physics2D.autoSimulation = false;
+            Physics2D.autoSimulation = false; // turn off physics in edit mode
             resetObjects(); // reset all objects
         }
 
@@ -240,6 +248,47 @@ public class GUIscript : MonoBehaviour
         }
     }
     /**
+     * Helper method to create the level identifier
+     */
+    private void generateID()
+    {
+        StringBuilder result;
+        int type;
+        int current;
+
+        // create an ID only if the string is empty
+        if (String.IsNullOrEmpty(levelID))
+        {
+            result = new StringBuilder("", levelIDlength);
+
+            for (int i = 0; i < levelIDlength; i++)
+            {
+                // get a random number out of 0, 1, 2
+                type = UnityEngine.Random.Range(0, 3);
+
+                switch (type)
+                {
+                    case 0:
+                        // generate a random number and append it as a char
+                        current = UnityEngine.Random.Range(0, 10); // number between 0 and 9
+                        result.Append((char) ('0' + current));
+                        break;
+                    case 1:
+                        // generate a random uppercase letter and append it as a char
+                        current = UnityEngine.Random.Range(1, 26) - 1; // letter between A and Z
+                        result.Append((char) ('A' + current));
+                        break;
+                    case 2:
+                        // generate a random lowercase letter and append it as a char
+                        current = UnityEngine.Random.Range(1, 26) - 1; // letter between a and z
+                        result.Append((char) ('a' + current));
+                        break;
+                }
+            }
+            levelID = result.ToString();
+        }
+    }
+    /**
      * Helper method to add an object
      */
     public void createObject()
@@ -342,6 +391,9 @@ public class GUIscript : MonoBehaviour
                     levelMenuToggle = false;
                 }
                 GUILayout.EndHorizontal();
+
+                GUILayout.Label("Level Name");
+                levelName = GUILayout.TextField(levelName, 25);
 
                 GUILayout.Label("Win Conditions");
                 dontMove = GUILayout.Toggle(dontMove, "Don't Move");

@@ -729,6 +729,7 @@ MonoBehaviour:
   mouseOver: 0
   hasGravity: 0
   isImmobile: 0
+  isSolid: 0
   isTarget: 0
   isKey: 0
   oldPosition: {x: 0, y: 0, z: 0}
