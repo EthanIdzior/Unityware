@@ -46,9 +46,9 @@ public class GUIscript : MonoBehaviour
     // Default Locations to return to
     //List<KeyValuePair<string, Vector3>> defaultLocations = new List<KeyValuePair<string, Vector3>>();
 
-    private String levelName = "";
-    private String instruction = "";
-    private String levelID = ""; // unique identifier for the level
+    public String levelName = "";
+    public String instruction = "";
+    public String levelID = ""; // unique identifier for the level
     private int levelIDlength = 25;
 
     // Start is called before the first frame update
