@@ -65,7 +65,9 @@ public class returnToMenu : MonoBehaviour
             }
             if (GUILayout.Button("Load Level"))
             {
-                // TODO
+                // TODO verify level
+
+                // load level in editor
             }
             GUILayout.EndHorizontal();
 
@@ -96,7 +98,19 @@ public class returnToMenu : MonoBehaviour
             }
             if (GUILayout.Button("Import Level"))
             {
-                // TODO
+                String path;
+
+                // get the path of the level
+                path = EditorUtility.OpenFilePanel(
+                    "Export a level",
+                    "",
+                    "txt");
+                if (path.Length != 0)
+                {
+                    // TODO: verify imported level
+
+                    // TOOD: copy file to local saves
+                }
             }
             GUILayout.EndHorizontal();
 
