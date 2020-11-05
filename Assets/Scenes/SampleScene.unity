@@ -245,6 +245,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Object: {fileID: 1132821001}
   controller: {fileID: 519420030}
+  dontMove: 1
+  collectKeys: 0
+  goToTarget: 0
+  levelName: 
+  instruction: 
+  levelID: 
 --- !u!1 &996398511
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,6 +352,7 @@ MonoBehaviour:
   backgroundMusic:
   - {fileID: 8300000, guid: 47ab79b2a9c28874aa22d02f48a51f62, type: 3}
   - {fileID: 8300000, guid: 67a0b1883cb962a47962487b0327c245, type: 3}
+  backgroundMusicIndex: 0
   hasSound: 0
   spriteRenderer: {fileID: 996398512}
   backgroundSprites:
@@ -353,6 +360,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0c49ca82d650e2c4da6c236fc1f3651b, type: 3}
   - {fileID: 21300000, guid: dece15dc179d6474da32fc92985d48d4, type: 3}
   - {fileID: 21300000, guid: 7eac11f67dc59754eb3b12bd669416ea, type: 3}
+  backgroundSpriteIndex: 0
+  soundToggled: 0
+  colorIndex: 0
   playGUI: {fileID: 519420033}
 --- !u!82 &996398515
 AudioSource:
@@ -464,6 +474,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menu: TitleScreen
   playGUI: {fileID: 519420033}
+  controller: {fileID: 519420030}
+  background: {fileID: 996398514}
 --- !u!1 &1132821001
 GameObject:
   m_ObjectHideFlags: 0
@@ -739,9 +751,12 @@ MonoBehaviour:
   audioClips:
   - {fileID: 8300000, guid: 32088ae544d0d334f85ab4f4f56bb88f, type: 3}
   - {fileID: 8300000, guid: ce4f6e4d4c8569c478135a17e1e0971e, type: 3}
+  audioClipIndex: 0
   hasSound: 0
   spriteRenderer: {fileID: 1437997045}
   objectSprites: []
+  objectSpriteIndex: 0
+  colorIndex: 0
   mechanics: {fileID: 519420030}
 --- !u!61 &1437997048
 BoxCollider2D:

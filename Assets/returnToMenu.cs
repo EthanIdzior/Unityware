@@ -1,15 +1,19 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using UnityEditor;
+using System.Text.RegularExpressions; // used to parse text before saving to files
+using UnityEditor; // used for the import/export file window
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; // used to switch scenes
+using System.Runtime.InteropServices;
 
 public class returnToMenu : MonoBehaviour
 {
+    // Variables used for saving to help compatiblity later on
+    int maxProperties = 13; // the number of properties that can be set, used for saving
+
     // Variables related to the menu itself
     int height = 150;
     int width = 200;
@@ -19,19 +23,25 @@ public class returnToMenu : MonoBehaviour
 
     private bool menuOpen = true;
 
-    // Need to get playing mode
-    public GUIscript playGUI;
+    public GUIscript playGUI; // required for playing mode and saving
+    public gameMechanics controller; // required to retrieve variables for saving
+    public changeBackground background; // required to retrieve background variables for saving
 
     private bool error = false;
     private String errorMessage = "";
 
+    private bool fileChanged = false;
+    private String change = "";
+
     // Start is called before the first frame update
     private void Start()
     {
-        // Add audio
- 
+        // Retrieve variables from other scripts
         GameObject mainCamera = GameObject.Find("Main Camera");
         playGUI = mainCamera.GetComponent<GUIscript>();
+        controller = mainCamera.GetComponent<gameMechanics>();
+        background = (GameObject.Find("background")).GetComponent<changeBackground>();
+
     }
 
     private void OnGUI()
@@ -52,6 +62,7 @@ public class returnToMenu : MonoBehaviour
             GUILayout.BeginHorizontal("box");
             if (GUILayout.Button("Save Level"))
             {
+                change = "saved";
                 if (!String.IsNullOrEmpty(playGUI.levelName))
                 {
                     saveLevel();
@@ -65,6 +76,7 @@ public class returnToMenu : MonoBehaviour
             }
             if (GUILayout.Button("Load Level"))
             {
+                change = "loaded";
                 // TODO verify level
 
                 // load level in editor
@@ -75,6 +87,7 @@ public class returnToMenu : MonoBehaviour
             GUILayout.BeginHorizontal("box");
             if (GUILayout.Button("Export Level"))
             {
+                change = "exported";
                 if (!String.IsNullOrEmpty(playGUI.levelName))
                 {
                     String path;
@@ -98,6 +111,7 @@ public class returnToMenu : MonoBehaviour
             }
             if (GUILayout.Button("Import Level"))
             {
+                change = "imported";
                 String path;
 
                 // get the path of the level
@@ -142,6 +156,17 @@ public class returnToMenu : MonoBehaviour
             }
             GUILayout.EndArea();
         }
+        if (fileChanged)
+        {
+            // Display a message saying that the level was saved successfully
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 210, 60), GUI.skin.box);
+            GUILayout.Label("Level " + change + " successfully");
+            if (GUILayout.Button("Close"))
+            {
+                fileChanged = false;
+            }
+            GUILayout.EndArea();
+        }
     }
     /**
      * Method to save the levels locally, gets a filename from the level name
@@ -152,7 +177,7 @@ public class returnToMenu : MonoBehaviour
 
         fileName = nameToFileName(fileName);
         fileName += ".txt";
-        fileName = "Saves/" + fileName; // add subfolder the saves go to for the full path
+        fileName = "Assets/Saves/" + fileName; // add subfolder the saves go to for the full path
 
         saveLevel(fileName);
     }
@@ -168,6 +193,20 @@ public class returnToMenu : MonoBehaviour
         return name;
     }
     /**
+     * Helper method to write a boolean as a character
+     */
+    private String boolToString(bool boolean)
+    {
+        if (boolean)
+        {
+            return "1";
+        }
+        else
+        {
+            return "0";
+        }
+    }
+    /**
      * Method to save levels given the path
      */
     private void saveLevel(String path)
@@ -175,43 +214,121 @@ public class returnToMenu : MonoBehaviour
         // TODO
 
         // check if the file exists
+        if (File.Exists(path))
+        {
+            // TODO: can't implement until the first file is saved
             // If so check if it has the same level id
                 // if no, throw an error stating that the level already exists and return
+        }
         // set up the file to save to
+        StreamWriter save = File.CreateText(path);
+
+        // save.WriteLine("Test");
 
         // save values in the form name:value, ex solid:0. This is to allow older saves to be compatible as we can just set newer properties to default values if the solid descriptor is not found
 
         // Begin writing to the file line by line
+
+
         // Save level settings
             // Level name
+            save.WriteLine("name:" + playGUI.levelName); 
             // level id
+            save.WriteLine("id:" + playGUI.levelID); 
             // Win condition (as int)
+            save.Write("win:");
+            if (playGUI.dontMove)
+            {
+                save.Write("0");
+            }else if (playGUI.collectKeys)
+            {
+                save.Write("1");
+            }else if (playGUI.goToTarget)
+            {
+                save.Write("2");
+            }
+            save.Write("\n");
             // level time
+            save.WriteLine("time:" + controller.timerStart);
             // level instruction
+            save.WriteLine("instruction:" + playGUI.instruction);
+
+
         // Save general background/object properties
             // object Total (next int index for new objects, total objects created)
+            save.WriteLine("objectTotal:" + controller.objectTotal);
             // current number of objects
+            save.WriteLine("objectNum:" + controller.objectList.Count);
             // number of properties per object
+            save.WriteLine("maxProperties:" + maxProperties);
             // max width
+            save.WriteLine("maxWidth:" + controller.maxWidth);
             // max height
-            // background properties
-            // sprite index
-            // color index
-            // music bool (0 or 1)
-            // music index, -1 if not applicable
+            save.WriteLine("maxHeight:" + controller.maxHeight);
+
+
+        // background properties
+        // sprite index
+        save.WriteLine("bgSpriteIndex:" + background.backgroundSpriteIndex);
+        // color index
+        save.WriteLine("bgColorIndex:" + background.colorIndex);
+        // music bool (0 or 1)
+        save.WriteLine("bgHasMusic:" + boolToString(background.soundToggled));
+        // music index
+        save.WriteLine("bgMusicIndex:" + background.backgroundMusicIndex);
+
+        objectProperties objprop;
+
         // object properties (per object, wrap in for loop)
+        foreach (GameObject obj in controller.objectList)
+        {
+            objprop = obj.transform.GetChild(0).GetComponent<objectProperties>();
+
             // object name
+            save.WriteLine("objName:" + obj.name);
+            // save position
+            save.WriteLine("objPositionX:" + obj.transform.position.x);
+            save.WriteLine("objPositionY:" + obj.transform.position.y);
+            save.WriteLine("objPositionZ:" + obj.transform.position.z);
+            // save rotation
+            save.WriteLine("objRotationX:" + obj.transform.rotation.x);
+            save.WriteLine("objRotationY:" + obj.transform.rotation.y);
+            save.WriteLine("objRotationZ:" + obj.transform.rotation.z);
+            // save scale
+            save.WriteLine("objScaleX:" + obj.transform.localScale.x);
+            save.WriteLine("objScaleY:" + obj.transform.localScale.y);
+            save.WriteLine("objScaleZ:" + obj.transform.localScale.z);
             // draggable bool (0 or 1)
+            save.WriteLine("objDraggable:" + boolToString(objprop.isDraggable));
             // clickable bool
+            save.WriteLine("objClickable:" + boolToString(objprop.isClickable));
             // space bool
+            save.WriteLine("objSpace:" + boolToString(objprop.kbInputOn));
             // gravity bool
+            save.WriteLine("objGravity:" + boolToString(objprop.hasGravity));
             // immobile bool
+            save.WriteLine("objImmobile:" + boolToString(objprop.isImmobile));
+            // solid bool
+            save.WriteLine("objSolid:" + boolToString(objprop.isSolid));
             // goal bool
+            save.WriteLine("objGoal:" + boolToString(objprop.isTarget));
             // key bool
+            save.WriteLine("objKey:" + boolToString(objprop.isKey));
             // controllable bool
+            save.WriteLine("objControllable:" + boolToString(objprop.controllable));
             // sprite index
+            save.WriteLine("objSpriteIndex:" + objprop.objectSpriteIndex);
             // color index
+            save.WriteLine("objColorIndex:" + objprop.colorIndex);
             // sound bool
+            save.WriteLine("objHasSound:" + objprop.hasSound);
             // sound index
+            save.WriteLine("objSoundIndex:" + objprop.audioClipIndex);
+        }
+
+
+        save.Close();
+
+        fileChanged = true;
     }
 }

@@ -27,9 +27,9 @@ public class GUIscript : MonoBehaviour
     private AudioSource audioSource;
 
     // Types of win
-    private bool dontMove = true;
-    private bool collectKeys = false;
-    private bool goToTarget = false;
+    public bool dontMove = true;
+    public bool collectKeys = false;
+    public bool goToTarget = false;
 
     // Win condition variables
     private bool positionsSaved = false;

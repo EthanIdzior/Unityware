@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class gameMechanics : MonoBehaviour
 {
-
     // Activation Booleans
     public Boolean isWin = false;
     public Boolean isLose = false;

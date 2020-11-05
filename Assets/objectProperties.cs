@@ -36,17 +36,17 @@ public class objectProperties : MonoBehaviour
     // Variables related to audio
     public AudioSource audioSource;
     public AudioClip[] audioClips;
-    private int audioClipIndex = 0;
+    public int audioClipIndex = 0;
     public bool hasSound = false;
 
     // Create an array to hold the sprites
     public SpriteRenderer spriteRenderer;
     public Sprite[] objectSprites;
-    private int objectSpriteIndex = 0;
+    public int objectSpriteIndex = 0;
 
     // Create an array with preset colors
     private Color[] colors = { /* Black: */ new Color(0, 0, 0, 1),  /* White: */ new Color(1, 1, 1, 1), /* Magenta: */ new Color(1, 0, 1, 1), /* Red: */ new Color(1, 0, 0, 1), /* Yellow: */ new Color(1, 1, 0, 1), /* Green: */ new Color(0, 1, 0, 1), /* Cyan: */ new Color(0, 1, 1, 1), /* Blue: */ new Color(0, 0, 1, 1) };
-    private int colorIndex = 0;
+    public int colorIndex = 0;
 
     // GUIscript contains the variables for playing
     GUIscript playGUI;

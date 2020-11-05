@@ -16,20 +16,20 @@ public class changeBackground : MonoBehaviour
     // Variables related to audio
     public AudioSource audioSource;
     public AudioClip[] backgroundMusic;
-    private int backgroundMusicIndex = 0;
+    public int backgroundMusicIndex = 0;
     public bool hasSound = false;
 
     // Create an array to hold the sprites
     public SpriteRenderer spriteRenderer;
     public Sprite[] backgroundSprites;
-    private int backgroundSpriteIndex = 0;
+    public int backgroundSpriteIndex = 0;
 
     private bool menuOpen = true;
-    bool soundToggled = false;
+    public bool soundToggled = false;
 
     // Create an array with preset colors
     private Color[] colors = {/* White: */ new Color(1, 1, 1, 1), /* Magenta: */ new Color(1, 0, 1, 1), /* Red: */ new Color(1, 0, 0, 1), /* Yellow: */ new Color(1, 1, 0, 1), /* Green: */ new Color(0, 1, 0, 1), /* Cyan: */ new Color(0, 1, 1, 1), /* Blue: */ new Color(0, 0, 1, 1), /* Black: */ new Color(0, 0, 0, 1) };
-    private int colorIndex = 0;
+    public int colorIndex = 0;
 
     // Need to get playing mode
     public GUIscript playGUI;
