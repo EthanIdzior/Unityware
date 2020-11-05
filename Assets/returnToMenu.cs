@@ -8,6 +8,7 @@ using UnityEditor; // used for the import/export file window
 using UnityEngine;
 using UnityEngine.SceneManagement; // used to switch scenes
 using System.Runtime.InteropServices;
+using System.Linq.Expressions;
 
 public class returnToMenu : MonoBehaviour
 {
@@ -119,11 +120,85 @@ public class returnToMenu : MonoBehaviour
                     "Export a level",
                     "",
                     "txt");
+
                 if (path.Length != 0)
                 {
                     // TODO: verify imported level
+                    if (validLevel(path))
+                    {
+                        // if file does not exist
+                        if (!File.Exists("Assets/Saves/" + Path.GetFileName(path)))
+                        {
+                            // copy file to local saves
+                            File.Copy(path, "Assets/Saves/" + Path.GetFileName(path));
 
-                    // TOOD: copy file to local saves
+                            fileChanged = true;
+                            change = "imported";
+                        }
+                        // if file exists
+                        else
+                        {
+                            // compare level files to see if the id matches
+
+                            String localSecondLine = "";
+                            String importSecondLine = "";
+                            bool localHasSecond = true;
+                            bool importHasSecond = true;
+
+                            try
+                            {
+                                // get the second line for the first file
+                                using (StreamReader localFile = new StreamReader("Assets/Saves/" + Path.GetFileName(path)))
+                                {
+                                    localFile.ReadLine(); // Skip first line
+                                    localSecondLine = localFile.ReadLine();
+                                    // if something goes wrong reading these lines
+                                }
+                            }
+                            catch (IOException e)
+                            {
+                                localHasSecond = false;
+                            }
+
+                            // get the second line for the second file if the first was successful
+                            if (localHasSecond)
+                            {
+                                try
+                                {
+                                    using (StreamReader importFile = new StreamReader(path))
+                                    {
+                                        importFile.ReadLine(); // Skip first line
+                                        importSecondLine = importFile.ReadLine();
+                                    }
+                                }
+                                catch (IOException e)
+                                {
+                                    importHasSecond = false;
+                                }
+
+                            }
+
+                            if (localHasSecond && importHasSecond)
+                            {
+                                // if the id of both levels is the same
+                                if (String.Equals(localSecondLine, importSecondLine))
+                                {
+                                    error = true;
+                                    errorMessage = "This level already exists";
+                                }
+                            }
+                            else
+                            {
+                                error = true;
+                                errorMessage = "A level already exists with the same name";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        error = true;
+                        errorMessage = "The imported level is not valid";
+                    }
                 }
             }
             GUILayout.EndHorizontal();
@@ -169,18 +244,85 @@ public class returnToMenu : MonoBehaviour
         }
     }
     /**
-     * Method to save the levels locally, gets a filename from the level name
+     * Method to ensure that levels are valid
      */
-    private void saveLevel()
+    private bool validLevel(String path)
     {
-        String fileName = playGUI.levelName;
+        bool result = true;
+        String currentLine = "";
+        String key = "";
 
-        fileName = nameToFileName(fileName);
-        fileName += ".txt";
-        fileName = "Assets/Saves/" + fileName; // add subfolder the saves go to for the full path
+        try
+        {
+            // TODO: check if level is valid
+            using (StreamReader file = new StreamReader(path))
+            {
+                // TODO: verify level properties
 
-        saveLevel(fileName);
+                // verify name
+                currentLine = file.ReadLine();
+                key = "name";
+                // verify first half of line
+                if (hasKey(currentLine, key)){
+                    // verify second half is not empty
+                    // strip key
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    // check if name is empty or null
+                    if (String.IsNullOrEmpty(currentLine))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+                // TODO: verify id
+                // TODO: verify win condition
+                // TODO: verify time
+                // TODO: verify instruction
+                // TODO: verify objectTotal
+                // TODO: verify objectNum
+                // TODO: verify maxProperties
+                // TODO: verify maxWidth
+                // TODO: verify maxHeight
+
+                // TODO: verify background properties
+                // TODO: verify bgSpriteIndex
+                // TODO: verify bgColorIndex
+                // TODO: verify bgHasMusic
+                // TODO: verify bgMusicIndex
+
+                // TODO: verify object properties
+
+            }
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
+
+        return result;
     }
+    /**
+     * Helper method for validLevel, checks if the string is in the format of [key]:[value]
+     */
+    private bool hasKey(String line, String key)
+    {
+        String[] parts = new String[] { "", "" };
+
+        parts = line.Split(new[] { ':' }, 2);
+        if (String.Equals(parts[0], key))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     /**
      * Method to replace unwanted characters for filenames
      */
@@ -193,7 +335,7 @@ public class returnToMenu : MonoBehaviour
         return name;
     }
     /**
-     * Helper method to write a boolean as a character
+     * Helper method to write a boolean as a string
      */
     private String boolToString(bool boolean)
     {
@@ -207,12 +349,23 @@ public class returnToMenu : MonoBehaviour
         }
     }
     /**
+    * Method to save the levels locally, gets a filename from the level name before passing it to the overloaded method
+    */
+    private void saveLevel()
+    {
+        String fileName = playGUI.levelName;
+
+        fileName = nameToFileName(fileName);
+        fileName += ".txt";
+        fileName = "Assets/Saves/" + fileName; // add subfolder the saves go to for the full path
+
+        saveLevel(fileName);
+    }
+    /**
      * Method to save levels given the path
      */
     private void saveLevel(String path)
     {
-        // TODO
-
         // check if the file exists
         if (File.Exists(path))
         {
