@@ -27,6 +27,7 @@ public class objectProperties : MonoBehaviour
     public bool isSolid = false; // objects can pass through it
     public bool isTarget = false;
     public bool isKey = false;
+    public bool collisions = true;
 
     // store position of the object when in editor mode
     public Vector3 oldPosition;
@@ -116,6 +117,9 @@ public class objectProperties : MonoBehaviour
             isSolid = GUILayout.Toggle(isSolid, "Solid");
             GUILayout.EndHorizontal();
 
+            // Edit Collisions
+            collisions = GUILayout.Toggle(collisions, "Collisions");
+
             // Win Condition Properties
             GUILayout.BeginHorizontal("box");
             isTarget = GUILayout.Toggle(isTarget, "Is Goal");
@@ -125,6 +129,7 @@ public class objectProperties : MonoBehaviour
                 controllable = false;
                 hasGravity = false;
                 isImmobile = true;
+                collisions = false;
             }
                 
             isKey = GUILayout.Toggle(isKey, "Is Key");
@@ -133,13 +138,21 @@ public class objectProperties : MonoBehaviour
                 isTarget = false;
                 controllable = false;
                 hasGravity = false;
-                isImmobile = true;
+                isImmobile = false;
+                collisions = false;
             }
                 
 
             GUILayout.EndHorizontal();
 
             Rigidbody2D body = gameObject.GetComponent<Rigidbody2D>();
+            BoxCollider2D collisionBox = gameObject.GetComponent<BoxCollider2D>();
+
+            if (collisions)
+                collisionBox.isTrigger = false;
+
+            else
+                collisionBox.isTrigger = true;
 
             // turn the gravity on/off
             if (hasGravity && body.gravityScale != 1)

@@ -219,8 +219,6 @@ public class GUIscript : MonoBehaviour
 
                 }
 
-                keyAmount = keyAmount / 2;
-
                 keysSaved = true;
             }
 
@@ -237,7 +235,6 @@ public class GUIscript : MonoBehaviour
                                 (keyLocations[new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z))]).transform.position = new Vector3(-10, -10, 0);
                                 keyLocations.Remove(new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z)));
                                 keyAmount = keyAmount - 1;
-                                print(keyAmount);
                             }
                 }
             }
@@ -438,7 +435,16 @@ public class GUIscript : MonoBehaviour
                 }
 
                 GUILayout.Label("Level Time");
-                controller.timerStart = float.Parse(GUILayout.TextField((controller.timerStart).ToString(), 3));
+                String fromText = GUILayout.TextField((controller.timerStart).ToString(), 3);
+                float placeHolder = 0;
+
+                // Check to see if a number before setting
+                if (float.TryParse(fromText, out placeHolder)) 
+                    controller.timerStart = float.Parse(fromText);
+                
+
+                else if (fromText == "")
+                    controller.timerStart = 0;
 
                 GUILayout.Label("Level Instruction");
                 instruction = GUILayout.TextField(instruction, maxInstructionLength);
