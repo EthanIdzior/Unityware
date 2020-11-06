@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement; // used to switch scenes
 using System.Runtime.InteropServices;
 using System.Linq.Expressions;
+using System.ComponentModel.Design;
 
 public class returnToMenu : MonoBehaviour
 {
@@ -155,7 +156,7 @@ public class returnToMenu : MonoBehaviour
                                     // if something goes wrong reading these lines
                                 }
                             }
-                            catch (IOException e)
+                            catch (IOException)
                             {
                                 localHasSecond = false;
                             }
@@ -171,7 +172,7 @@ public class returnToMenu : MonoBehaviour
                                         importSecondLine = importFile.ReadLine();
                                     }
                                 }
-                                catch (IOException e)
+                                catch (IOException)
                                 {
                                     importHasSecond = false;
                                 }
@@ -251,6 +252,9 @@ public class returnToMenu : MonoBehaviour
         bool result = true;
         String currentLine = "";
         String key = "";
+        int objTotal;
+        int objNum;
+        int maxProperties;
 
         try
         {
@@ -264,30 +268,133 @@ public class returnToMenu : MonoBehaviour
                 key = "name";
                 // verify first half of line
                 if (hasKey(currentLine, key)){
-                    // verify second half is not empty
                     // strip key
                     currentLine = currentLine.Substring(key.Length + 1);
 
                     // check if name is empty or null
                     if (String.IsNullOrEmpty(currentLine))
-                    {
                         return false;
-                    }
+
+                    if (currentLine.Length > playGUI.maxNameLength)
+                        return false;
+                } else
+                    return false;
+
+                // verify id
+                currentLine = file.ReadLine();
+                key = "id";
+                // verify second line has key
+                if (hasKey(currentLine, key))
+                {
+                    // strip key
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    // check if key is null, does not have the correct length, or contains non letters and numbers
+                    if (String.IsNullOrEmpty(currentLine) || currentLine.Length != playGUI.levelIDlength || !Regex.IsMatch(currentLine, @"^[a-zA-Z0-9]+$"))
+                        return false;
+                } else
+                    return false;
+                
+                // verify win condition
+                currentLine = file.ReadLine();
+                key = "win";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    if (!isPositiveBelowEnd(currentLine, key, playGUI.winConditions - 1))
+                        return false;
+                } else
+                    return false;
+
+                // verify time
+                currentLine = file.ReadLine();
+                key = "time";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    if (!isPositiveInt(currentLine, key))
+                        return false;
+                } else
+                    return false;
+
+                // verify instruction
+                currentLine = file.ReadLine();
+                key = "instruction";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    if (currentLine.Length > playGUI.maxInstructionLength)
+                        return false;
+                } else
+                    return false;
+
+                // verify objectTotal
+                currentLine = file.ReadLine();
+                key = "objectTotal";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    if (!isPositiveBelowEnd(currentLine, key, playGUI.objectCapacity()))
+                        return false;
+                    
+                    objTotal = int.Parse(currentLine); // store total for further verification later
+                } else
+                    return false;
+
+                // verify objectNum
+                currentLine = file.ReadLine();
+                key = "objectNum";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    if (!isPositiveBelowEnd(currentLine, key, objTotal))
+                        return false;
+
+                    objNum = int.Parse(currentLine); // store number of objects for further verification later
+                } else
+                    return false;
+
+                // verify maxProperties
+                currentLine = file.ReadLine();
+                key = "maxProperties";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    if (!isPositiveInt(currentLine, key))
+                        return false;
+
+                    maxProperties = int.Parse(currentLine); // store the number of properties an object can have for further verification later
                 }
                 else
-                {
                     return false;
-                }
-                // TODO: verify id
-                // TODO: verify win condition
-                // TODO: verify time
-                // TODO: verify instruction
-                // TODO: verify objectTotal
-                // TODO: verify objectNum
-                // TODO: verify maxProperties
-                // TODO: verify maxWidth
-                // TODO: verify maxHeight
 
+                // verify maxWidth
+                currentLine = file.ReadLine();
+                key = "maxWidth";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    if (!isPositiveInt(currentLine, key))
+                        return false;
+                } else
+                    return false;
+
+                // verify maxHeight
+                currentLine = file.ReadLine();
+                key = "maxHeight";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    if (!isPositiveInt(currentLine, key))
+                        return false;
+                }
+                else
+                    return false;
+
+                // TODO: check if background is valid
                 // TODO: verify background properties
                 // TODO: verify bgSpriteIndex
                 // TODO: verify bgColorIndex
@@ -298,12 +405,65 @@ public class returnToMenu : MonoBehaviour
 
             }
         }
-        catch (IOException e)
+        catch (IOException)
         {
             return false;
         }
 
         return result;
+    }
+    /**
+     * Helper method for validLevel, checks if key is an integer between 0 and end
+     */
+    private bool isPositiveBelowEnd(String currentLine, String key, int end)
+    {
+        return isIntWithinRange(currentLine, key, 0, end);
+    }
+    private bool isPositiveBelowOrEqualToEnd(String currentLine, String key, int end)
+    {
+        return isIntWithinRange(currentLine, key, 0, end + 1);
+    }
+    /**
+     * Helper method for validLevel, checks if the key is an integer within the range of start and end
+     */
+    private bool isIntWithinRange(String currentLine, String key, int start, int end)
+    {
+        int value;
+        // if null/empty or not integer
+        if (String.IsNullOrEmpty(currentLine) || !int.TryParse(currentLine, out value))
+        {
+            return false;
+        }
+        else
+        {
+            // if value is outside of the range
+            if (value < start || value > end)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * Helper method for validLevel, checks if the key is a positive int
+     */
+    private bool isPositiveInt(String currentLine, String key)
+    {
+        int value;
+        // if null/empty or not integer
+        if (String.IsNullOrEmpty(currentLine) || !int.TryParse(currentLine, out value))
+        {
+            return false;
+        }
+        else
+        {
+            // if value is outside of the range
+            if (value < 0)
+            {
+                return false;
+            }
+        }
+        return true;
     }
     /**
      * Helper method for validLevel, checks if the string is in the format of [key]:[value]

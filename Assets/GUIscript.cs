@@ -49,7 +49,11 @@ public class GUIscript : MonoBehaviour
     public String levelName = "";
     public String instruction = "";
     public String levelID = ""; // unique identifier for the level
-    private int levelIDlength = 25;
+    public int levelIDlength = 25;
+
+    public int winConditions = 3; // edit if more win conditions are added
+    public int maxInstructionLength = 25;
+    public int maxNameLength = 25;
 
     // Start is called before the first frame update
     void Start()
@@ -289,12 +293,19 @@ public class GUIscript : MonoBehaviour
         }
     }
     /**
+     * Helper method of create object to determine what the maximum number of objects is
+     */
+    public int objectCapacity()
+    {
+        return ((controller.maxWidth - 1) * (controller.maxHeight - 1));
+    }
+    /**
      * Helper method to add an object
      */
     public void createObject()
     {
         // if the canvas can fit more objects
-        if (controller.objectList.Count <= ((controller.maxWidth - 1) * (controller.maxHeight - 1)))
+        if (controller.objectList.Count <= objectCapacity())
         {
             GameObject newObject = (GameObject)Instantiate(Object) as GameObject;
             float x = UnityEngine.Random.Range(0 + 2 + paddingx, controller.maxWidth + 2);
@@ -326,6 +337,7 @@ public class GUIscript : MonoBehaviour
         }
         else
         {
+            UnityEngine.Debug.Log(objectCapacity());
             // create UI to tell the user they cannot create more objects
             objectError = true;
         }
@@ -393,7 +405,7 @@ public class GUIscript : MonoBehaviour
                 GUILayout.EndHorizontal();
 
                 GUILayout.Label("Level Name");
-                levelName = GUILayout.TextField(levelName, 25);
+                levelName = GUILayout.TextField(levelName, maxNameLength);
 
                 GUILayout.Label("Win Conditions");
                 dontMove = GUILayout.Toggle(dontMove, "Don't Move");
@@ -429,7 +441,7 @@ public class GUIscript : MonoBehaviour
                 controller.timerStart = float.Parse(GUILayout.TextField((controller.timerStart).ToString(), 3));
 
                 GUILayout.Label("Level Instruction");
-                instruction = GUILayout.TextField(instruction, 25);
+                instruction = GUILayout.TextField(instruction, maxInstructionLength);
 
                 GUILayout.EndArea();
             }
