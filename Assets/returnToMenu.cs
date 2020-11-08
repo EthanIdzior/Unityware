@@ -118,7 +118,7 @@ public class returnToMenu : MonoBehaviour
 
                 // get the path of the level
                 path = EditorUtility.OpenFilePanel(
-                    "Export a level",
+                    "Import a level",
                     "",
                     "txt");
 
@@ -255,6 +255,8 @@ public class returnToMenu : MonoBehaviour
         int objTotal;
         int objNum;
         int maxProperties;
+        int maxWidth;
+        int maxHeight;
 
         try
         {
@@ -348,7 +350,7 @@ public class returnToMenu : MonoBehaviour
                 if (hasKey(currentLine, key))
                 {
                     currentLine = currentLine.Substring(key.Length + 1);
-                    if (!isPositiveBelowEnd(currentLine, key, objTotal))
+                    if (!isPositiveBelowOrEqualToEnd(currentLine, key, objTotal))
                         return false;
 
                     objNum = int.Parse(currentLine); // store number of objects for further verification later
@@ -378,6 +380,8 @@ public class returnToMenu : MonoBehaviour
 
                     if (!isPositiveInt(currentLine, key))
                         return false;
+
+                    maxWidth = int.Parse(currentLine);
                 } else
                     return false;
 
@@ -390,20 +394,122 @@ public class returnToMenu : MonoBehaviour
 
                     if (!isPositiveInt(currentLine, key))
                         return false;
+
+                    maxHeight = int.Parse(currentLine);
                 }
                 else
                     return false;
 
-                // TODO: check if background is valid
                 // TODO: verify background properties
-                // TODO: verify bgSpriteIndex
-                // TODO: verify bgColorIndex
-                // TODO: verify bgHasMusic
-                // TODO: verify bgMusicIndex
+                // verify bgSpriteIndex
+                currentLine = file.ReadLine();
+                key = "bgSpriteIndex";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    // ensure that it is below the array size
+                    if (!isPositiveBelowEnd(currentLine, key, background.backgroundSprites.Length))
+                        return false;
+                }
+                else
+                    return false;
+
+                // verify bgColorIndex
+                currentLine = file.ReadLine();
+                key = "bgColorIndex";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    // ensure that it is below the array size
+                    if (!isPositiveBelowEnd(currentLine, key, background.colors.Length))
+                        return false;
+                }
+                else
+                    return false;
+
+                // verify bgHasMusic
+                currentLine = file.ReadLine();
+                key = "bgHasMusic";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    // ensure that it is a valid boolean
+                    if (!isIntBoolean(currentLine, key))
+                        return false;
+                }
+                else
+                    return false;
+
+                // verify bgMusicIndex
+                currentLine = file.ReadLine();
+                key = "bgMusicIndex";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    // ensure that it is below the array size
+                    if (!isPositiveBelowEnd(currentLine, key, background.backgroundMusic.Length))
+                        return false;
+                }
+                else 
+                    return false;
 
                 // TODO: verify object properties
+                // TODO: add for loop once it works for one object
+                int i = 0; // replace once for loop implemented
 
-            }
+                // TODO: verify objName
+                currentLine = file.ReadLine();
+                key = "objName";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    String name = "Object" + (i + 1);
+
+                    // ensure that the name matches the format
+                    if (!String.Equals(currentLine, name))
+                        return false;
+                }
+                else
+                    return false;
+                // verify objPositionX
+                currentLine = file.ReadLine();
+                key = "objPositionX";
+                if (hasKey(currentLine, key))
+                {
+                    currentLine = currentLine.Substring(key.Length + 1);
+
+                    // ensure that it is an integer
+                    if (!isIntWithinRange(currentLine, key, 2, maxWidth + 2))
+                        return false;
+                } else
+                    return false;
+
+                    // TODO: verify objPositionY
+                    // TODO: verify objPositionZ
+                    // TODO: verify objRotationX
+                    // TODO: verify objRotationY
+                    // TODO: verify objScaleX
+                    // TODO: verify objScaleY
+                    // TODO: verify objScaleZ
+                    // TODO: verify objDraggable
+                    // TODO: verify objClickable
+                    // TODO: verify objSpace
+                    // TODO: verify objGravity
+                    // TODO: verify objImmobile
+                    // TODO: verify objSolid
+                    // TODO: verify objGoal
+                    // TODO: verify objKey
+                    // TODO: verify objControllable
+                    // TODO: verify objSpriteIndex
+                    // TODO: verify objColorIndex
+                    // TODO: verify objHasSound
+                    // TODO: verify objSoundIndex
+                }
         }
         catch (IOException)
         {
@@ -413,15 +519,22 @@ public class returnToMenu : MonoBehaviour
         return result;
     }
     /**
+     * Helper method for validLevel, checks if the key is 0 or 1
+     */
+    private bool isIntBoolean(String currentLine, String key)
+    {
+        return isPositiveBelowOrEqualToEnd(currentLine, key, 1);
+    }
+    /**
      * Helper method for validLevel, checks if key is an integer between 0 and end
      */
     private bool isPositiveBelowEnd(String currentLine, String key, int end)
     {
-        return isIntWithinRange(currentLine, key, 0, end);
+        return isIntWithinRange(currentLine, key, 0, end - 1);
     }
     private bool isPositiveBelowOrEqualToEnd(String currentLine, String key, int end)
     {
-        return isIntWithinRange(currentLine, key, 0, end + 1);
+        return isIntWithinRange(currentLine, key, 0, end);
     }
     /**
      * Helper method for validLevel, checks if the key is an integer within the range of start and end

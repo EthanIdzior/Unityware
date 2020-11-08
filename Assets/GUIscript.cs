@@ -334,7 +334,6 @@ public class GUIscript : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.Log(objectCapacity());
             // create UI to tell the user they cannot create more objects
             objectError = true;
         }
