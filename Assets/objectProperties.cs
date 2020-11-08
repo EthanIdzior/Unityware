@@ -108,7 +108,7 @@ public class objectProperties : MonoBehaviour
             GUILayout.Label("Object Properties for " + transform.root.name);
             isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
             isClickable = GUILayout.Toggle(isClickable, "Clickable");
-            kbInputOn = GUILayout.Toggle(kbInputOn, "Space Does Action");
+            kbInputOn = GUILayout.Toggle(kbInputOn, "Space To Jump");
 
             // group these two properties as they cannot both be true at the same time
             GUILayout.BeginHorizontal("box");
@@ -329,6 +329,7 @@ public class objectProperties : MonoBehaviour
         if (mouseOver && Input.GetMouseButton(1))
         {
             objectProperties otherProperties;
+			
             // make sure no other property menus are open, if they are then close them
             foreach (GameObject obj in mechanics.objectList)
             {
@@ -340,6 +341,7 @@ public class objectProperties : MonoBehaviour
                     otherProperties.menuOpen = false;
                 }
             }
+			
             menuOpen = true;
         }
         //what happens with isDraggable
@@ -387,16 +389,17 @@ public class objectProperties : MonoBehaviour
         {
             if (isClickable && mouseOver && Input.GetMouseButtonDown(0))
             {
-                gameObject.transform.localScale += new Vector3(1, 0, 1);
+                gameObject.transform.localScale += new Vector3(1, 1, 1);
             }
 
             if (Input.GetKeyDown(kbInput) && kbInputOn)
             {
                 // don't allow zero or negative scale
-                if (gameObject.transform.localScale.x > 1 && gameObject.transform.localScale.z > 1)
-                {
-                    gameObject.transform.localScale += new Vector3(-1, 0, -1);
-                }
+                //if (gameObject.transform.localScale.x > 1 && gameObject.transform.localScale.z > 1)
+                //{
+					transform.position += new Vector3(0,1,0);
+                    //gameObject.transform.localScale += new Vector3(-1, -1, -1);
+                //}
             }
         }
     }
