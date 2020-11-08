@@ -28,6 +28,7 @@ public class returnToMenu : MonoBehaviour
     public GUIscript playGUI; // required for playing mode and saving
     public gameMechanics controller; // required to retrieve variables for saving
     public changeBackground background; // required to retrieve background variables for saving
+    public objectProperties objZeroProperties;
 
     private bool error = false;
     private String errorMessage = "";
@@ -43,7 +44,10 @@ public class returnToMenu : MonoBehaviour
         playGUI = mainCamera.GetComponent<GUIscript>();
         controller = mainCamera.GetComponent<gameMechanics>();
         background = (GameObject.Find("background")).GetComponent<changeBackground>();
+        objZeroProperties = ((GameObject.Find("Object0")).transform.GetChild(0)).GetComponent<objectProperties>(); // TODO: check if this is being retrieve correctly
 
+        UnityEngine.Debug.Log(objZeroProperties + " ");
+        UnityEngine.Debug.Log(objZeroProperties.objectSprites.Length);
     }
 
     private void OnGUI()
@@ -245,18 +249,530 @@ public class returnToMenu : MonoBehaviour
         }
     }
     /**
+     * Helper method to ensure the name is valid
+     */
+    private bool validKey(String currentLine)
+    {
+        String key = "name";
+        // verify first half of line
+        if (hasKey(currentLine, key))
+        {
+            // strip key
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // check if name is empty or null
+            if (String.IsNullOrEmpty(currentLine))
+                return false;
+
+            if (currentLine.Length > playGUI.maxNameLength)
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validID(String currentLine)
+    {
+        String key = "id";
+        // verify second line has key
+        if (hasKey(currentLine, key))
+        {
+            // strip key
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // check if key is null, does not have the correct length, or contains non letters and numbers
+            if (String.IsNullOrEmpty(currentLine) || currentLine.Length != playGUI.levelIDlength || !Regex.IsMatch(currentLine, @"^[a-zA-Z0-9]+$"))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validWin(String currentLine)
+    {
+        String key = "win";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isPositiveBelowEnd(currentLine, key, playGUI.winConditions - 1))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validTime(String currentLine)
+    {
+        String key = "time";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+            if (!isPositiveInt(currentLine, key))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validInstruction(String currentLine)
+    {
+        String key = "instruction";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+            if (currentLine.Length > playGUI.maxInstructionLength)
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjectTotal(String currentLine, ref int objTotal)
+    {
+        String key = "objectTotal";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+            if (!isPositiveBelowEnd(currentLine, key, playGUI.objectCapacity()))
+                return false;
+
+            objTotal = int.Parse(currentLine); // store total for further verification later
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjectNum(String currentLine, int objTotal, ref int objNum)
+    {
+        String key = "objectNum";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+            if (!isPositiveBelowOrEqualToEnd(currentLine, key, objTotal))
+                return false;
+
+            objNum = int.Parse(currentLine); // store number of objects for further verification later
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validMaxProperties(String currentLine, ref int maxProperties)
+    {
+        String key = "maxProperties";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+            if (!isPositiveInt(currentLine, key))
+                return false;
+
+            maxProperties = int.Parse(currentLine); // store the number of properties an object can have for further verification later
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validMaxWidth(String currentLine, ref int maxWidth)
+    {
+        String key = "maxWidth";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isPositiveInt(currentLine, key))
+                return false;
+
+            maxWidth = int.Parse(currentLine);
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validMaxHeight(String currentLine, ref int maxHeight)
+    {
+        String key = "maxHeight";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isPositiveInt(currentLine, key))
+                return false;
+
+            maxHeight = int.Parse(currentLine);
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validBgSpriteIndex(String currentLine)
+    {
+        String key = "bgSpriteIndex";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is below the array size
+            if (!isPositiveBelowEnd(currentLine, key, background.backgroundSprites.Length))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validBgColorIndex(String currentLine)
+    {
+        String key = "bgColorIndex";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is below the array size
+            if (!isPositiveBelowEnd(currentLine, key, background.colors.Length))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validBgHasMusic(String currentLine)
+    {
+        String key = "bgHasMusic";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is a valid boolean
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validBgMusicIndex(String currentLine)
+    {
+        String key = "bgMusicIndex";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is below the array size
+            if (!isPositiveBelowEnd(currentLine, key, background.backgroundMusic.Length))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjName(String currentLine, int i)
+    {
+        String key = "objName";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            String name = "Object" + (i + 1);
+
+            // ensure that the name matches the format
+            if (!String.Equals(currentLine, name))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjPositionX(String currentLine, int maxWidth)
+    {
+        String key = "objPositionX";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is an integer
+            if (!isIntWithinRange(currentLine, key, 2, maxWidth + 2))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjPositionY(String currentLine, int maxHeight)
+    {
+        String key = "objPositionY";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is an integer
+            if (!isIntWithinRange(currentLine, key, 0, maxHeight))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjPositionZ(String currentLine)
+    {
+        String key = "objPositionZ";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            int value;
+            // if null/empty or not integer
+            if (String.IsNullOrEmpty(currentLine) || !int.TryParse(currentLine, out value))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjRotation(String currentLine, String letter)
+    {
+        String key = "objRotation" + letter;
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            int value;
+            // check if it is not zero, as the rotation should only change in play mode
+            if (String.IsNullOrEmpty(currentLine) || (!int.TryParse(currentLine, out value) || value != 0))
+                return false;
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    private bool validObjScale(String currentLine, String letter)
+    {
+        String key = "objScale" + letter;
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            int value;
+            // check if it is not one, as the rotation should only change in play mode
+            if (String.IsNullOrEmpty(currentLine) || (!int.TryParse(currentLine, out value) || value != 1))
+                return false;
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    private bool validObjDraggable(String currentLine)
+    {
+        String key = "objDraggable";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            return true;
+        } else
+            return false;
+    }
+    private bool validObjClickable (String currentLine)
+    {
+        String key = "objClickable";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjSpace(String currentLine)
+    {
+        String key = "objSpace";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjGravity(String currentLine, ref bool gravity)
+    {
+        String key = "objGravity";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            gravity = stringToBool(currentLine);
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjImmobile(String currentLine, bool gravity, ref bool immobile)
+    {
+        String key = "objImmobile";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            immobile = stringToBool(currentLine);
+
+            // both cannot be active at the same time
+            if (immobile && gravity)
+                return false;
+            
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjSolid(String currentLine)
+    {
+        String key = "objSolid";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjGoal(String currentLine, bool immobile, ref bool goal)
+    {
+        String key = "objGoal";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            goal = stringToBool(currentLine);
+
+            // both must be active at the same time
+            if (immobile != goal)
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjKey(String currentLine, bool immobile, ref bool objKey)
+    {
+        String key = "objKey";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            objKey = stringToBool(currentLine);
+
+            // both cannot be active at the same time
+            if (immobile && objKey)
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjControllable(String currentLine, bool goal, bool objKey)
+    {
+        String key = "objControllable";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            bool controllable = stringToBool(currentLine);
+
+            // controllable cannot be active at the same time as goal or key
+            if ((goal && controllable) || (objKey && controllable))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjSpriteIndex(String currentLine)
+    {
+        // TODO: complete method
+        String key = "objSpriteIndex";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is below the array size
+            if (!isPositiveBelowEnd(currentLine, key, objZeroProperties.objectSprites.Length))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    /**
      * Method to ensure that levels are valid
      */
     private bool validLevel(String path)
     {
         bool result = true;
         String currentLine = "";
-        String key = "";
-        int objTotal;
-        int objNum;
-        int maxProperties;
-        int maxWidth;
-        int maxHeight;
+
+        int objTotal = 0;
+        int objNum = 0;
+        int maxProperties = 0;
+        int maxWidth = 0;
+        int maxHeight = 0;
+        bool gravity = false;
+        bool immobile = false;
+        bool goal = false;
+        bool key = false;
 
         try
         {
@@ -267,249 +783,199 @@ public class returnToMenu : MonoBehaviour
 
                 // verify name
                 currentLine = file.ReadLine();
-                key = "name";
-                // verify first half of line
-                if (hasKey(currentLine, key)){
-                    // strip key
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    // check if name is empty or null
-                    if (String.IsNullOrEmpty(currentLine))
-                        return false;
-
-                    if (currentLine.Length > playGUI.maxNameLength)
-                        return false;
-                } else
+                if (!validKey(currentLine))
                     return false;
 
                 // verify id
                 currentLine = file.ReadLine();
-                key = "id";
-                // verify second line has key
-                if (hasKey(currentLine, key))
-                {
-                    // strip key
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    // check if key is null, does not have the correct length, or contains non letters and numbers
-                    if (String.IsNullOrEmpty(currentLine) || currentLine.Length != playGUI.levelIDlength || !Regex.IsMatch(currentLine, @"^[a-zA-Z0-9]+$"))
-                        return false;
-                } else
+                if (!validID(currentLine))
                     return false;
                 
                 // verify win condition
                 currentLine = file.ReadLine();
-                key = "win";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    if (!isPositiveBelowEnd(currentLine, key, playGUI.winConditions - 1))
-                        return false;
-                } else
+                if (!validWin(currentLine))
                     return false;
 
                 // verify time
                 currentLine = file.ReadLine();
-                key = "time";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-                    if (!isPositiveInt(currentLine, key))
-                        return false;
-                } else
+                if (!validTime(currentLine))
                     return false;
 
                 // verify instruction
                 currentLine = file.ReadLine();
-                key = "instruction";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-                    if (currentLine.Length > playGUI.maxInstructionLength)
-                        return false;
-                } else
+                if (!validInstruction(currentLine))
                     return false;
 
                 // verify objectTotal
                 currentLine = file.ReadLine();
-                key = "objectTotal";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-                    if (!isPositiveBelowEnd(currentLine, key, playGUI.objectCapacity()))
-                        return false;
-                    
-                    objTotal = int.Parse(currentLine); // store total for further verification later
-                } else
+                if (!validObjectTotal(currentLine, ref objTotal))
                     return false;
 
                 // verify objectNum
                 currentLine = file.ReadLine();
-                key = "objectNum";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-                    if (!isPositiveBelowOrEqualToEnd(currentLine, key, objTotal))
-                        return false;
-
-                    objNum = int.Parse(currentLine); // store number of objects for further verification later
-                } else
+                if (!validObjectNum(currentLine, objTotal, ref objNum))
                     return false;
+                    
 
                 // verify maxProperties
                 currentLine = file.ReadLine();
-                key = "maxProperties";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-                    if (!isPositiveInt(currentLine, key))
-                        return false;
-
-                    maxProperties = int.Parse(currentLine); // store the number of properties an object can have for further verification later
-                }
-                else
+                if (!validMaxProperties(currentLine, ref maxProperties))
                     return false;
 
                 // verify maxWidth
                 currentLine = file.ReadLine();
-                key = "maxWidth";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    if (!isPositiveInt(currentLine, key))
-                        return false;
-
-                    maxWidth = int.Parse(currentLine);
-                } else
+                if (!validMaxWidth(currentLine, ref maxWidth))
                     return false;
 
                 // verify maxHeight
                 currentLine = file.ReadLine();
-                key = "maxHeight";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    if (!isPositiveInt(currentLine, key))
-                        return false;
-
-                    maxHeight = int.Parse(currentLine);
-                }
-                else
+                if (!validMaxHeight(currentLine, ref maxHeight))
                     return false;
 
-                // TODO: verify background properties
+                // verify background properties
                 // verify bgSpriteIndex
                 currentLine = file.ReadLine();
-                key = "bgSpriteIndex";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    // ensure that it is below the array size
-                    if (!isPositiveBelowEnd(currentLine, key, background.backgroundSprites.Length))
-                        return false;
-                }
-                else
+                if (!validBgSpriteIndex(currentLine))
                     return false;
 
                 // verify bgColorIndex
                 currentLine = file.ReadLine();
-                key = "bgColorIndex";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    // ensure that it is below the array size
-                    if (!isPositiveBelowEnd(currentLine, key, background.colors.Length))
-                        return false;
-                }
-                else
+                if (!validBgColorIndex(currentLine))
                     return false;
 
                 // verify bgHasMusic
                 currentLine = file.ReadLine();
-                key = "bgHasMusic";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    // ensure that it is a valid boolean
-                    if (!isIntBoolean(currentLine, key))
-                        return false;
-                }
-                else
+                if (!validBgHasMusic(currentLine))
                     return false;
 
                 // verify bgMusicIndex
                 currentLine = file.ReadLine();
-                key = "bgMusicIndex";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
-
-                    // ensure that it is below the array size
-                    if (!isPositiveBelowEnd(currentLine, key, background.backgroundMusic.Length))
-                        return false;
-                }
-                else 
+                if (!validBgMusicIndex(currentLine))
                     return false;
 
                 // TODO: verify object properties
                 // TODO: add for loop once it works for one object
-                int i = 0; // replace once for loop implemented
-
-                // TODO: verify objName
-                currentLine = file.ReadLine();
-                key = "objName";
-                if (hasKey(currentLine, key))
+                for (int i = 0; i < objNum; i++)
                 {
-                    currentLine = currentLine.Substring(key.Length + 1);
+                    if (i == 0) // read first run, otherwise will read at the end of the loop
+                    {
+                        currentLine = file.ReadLine();
+                    }
 
-                    String name = "Object" + (i + 1);
-
-                    // ensure that the name matches the format
-                    if (!String.Equals(currentLine, name))
+                    // verify objName
+                    if (!validObjName(currentLine, i))
                         return false;
-                }
-                else
-                    return false;
-                // verify objPositionX
-                currentLine = file.ReadLine();
-                key = "objPositionX";
-                if (hasKey(currentLine, key))
-                {
-                    currentLine = currentLine.Substring(key.Length + 1);
 
-                    // ensure that it is an integer
-                    if (!isIntWithinRange(currentLine, key, 2, maxWidth + 2))
+                    // verify objPositionX
+                    currentLine = file.ReadLine();
+                    if (!validObjPositionX(currentLine, maxWidth))
                         return false;
-                } else
-                    return false;
 
-                    // TODO: verify objPositionY
-                    // TODO: verify objPositionZ
-                    // TODO: verify objRotationX
-                    // TODO: verify objRotationY
-                    // TODO: verify objScaleX
-                    // TODO: verify objScaleY
-                    // TODO: verify objScaleZ
-                    // TODO: verify objDraggable
-                    // TODO: verify objClickable
-                    // TODO: verify objSpace
-                    // TODO: verify objGravity
-                    // TODO: verify objImmobile
-                    // TODO: verify objSolid
-                    // TODO: verify objGoal
-                    // TODO: verify objKey
-                    // TODO: verify objControllable
+                    // verify objPositionY
+                    currentLine = file.ReadLine();
+                    if (!validObjPositionY(currentLine, maxHeight))
+                        return false;
+
+                    // verify objPositionZ
+                    currentLine = file.ReadLine();
+                    if (!validObjPositionZ(currentLine))
+                        return false;
+
+                    // verify objRotationX
+                    currentLine = file.ReadLine();
+                    if (!validObjRotation(currentLine, "X"))
+                        return false;
+
+                    // verify objRotationY
+                    currentLine = file.ReadLine();
+                    if (!validObjRotation(currentLine, "Y"))
+                        return false;
+
+                    // verify objRotationZ
+                    currentLine = file.ReadLine();
+                    if (!validObjRotation(currentLine, "Z"))
+                        return false;
+
+                    // verify objScaleX
+                    currentLine = file.ReadLine();
+                    if (!validObjScale(currentLine, "X"))
+                        return false;
+
+                    // verify objScaleY
+                    currentLine = file.ReadLine();
+                    if (!validObjScale(currentLine, "Y"))
+                        return false;
+
+                    // verify objScaleZ
+                    currentLine = file.ReadLine();
+                    if (!validObjScale(currentLine, "Z"))
+                        return false;
+
+                    // verify objDraggable
+                    currentLine = file.ReadLine();
+                    if (!validObjDraggable(currentLine))
+                        return false;
+
+                    // verify objClickable
+                    currentLine = file.ReadLine();
+                    if (!validObjClickable(currentLine))
+                        return false;
+
+                    // verify objSpace
+                    currentLine = file.ReadLine();
+                    if (!validObjSpace(currentLine))
+                        return false;
+
+                    // verify objGravity
+                    currentLine = file.ReadLine();
+                    if (!validObjGravity(currentLine, ref gravity))
+                        return false;
+
+                    // verify objImmobile
+                    currentLine = file.ReadLine();
+                    if (!validObjImmobile(currentLine, gravity, ref immobile))
+                        return false;
+
+                    // verify objSolid
+                    currentLine = file.ReadLine();
+                    if (!validObjSolid(currentLine))
+                        return false;
+
+                    // verify objGoal
+                    currentLine = file.ReadLine();
+                    if (!validObjGoal(currentLine, immobile, ref goal))
+                        return false;
+
+                    // verify objKey
+                    currentLine = file.ReadLine();
+                    if (!validObjKey(currentLine, immobile, ref key))
+                        return false;
+
+                    // verify objControllable
+                    currentLine = file.ReadLine();
+                    if (!validObjControllable(currentLine, goal, key))
+                        return false;
+
                     // TODO: verify objSpriteIndex
+                    // TODO FINISH METHOD FOR OBJSPRITEINDEX
+
                     // TODO: verify objColorIndex
                     // TODO: verify objHasSound
                     // TODO: verify objSoundIndex
+
+                    String nameKey = "objName";
+                    // while the next line is not a new object
+                    while (i + 1 != objNum && !hasKey(currentLine, nameKey))
+                    {
+                        // if there are no more lines
+                        if (file.Peek() == -1)
+                            return false;
+
+                        // read in the next line
+                        currentLine = file.ReadLine();
+                    }
                 }
+            }
         }
         catch (IOException)
         {
@@ -619,6 +1085,20 @@ public class returnToMenu : MonoBehaviour
         else
         {
             return "0";
+        }
+    }
+    /**
+     * Helper method to write a string to a boolean
+     */
+    private bool stringToBool(String str)
+    {
+        if (str == "1")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
     /**
