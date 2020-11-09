@@ -29,6 +29,7 @@ public class returnToMenu : MonoBehaviour
     public gameMechanics controller; // required to retrieve variables for saving
     public changeBackground background; // required to retrieve background variables for saving
     public objectProperties objZeroProperties;
+    public GameObject objZero;
 
     private bool error = false;
     private String errorMessage = "";
@@ -44,10 +45,7 @@ public class returnToMenu : MonoBehaviour
         playGUI = mainCamera.GetComponent<GUIscript>();
         controller = mainCamera.GetComponent<gameMechanics>();
         background = (GameObject.Find("background")).GetComponent<changeBackground>();
-        objZeroProperties = ((GameObject.Find("Object0")).transform.GetChild(0)).GetComponent<objectProperties>(); // TODO: check if this is being retrieve correctly
-
-        UnityEngine.Debug.Log(objZeroProperties + " ");
-        UnityEngine.Debug.Log(objZeroProperties.objectSprites.Length);
+        objZeroProperties = ((GameObject.Find("Object0")).transform.GetChild(0)).GetComponent<objectProperties>();
     }
 
     private void OnGUI()
@@ -741,7 +739,6 @@ public class returnToMenu : MonoBehaviour
     }
     private bool validObjSpriteIndex(String currentLine)
     {
-        // TODO: complete method
         String key = "objSpriteIndex";
         if (hasKey(currentLine, key))
         {
@@ -749,6 +746,70 @@ public class returnToMenu : MonoBehaviour
 
             // ensure that it is below the array size
             if (!isPositiveBelowEnd(currentLine, key, objZeroProperties.objectSprites.Length))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjColorIndex(String currentLine)
+    {
+        String key = "objColorIndex";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is below the array size
+            if (!isPositiveBelowEnd(currentLine, key, objZeroProperties.colors.Length))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validObjHasSound(String currentLine)
+    {
+        String key = "objHasSound";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool validobjSoundIndex(String currentLine)
+    {
+        String key = "objSoundIndex";
+
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            // ensure that it is below the array size
+            if (!isPositiveBelowEnd(currentLine, key, objZeroProperties.audioClips.Length))
+                return false;
+
+            return true;
+        }
+        else
+            return false;
+           
+    }
+    private bool validObjSoundIndex(String currentLine)
+    {
+        String key = "objSoundIndex";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
                 return false;
 
             return true;
@@ -853,8 +914,8 @@ public class returnToMenu : MonoBehaviour
                 if (!validBgMusicIndex(currentLine))
                     return false;
 
-                // TODO: verify object properties
-                // TODO: add for loop once it works for one object
+                // verify object properties
+                // add for loop once it works for one object
                 for (int i = 0; i < objNum; i++)
                 {
                     if (i == 0) // read first run, otherwise will read at the end of the loop
@@ -956,12 +1017,25 @@ public class returnToMenu : MonoBehaviour
                     if (!validObjControllable(currentLine, goal, key))
                         return false;
 
-                    // TODO: verify objSpriteIndex
-                    // TODO FINISH METHOD FOR OBJSPRITEINDEX
+                    // verify objSpriteIndex
+                    currentLine = file.ReadLine();
+                    if (!validObjSpriteIndex(currentLine))
+                        return false;
 
-                    // TODO: verify objColorIndex
-                    // TODO: verify objHasSound
-                    // TODO: verify objSoundIndex
+                    // verify objColorIndex
+                    currentLine = file.ReadLine();
+                    if (!validObjColorIndex(currentLine))
+                        return false;
+
+                    // verify objHasSound
+                    currentLine = file.ReadLine();
+                    if (!validObjHasSound(currentLine))
+                        return false;
+
+                    // verify objSoundIndex
+                    currentLine = file.ReadLine();
+                    if (!validObjSoundIndex(currentLine))
+                        return false;
 
                     String nameKey = "objName";
                     // while the next line is not a new object
@@ -1227,7 +1301,7 @@ public class returnToMenu : MonoBehaviour
             // color index
             save.WriteLine("objColorIndex:" + objprop.colorIndex);
             // sound bool
-            save.WriteLine("objHasSound:" + objprop.hasSound);
+            save.WriteLine("objHasSound:" + boolToString(objprop.hasSound));
             // sound index
             save.WriteLine("objSoundIndex:" + objprop.audioClipIndex);
         }
