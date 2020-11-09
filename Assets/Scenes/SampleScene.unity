@@ -482,13 +482,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 996398511}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4c2243a87806b2468bb9d614fe494b2, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b7d3ca440bca9c49a090f305f146222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: TitleScreen
-  playGUI: {fileID: 0}
-  controller: {fileID: 0}
-  background: {fileID: 0}
+  menu: SampleScene
+  playGUI: {fileID: 519420033}
+  controller: {fileID: 519420030}
+  background: {fileID: 996398514}
+  objZeroProperties: {fileID: 1132821004}
+  objZero: {fileID: 0}
 --- !u!1 &1132821001
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,7 +554,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1132821001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9817180840930040ba8ff20fadc2cf7, type: 3}
+  m_Script: {fileID: 11500000, guid: 38bf2bac56433754ca2e3f470b447d83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isClickable: 0
@@ -565,7 +567,7 @@ MonoBehaviour:
   isSolid: 0
   isTarget: 0
   isKey: 0
-  collisions: 0
+  collisions: 1
   oldPosition: {x: 0, y: 0, z: 0}
   oldPositionSprite: {x: 0, y: 0, z: 0}
   oldScale: {x: 0, y: 0, z: 0}
@@ -576,6 +578,15 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   objectSprites: []
   objectSpriteIndex: 0
+  colors:
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
   colorIndex: 0
   mechanics: {fileID: 0}
 --- !u!61 &1132821005
@@ -829,7 +840,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1437997044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9817180840930040ba8ff20fadc2cf7, type: 3}
+  m_Script: {fileID: 11500000, guid: 38bf2bac56433754ca2e3f470b447d83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isClickable: 0
@@ -842,7 +853,7 @@ MonoBehaviour:
   isSolid: 0
   isTarget: 0
   isKey: 0
-  collisions: 0
+  collisions: 1
   oldPosition: {x: 0, y: 0, z: 0}
   oldPositionSprite: {x: 0, y: 0, z: 0}
   oldScale: {x: 0, y: 0, z: 0}
@@ -850,9 +861,18 @@ MonoBehaviour:
   audioClips: []
   audioClipIndex: 0
   hasSound: 0
-  spriteRenderer: {fileID: 1437997045}
+  spriteRenderer: {fileID: 0}
   objectSprites: []
   objectSpriteIndex: 0
+  colors:
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
   colorIndex: 0
   mechanics: {fileID: 0}
 --- !u!61 &1437997048
