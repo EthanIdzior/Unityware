@@ -8,6 +8,7 @@ using System.Text;
 //using System.Runtime.Remoting.Channels;
 //using System.Runtime.Remoting.Channels;
 using UnityEngine;
+using UnityEditor; // use for confirmation prompts
 
 public class GUIscript : MonoBehaviour
 {
@@ -339,6 +340,17 @@ public class GUIscript : MonoBehaviour
         }
 
     }
+    public void deleteAllObjects()
+    {
+        objectProperties obj;
+
+        while (controller.objectList.Count > 0)
+        {
+            // delete the first object
+            obj = (controller.objectList[0]).transform.GetChild(0).GetComponent<objectProperties>();
+            obj.deleteObject();
+        }
+    }
     // Save the properties of each object before playing the game
     void saveObjects()
     {
@@ -465,6 +477,13 @@ public class GUIscript : MonoBehaviour
             if (GUI.Button(new Rect(10, Screen.height - 30, 80, 20), "Add Object"))
             {
                 createObject();
+            }
+            if (GUI.Button(new Rect(100, Screen.height - 30, 120, 20), "Delete All Objects"))
+            {
+                if (controller.objectList.Count > 0 && EditorUtility.DisplayDialog("Delete all objects?", "Are you sure you would like to delete all objects?", "Confirm", "Cancel"))
+                {
+                    deleteAllObjects();
+                }
             }
         }
 

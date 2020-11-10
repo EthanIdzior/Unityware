@@ -837,10 +837,10 @@ public class returnToMenu : MonoBehaviour
 
         try
         {
-            // TODO: check if level is valid
+            // check if level is valid
             using (StreamReader file = new StreamReader(path))
             {
-                // TODO: verify level properties
+                // verify level properties
 
                 // verify name
                 currentLine = file.ReadLine();

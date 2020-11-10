@@ -303,7 +303,7 @@ public class objectProperties : MonoBehaviour
     /* 
      * Helper method to delete the current object.
      */
-    void deleteObject()
+    public void deleteObject()
     {
         menuOpen = false; // close menu as the object no longer exists
         mechanics.objectList.Remove(transform.root.gameObject);
