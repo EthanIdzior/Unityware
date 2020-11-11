@@ -56,6 +56,8 @@ public class GUIscript : MonoBehaviour
     public int maxInstructionLength = 25;
     public int maxNameLength = 25;
 
+    bool deleteObjects = false; // boolean controlling prompt asking if the user is sure about deleting objects
+
     // Start is called before the first frame update
     void Start()
     {
@@ -480,10 +482,29 @@ public class GUIscript : MonoBehaviour
             }
             if (GUI.Button(new Rect(100, Screen.height - 30, 120, 20), "Delete All Objects"))
             {
-                if (controller.objectList.Count > 0 && EditorUtility.DisplayDialog("Delete all objects?", "Are you sure you would like to delete all objects?", "Confirm", "Cancel"))
+                // open the delete objects confirmation box if there are objects to delete
+                if (controller.objectList.Count > 0)
+                {
+                    deleteObjects = true;
+                }
+            }
+            if (deleteObjects)
+            {
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 230, 80), GUI.skin.box);
+                
+                GUILayout.Label("Are you sure you would like to delete all objects?");
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Confirm"))
                 {
                     deleteAllObjects();
+                    deleteObjects = false; // hide menu
                 }
+                if (GUILayout.Button("Cancel"))
+                {
+                    deleteObjects = false; // hide menu
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.EndArea();
             }
         }
 

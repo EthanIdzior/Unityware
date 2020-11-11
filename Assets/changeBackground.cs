@@ -10,7 +10,7 @@ using UnityEngine;
 public class changeBackground : MonoBehaviour
 {
     // Variables related to the menu itself
-    int height = 150;
+    int height = 190;
     int width = 200;
 
     // Variables related to audio
@@ -26,6 +26,7 @@ public class changeBackground : MonoBehaviour
 
     private bool menuOpen = true;
     public bool soundToggled = false;
+    private bool clearBackground = false;
 
     // Create an array with preset colors
     public Color[] colors = {/* White: */ new Color(1, 1, 1, 1), /* Magenta: */ new Color(1, 0, 1, 1), /* Red: */ new Color(1, 0, 0, 1), /* Yellow: */ new Color(1, 1, 0, 1), /* Green: */ new Color(0, 1, 0, 1), /* Cyan: */ new Color(0, 1, 1, 1), /* Blue: */ new Color(0, 0, 1, 1), /* Black: */ new Color(0, 0, 0, 1) };
@@ -150,6 +151,16 @@ public class changeBackground : MonoBehaviour
                 soundToggled = false;
             }
 
+            // reset properties
+            if (GUILayout.Button("Reset Background"))
+            {
+                // if the values aren't already at default
+                if (levelChanged())
+                {
+                    // show the menu to reset the background
+                    clearBackground = true;
+                }
+            }
 
             GUILayout.EndArea();
         }
@@ -162,6 +173,63 @@ public class changeBackground : MonoBehaviour
             }
             GUILayout.EndArea();
         }
+        if (clearBackground)
+        {
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 230, 80), GUI.skin.box);
+
+            GUILayout.Label("Are you sure you would like to reset the background?");
+            GUILayout.BeginHorizontal("box");
+            if (GUILayout.Button("Confirm"))
+            {
+                resetBackground();
+                clearBackground = false; // hide menu
+            }
+            if (GUILayout.Button("Cancel"))
+            {
+                clearBackground = false; // hide menu
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
+        }
+    }
+    /*
+     * Helper method to reset all background properties
+     */
+    public void resetBackground()
+    {
+        // reset background sprite
+        backgroundSpriteIndex = 0;
+        spriteRenderer.sprite = backgroundSprites[0];
+
+        // reset background color
+        colorIndex = 0;
+        spriteRenderer.color = colors[0];
+
+        // set background has sound to false
+        hasSound = false;
+        soundToggled = true;
+
+        // reset background audio
+        backgroundMusicIndex = 0;
+        audioSource.clip = backgroundMusic[0];
+    }
+    private bool levelChanged()
+    {
+        bool result = false;
+
+        if (backgroundSpriteIndex != 0)
+        {
+            result = true;
+        }
+        if (colorIndex != 0)
+        {
+            result = true;
+        }
+        if (hasSound)
+        {
+            result = true;
+        }
         
+        return result;
     }
 }
