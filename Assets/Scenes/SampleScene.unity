@@ -166,6 +166,7 @@ MonoBehaviour:
   hasTimer: 1
   hasPoints: 0
   timerStart: 300
+  initialStartTime: 0
   timeLeft: 0
   playingGame: 0
   objectTotal: 0
@@ -485,7 +486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b7d3ca440bca9c49a090f305f146222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: SampleScene
+  menu: TitleScreen
   playGUI: {fileID: 519420033}
   controller: {fileID: 519420030}
   background: {fileID: 996398514}
@@ -861,7 +862,7 @@ MonoBehaviour:
   audioClips: []
   audioClipIndex: 0
   hasSound: 0
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 1437997045}
   objectSprites: []
   objectSpriteIndex: 0
   colors:

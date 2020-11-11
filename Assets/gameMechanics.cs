@@ -15,6 +15,7 @@ public class gameMechanics : MonoBehaviour
 
     // Values that can be set externally
     public float timerStart = 0;
+    public float initialStartTime; // initial start time from the editor, use to reset the start time
 
     // Game variables
     public float timeLeft = 0;
@@ -45,6 +46,7 @@ public class gameMechanics : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        initialStartTime = timerStart; // retrieve the first value of the start timer, as set in the unity editor
         objectList = new List<GameObject>();
 
         // retrieve the background object to control background music later

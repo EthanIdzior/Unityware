@@ -37,6 +37,8 @@ public class returnToMenu : MonoBehaviour
     private bool fileChanged = false;
     private String change = "";
 
+    private bool oldLevelChanged = false;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -67,23 +69,22 @@ public class returnToMenu : MonoBehaviour
             if (GUILayout.Button("Save Level"))
             {
                 change = "saved";
-                if (!String.IsNullOrEmpty(playGUI.levelName))
-                {
-                    saveLevel();
-                }
-                else
-                {
-                    error = true;
-                    errorMessage = "Level must be named before saving";
-                }
+                saveLevel();
                 
             }
             if (GUILayout.Button("Load Level"))
             {
                 change = "loaded";
-                // TODO verify level
 
-                // load level in editor
+                // if level changed, ask the user if they are sure they would like to continue
+                if (playGUI.levelChanged())
+                {
+                    oldLevelChanged = true;
+                }
+                else
+                {
+                    loadRandomLevel(); // TODO: change to loadLevel once a way to select is implemented
+                }
             }
             GUILayout.EndHorizontal();
 
@@ -126,7 +127,7 @@ public class returnToMenu : MonoBehaviour
 
                 if (path.Length != 0)
                 {
-                    // TODO: verify imported level
+                    // verify imported level
                     if (validLevel(path))
                     {
                         // if file does not exist
@@ -243,6 +244,29 @@ public class returnToMenu : MonoBehaviour
             {
                 fileChanged = false;
             }
+            GUILayout.EndArea();
+        }
+        if (oldLevelChanged)
+        {
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (400 / 2), (Screen.height / 2) - (60 / 2), 400, 80), GUI.skin.box);
+
+            GUILayout.Label("Would you like to save the current level before loading another?");
+            GUILayout.BeginHorizontal("box");
+            if (GUILayout.Button("Save and Load"))
+            {
+                saveAndLoad();
+                oldLevelChanged = false; // hide menu
+            }
+            if (GUILayout.Button("Load without Saving"))
+            {
+                loadRandomLevel(); // TODO: change to loadLevel when a way to select a level is implemented
+                oldLevelChanged = false; // hide menu
+            }
+            if (GUILayout.Button("Cancel"))
+            {
+                oldLevelChanged = false; // hide menu
+            }
+            GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
     }
@@ -1178,7 +1202,7 @@ public class returnToMenu : MonoBehaviour
     /**
     * Method to save the levels locally, gets a filename from the level name before passing it to the overloaded method
     */
-    private void saveLevel()
+    private bool saveLevel()
     {
         String fileName = playGUI.levelName;
 
@@ -1186,17 +1210,24 @@ public class returnToMenu : MonoBehaviour
         fileName += ".txt";
         fileName = "Assets/Saves/" + fileName; // add subfolder the saves go to for the full path
 
-        saveLevel(fileName);
+        return saveLevel(fileName);
     }
     /**
      * Method to save levels given the path
      */
-    private void saveLevel(String path)
+    private bool saveLevel(String path)
     {
+        if (String.IsNullOrEmpty(playGUI.levelName))
+        {
+            error = true;
+            errorMessage = "Level must be named before saving";
+            return false;
+        }
+
         // check if the file exists
         if (File.Exists(path))
         {
-            // TODO: can't implement until the first file is saved
+            // TODO: optional, implement a way to save over
             // If so check if it has the same level id
                 // if no, throw an error stating that the level already exists and return
         }
@@ -1253,7 +1284,7 @@ public class returnToMenu : MonoBehaviour
         // color index
         save.WriteLine("bgColorIndex:" + background.colorIndex);
         // music bool (0 or 1)
-        save.WriteLine("bgHasMusic:" + boolToString(background.soundToggled));
+        save.WriteLine("bgHasMusic:" + boolToString(background.hasSound));
         // music index
         save.WriteLine("bgMusicIndex:" + background.backgroundMusicIndex);
 
@@ -1310,5 +1341,257 @@ public class returnToMenu : MonoBehaviour
         save.Close();
 
         fileChanged = true;
+        return true;
+    }
+    private void loadLevel()
+    {
+        // TODO: allow a way to choose levels later
+    }
+    private void loadRandomLevel()
+    {
+        string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt");
+
+        int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
+
+        loadLevel(filePaths[randomIndex]);
+    }
+    private void loadLevel(String path)
+    {
+        // verify level
+        if (!validLevel(path))
+        {
+            return;
+        }
+
+        // clear old level stuff
+        playGUI.resetLevel();
+
+        String key = "";
+        String currentLine = "";
+        int objNum = 0;
+
+        // load level in editor
+        try
+        {
+            // read in level
+            using (StreamReader file = new StreamReader(path))
+            {
+                // TODO: read in level properties
+
+                // read in name
+                key = "name";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                playGUI.levelName = currentLine;
+
+                // read in id
+                key = "id";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                playGUI.levelID = currentLine;
+
+                // read in win condition
+                key = "win";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                switch (currentLine)
+                {
+                    case "0":
+                        playGUI.dontMove = true;
+                        playGUI.collectKeys = false;
+                        playGUI.goToTarget = false;
+                        break;
+                    case "1":
+                        playGUI.dontMove = false;
+                        playGUI.collectKeys = true;
+                        playGUI.goToTarget = false;
+                        break;
+                    case "2":
+                        playGUI.dontMove = false;
+                        playGUI.collectKeys = false;
+                        playGUI.goToTarget = true;
+                        break;
+                }
+
+                // read in time
+                key = "time";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                controller.timerStart = int.Parse(currentLine);
+
+                // read in instruction
+                key = "instruction";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                playGUI.instruction = currentLine;
+
+                // read in objectTotal
+                key = "objectTotal";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                controller.objectTotal = int.Parse(currentLine);
+
+                // read in objectNum
+                key = "objectNum";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                objNum = int.Parse(currentLine); // store for later
+
+                // read in maxProperties
+                key = "maxProperties";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                maxProperties = int.Parse(currentLine);
+
+                // read in maxWidth
+                key = "maxWidth";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                controller.maxWidth = int.Parse(currentLine);
+
+                // read in maxHeight
+                key = "maxHeight";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                controller.maxHeight = int.Parse(currentLine);
+
+                // read in background properties
+                // read in bgSpriteIndex
+                key = "bgSpriteIndex";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                background.backgroundSpriteIndex = int.Parse(currentLine);
+                background.spriteRenderer.sprite = background.backgroundSprites[background.backgroundSpriteIndex]; // render new background
+
+                // read in bgColorIndex
+                key = "bgColorIndex";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                background.colorIndex = int.Parse(currentLine);
+                background.spriteRenderer.color = background.colors[background.colorIndex]; // render new color
+
+                // TODO: read in bgHasMusic
+                key = "bgHasMusic";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                background.hasSound = stringToBool(currentLine);
+
+                // TODO: read in bgMusicIndex
+                key = "bgMusicIndex";
+                currentLine = file.ReadLine();
+                currentLine = currentLine.Substring(key.Length + 1);
+                background.backgroundMusicIndex = int.Parse(currentLine);
+                background.audioSource.clip = background.backgroundMusic[background.backgroundMusicIndex];
+
+                // play music if it has it
+                if (background.hasSound)
+                {
+                    background.audioSource.Play();
+                }
+
+                // TODO: read in object properties
+                // add for loop once it works for one object
+                for (int i = 0; i < objNum; i++)
+                {
+                    if (i == 0) // read first run, otherwise will read at the end of the loop
+                    {
+                        currentLine = file.ReadLine();
+                        // TODO: create new object
+                    }
+
+                    // TODO: read in objName
+
+                    // TODO: read in objPositionX
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objPositionY
+                    currentLine = file.ReadLine();
+
+                    // TODO: read inobjPositionZ
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objRotationX
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objRotationY
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objRotationZ
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objScaleX
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objScaleY
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objScaleZ
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objDraggable
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objClickable
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objSpace
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objGravity
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objImmobile
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objSolid
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objGoal
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objKey
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objControllable
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objSpriteIndex
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objColorIndex
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objHasSound
+                    currentLine = file.ReadLine();
+
+                    // TODO: read in objSoundIndex
+                    currentLine = file.ReadLine();
+
+                    String nameKey = "objName";
+                    // while the next line is not a new object
+                    while (i + 1 != objNum && !hasKey(currentLine, nameKey))
+                    {
+                        // if there are no more lines
+                        if (file.Peek() == -1)
+                            return;
+
+                        // read in the next line
+                        currentLine = file.ReadLine();
+                    }
+                }
+            }
+        }
+        catch (IOException)
+        {
+            return;
+        }
+    }
+    private void saveAndLoad()
+    {
+        // if level saved successfully
+        if (saveLevel())
+        {
+            loadRandomLevel(); // TODO: change to load level after a way to select is implemented
+        }
     }
 }

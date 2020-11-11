@@ -19,6 +19,8 @@ public class GUIscript : MonoBehaviour
     bool trackReset = false;
     bool objectError = false;
     bool levelMenuToggle = false;
+    bool settingsReset = false; // if true a confirmation prompt for resetting the settings will appear
+    bool levelReset = false; // if true a confirmation prompt for resetting the level will appear 
 
     private objectProperties objProperties;
 
@@ -454,7 +456,6 @@ public class GUIscript : MonoBehaviour
                 // Check to see if a number before setting
                 if (float.TryParse(fromText, out placeHolder)) 
                     controller.timerStart = float.Parse(fromText);
-                
 
                 else if (fromText == "")
                     controller.timerStart = 0;
@@ -462,6 +463,32 @@ public class GUIscript : MonoBehaviour
                 GUILayout.Label("Level Instruction");
                 instruction = GUILayout.TextField(instruction, maxInstructionLength);
 
+                if (GUILayout.Button("Reset Settings"))
+                {
+                    if (settingsChanged())
+                    {
+                        settingsReset = true;
+                    }
+                }
+
+                GUILayout.EndArea();
+            }
+            if (settingsReset)
+            {
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 230, 80), GUI.skin.box);
+
+                GUILayout.Label("Are you sure you would like to reset the settings?");
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Confirm"))
+                {
+                    resetSettings();
+                    settingsReset = false; // hide menu
+                }
+                if (GUILayout.Button("Cancel"))
+                {
+                    settingsReset = false; // hide menu
+                }
+                GUILayout.EndHorizontal();
                 GUILayout.EndArea();
             }
 
@@ -507,6 +534,33 @@ public class GUIscript : MonoBehaviour
                 GUILayout.EndArea();
             }
         }
+        // Button to reset the level
+        if (GUI.Button(new Rect(Screen.width - 200, 0, 90, 20), "Reset Level"))
+        {
+            // if the background or settings properties are changed or are if there are any objects
+            if (levelChanged())
+            {
+                levelReset = true;
+            }
+        }
+        if (levelReset)
+        {
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 230, 80), GUI.skin.box);
+
+            GUILayout.Label("Are you sure you would like to reset the level?");
+            GUILayout.BeginHorizontal("box");
+            if (GUILayout.Button("Confirm"))
+            {
+                resetLevel();
+                levelReset = false; // hide menu
+            }
+            if (GUILayout.Button("Cancel"))
+            {
+                levelReset = false; // hide menu
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
+        }
 
         // Play/Pause Button
         if (GUI.Button(new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
@@ -530,13 +584,9 @@ public class GUIscript : MonoBehaviour
                 controller.playingGame = true;
                 Physics2D.autoSimulation = true;
 
-                
-
                 // Refresh the background music
                 audioSource = background.GetComponent<AudioSource>();
                 hasSound = background.GetComponent<changeBackground>().hasSound;
-
-                
 
                 if (hasSound)
                 {
@@ -590,5 +640,76 @@ public class GUIscript : MonoBehaviour
             controller.resetTimer();
             trackReset = false;
         }
+    }
+    public void resetLevel()
+    {
+        // reset settings
+        resetSettings();
+
+        // clear objects
+        deleteAllObjects();
+
+        // reset background
+        background.GetComponent<changeBackground>().resetBackground();
+    }
+    public void resetSettings()
+    {
+        // reset level name
+        levelName = "";
+
+        // reset win condition
+        dontMove = true;
+        collectKeys = false;
+        goToTarget = false;
+
+        // reset level time
+        controller.timerStart = controller.initialStartTime;
+
+        // reset level instruction
+        instruction = "";
+    }
+    public bool levelChanged()
+    {
+        bool result = false;
+
+        if (settingsChanged())
+        {
+            result = true;
+        }else if (background.GetComponent<changeBackground>().changed())
+        {
+            result = true;
+        }else if (controller.objectList.Count > 0)
+        {
+            result = true;
+        }
+
+        return result;
+    }
+    public bool settingsChanged()
+    {
+        bool result = false;
+
+        // check if the name changed
+        if (levelName != "")
+        {
+            result = true;
+        }
+        // check if the win condition changed
+        else if (!dontMove)
+        {
+            result = true;
+        }
+        // check if the level time changed
+        else if (controller.timerStart != controller.initialStartTime)
+        {
+            result = true;   
+        }
+        // check if the level instruction changed
+        else if (instruction != "")
+        {
+            result = true;
+        }
+
+        return result;
     }
 }

@@ -146,16 +146,14 @@ public class changeBackground : MonoBehaviour
             }
             else
             {
-                audioSource.Stop();
-                backgroundMusicIndex = 0; // reset index
-                soundToggled = false;
+                stopMusic();
             }
 
             // reset properties
             if (GUILayout.Button("Reset Background"))
             {
                 // if the values aren't already at default
-                if (levelChanged())
+                if (changed())
                 {
                     // show the menu to reset the background
                     clearBackground = true;
@@ -212,8 +210,10 @@ public class changeBackground : MonoBehaviour
         // reset background audio
         backgroundMusicIndex = 0;
         audioSource.clip = backgroundMusic[0];
+
+        stopMusic();
     }
-    private bool levelChanged()
+    public bool changed()
     {
         bool result = false;
 
@@ -231,5 +231,11 @@ public class changeBackground : MonoBehaviour
         }
         
         return result;
+    }
+    public void stopMusic()
+    {
+        audioSource.Stop();
+        backgroundMusicIndex = 0; // reset index
+        soundToggled = false;
     }
 }
