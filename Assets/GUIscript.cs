@@ -362,6 +362,8 @@ public class GUIscript : MonoBehaviour
             obj = (controller.objectList[0]).transform.GetChild(0).GetComponent<objectProperties>();
             obj.deleteObject();
         }
+
+        controller.objectTotal = 0; // reset total
     }
     // Save the properties of each object before playing the game
     void saveObjects()
@@ -541,35 +543,35 @@ public class GUIscript : MonoBehaviour
                 GUILayout.EndHorizontal();
                 GUILayout.EndArea();
             }
-        }
-        // Button to reset the level
-        if (GUI.Button(new Rect(Screen.width - 200, 0, 90, 20), "Reset Level"))
-        {
-            // if the background or settings properties are changed or are if there are any objects
-            if (levelChanged())
+       
+            // Button to reset the level
+            if (GUI.Button(new Rect(Screen.width - 200, 0, 90, 20), "Reset Level"))
             {
-                levelReset = true;
+                // if the background or settings properties are changed or are if there are any objects
+                if (levelChanged())
+                {
+                    levelReset = true;
+                }
             }
-        }
-        if (levelReset)
-        {
-            GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 230, 80), GUI.skin.box);
+            if (levelReset)
+            {
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 230, 80), GUI.skin.box);
 
-            GUILayout.Label("Are you sure you would like to reset the level?");
-            GUILayout.BeginHorizontal("box");
-            if (GUILayout.Button("Confirm"))
-            {
-                resetLevel();
-                levelReset = false; // hide menu
+                GUILayout.Label("Are you sure you would like to reset the level?");
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Confirm"))
+                {
+                    resetLevel();
+                    levelReset = false; // hide menu
+                }
+                if (GUILayout.Button("Cancel"))
+                {
+                    levelReset = false; // hide menu
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.EndArea();
             }
-            if (GUILayout.Button("Cancel"))
-            {
-                levelReset = false; // hide menu
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.EndArea();
         }
-
         // Play/Pause Button
         if (GUI.Button(new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
         {

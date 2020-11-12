@@ -1504,6 +1504,8 @@ public class returnToMenu : MonoBehaviour
 
                 GameObject newObject;
                 objectProperties objProp;
+                playerMoveScript objMovement;
+                Rigidbody2D body;
                 float x = 0;
                 float y = 0;
                 float z = 0;
@@ -1522,6 +1524,8 @@ public class returnToMenu : MonoBehaviour
 
                     // get object properties
                     objProp = newObject.transform.GetChild(0).GetComponent<objectProperties>();
+                    objMovement = newObject.GetComponent<playerMoveScript>();
+                    body = newObject.GetComponent<Rigidbody2D>();
 
                     // read in objName
                     key = "objName";
@@ -1596,7 +1600,6 @@ public class returnToMenu : MonoBehaviour
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.isDraggable = stringToBool(currentLine);
-                    UnityEngine.Debug.Log(stringToBool(currentLine) + " " + objProp.isDraggable);
 
                     // TODO: read in objClickable
                     key = "objClickable";
@@ -1611,34 +1614,105 @@ public class returnToMenu : MonoBehaviour
                     objProp.kbInputOn = stringToBool(currentLine);
 
                     // TODO: read in objGravity
+                    key = "objGravity";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.hasGravity = stringToBool(currentLine);
+
+                    // enable/disable gravity
+                    if (objProp.hasGravity)
+                    {
+                        body.gravityScale = 1;
+                    }
+                    else
+                    {
+                        body.gravityScale = 0;
+                    }
 
                     // TODO: read in objImmobile
+                    key = "objImmobile";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.isImmobile = stringToBool(currentLine);
+
+                    // enable/disable immobility
+                    if (objProp.isImmobile)
+                    {
+                        body.isKinematic = true;
+                    }
+                    else
+                    {
+                        body.isKinematic = false;
+                    }
 
                     // TODO: read in objSolid
+                    key = "objSolid";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.isSolid = stringToBool(currentLine);
+
+                    // TODO: Replace solid with collisions in save/load
 
                     // TODO: read in objGoal
+                    key = "objGoal";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.isTarget = stringToBool(currentLine);
 
                     // TODO: read in objKey
+                    key = "objKey";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.isKey = stringToBool(currentLine);
 
                     // TODO: read in objControllable
+                    key = "objControllable";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.controllable = stringToBool(currentLine);
+
+                    if (objProp.controllable)
+                    {
+                        // enable movement in all directions
+                        objMovement.moveLeft = true;
+                        objMovement.moveRight = true;
+                        objMovement.moveUp = true;
+                        objMovement.moveDown = true;
+                    }
+                    else
+                    {
+                        objMovement.moveLeft = false;
+                        objMovement.moveRight = false;
+                        objMovement.moveUp = false;
+                        objMovement.moveDown = false;
+                    }
 
                     // TODO: read in objSpriteIndex
+                    key = "objSpriteIndex";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.objectSpriteIndex = int.Parse(currentLine);
+                    objProp.spriteRenderer.sprite = objProp.objectSprites[objProp.objectSpriteIndex]; // render new background
 
                     // TODO: read in objColorIndex
+                    key = "objColorIndex";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.colorIndex = int.Parse(currentLine);
+                    objProp.spriteRenderer.color = objProp.colors[objProp.colorIndex]; // render new color
 
                     // TODO: read in objHasSound
+                    key = "objHasSound";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.hasSound = stringToBool(currentLine);
 
                     // TODO: read in objSoundIndex
+                    key = "objSoundIndex";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.audioClipIndex = int.Parse(currentLine);
+                    objProp.audioSource.clip = objProp.audioClips[objProp.audioClipIndex];
 
                     // add new object to the list
                     controller.objectList.Add(newObject);
