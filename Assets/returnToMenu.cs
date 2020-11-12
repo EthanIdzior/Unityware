@@ -13,6 +13,8 @@ using System.ComponentModel.Design;
 
 public class returnToMenu : MonoBehaviour
 {
+    public GameObject Object;
+
     // Variables used for saving to help compatiblity later on
     int maxProperties = 13; // the number of properties that can be set, used for saving
 
@@ -48,6 +50,9 @@ public class returnToMenu : MonoBehaviour
         controller = mainCamera.GetComponent<gameMechanics>();
         background = (GameObject.Find("background")).GetComponent<changeBackground>();
         objZeroProperties = ((GameObject.Find("Object0")).transform.GetChild(0)).GetComponent<objectProperties>();
+
+        // retrieve the prototype gameobject
+        Object = GameObject.Find("Object0");
     }
 
     private void OnGUI()
@@ -1351,8 +1356,14 @@ public class returnToMenu : MonoBehaviour
     {
         string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt");
 
-        int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
+        if (filePaths.Length == 0)
+        {
+            error = true;
+            errorMessage = "No save files found";
+            return;
+        }
 
+        int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
         loadLevel(filePaths[randomIndex]);
     }
     private void loadLevel(String path)
@@ -1377,6 +1388,8 @@ public class returnToMenu : MonoBehaviour
             using (StreamReader file = new StreamReader(path))
             {
                 // TODO: read in level properties
+                // turn off physics
+                Physics2D.autoSimulation = true;
 
                 // read in name
                 key = "name";
@@ -1489,6 +1502,12 @@ public class returnToMenu : MonoBehaviour
                     background.audioSource.Play();
                 }
 
+                GameObject newObject;
+                objectProperties objProp;
+                float x = 0;
+                float y = 0;
+                float z = 0;
+
                 // TODO: read in object properties
                 // add for loop once it works for one object
                 for (int i = 0; i < objNum; i++)
@@ -1496,46 +1515,100 @@ public class returnToMenu : MonoBehaviour
                     if (i == 0) // read first run, otherwise will read at the end of the loop
                     {
                         currentLine = file.ReadLine();
-                        // TODO: create new object
                     }
 
-                    // TODO: read in objName
+                    // create new object
+                    newObject = (GameObject)Instantiate(Object) as GameObject;
 
-                    // TODO: read in objPositionX
-                    currentLine = file.ReadLine();
+                    // get object properties
+                    objProp = newObject.transform.GetChild(0).GetComponent<objectProperties>();
 
-                    // TODO: read in objPositionY
-                    currentLine = file.ReadLine();
+                    // read in objName
+                    key = "objName";
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    newObject.name = currentLine;
 
-                    // TODO: read inobjPositionZ
+                    // read in objPositionX
+                    key = "objPositionX";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    x = int.Parse(currentLine);
 
-                    // TODO: read in objRotationX
+                    // read in objPositionY
+                    key = "objPositionY";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    y = int.Parse(currentLine);
 
-                    // TODO: read in objRotationY
+                    // read inobjPositionZ
+                    key = "objPositionZ";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    z = int.Parse(currentLine);
 
-                    // TODO: read in objRotationZ
-                    currentLine = file.ReadLine();
+                    // transform object position
+                    newObject.transform.position = new Vector3(x, y, z);
 
-                    // TODO: read in objScaleX
+                    // read in objRotationX
+                    key = "objRotationX";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    x = int.Parse(currentLine);
 
-                    // TODO: read in objScaleY
+                    // read in objRotationY
+                    key = "objRotationY";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    y = int.Parse(currentLine);
 
-                    // TODO: read in objScaleZ
+                    // read inobjRotationZ
+                    key = "objRotationZ";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    z = int.Parse(currentLine);
+
+                    // transform object rotation, set it to 0,0,0
+                    newObject.transform.GetChild(0).transform.rotation = Quaternion.identity;
+
+                    // read in objScaleX
+                    key = "objScaleX";
+                    currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    x = int.Parse(currentLine);
+
+                    // read in objScaleY
+                    key = "objScaleY";
+                    currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    y = int.Parse(currentLine);
+
+                    // read in objScaleZ
+                    key = "objScaleZ";
+                    currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    z = int.Parse(currentLine);
+
+                    // transform object scale
+                    newObject.transform.GetChild(0).transform.localScale = new Vector3(x, y, z);
 
                     // TODO: read in objDraggable
+                    key = "objDraggable";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.isDraggable = stringToBool(currentLine);
+                    UnityEngine.Debug.Log(stringToBool(currentLine) + " " + objProp.isDraggable);
 
                     // TODO: read in objClickable
+                    key = "objClickable";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.isClickable = stringToBool(currentLine);
 
                     // TODO: read in objSpace
+                    key = "objSpace";
                     currentLine = file.ReadLine();
+                    currentLine = currentLine.Substring(key.Length + 1);
+                    objProp.kbInputOn = stringToBool(currentLine);
 
                     // TODO: read in objGravity
                     currentLine = file.ReadLine();
@@ -1566,6 +1639,9 @@ public class returnToMenu : MonoBehaviour
 
                     // TODO: read in objSoundIndex
                     currentLine = file.ReadLine();
+
+                    // add new object to the list
+                    controller.objectList.Add(newObject);
 
                     String nameKey = "objName";
                     // while the next line is not a new object
