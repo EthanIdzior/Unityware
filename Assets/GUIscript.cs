@@ -40,6 +40,8 @@ public class GUIscript : MonoBehaviour
     private int keyAmount = 0;
     private List<Vector3> startingLocation = new List<Vector3>();
     private List<Vector3> goalLocations = new List<Vector3>();
+    private List<GameObject> hostileObjects = new List<GameObject>();
+    private List<GameObject> controllableObjects = new List<GameObject>();
     Dictionary<Vector3, GameObject> keyLocations = new Dictionary<Vector3, GameObject>();
 
     // Variables related to object spawn positions
@@ -72,16 +74,7 @@ public class GUIscript : MonoBehaviour
         // generate levelID
         generateID();
 
-        // Get locations of all objects
-        // Saw that resetPositions was already a thing, keeping as a backup
-        /*
-        object[] obj = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-        foreach (object o in obj)
-        {
-            GameObject g = (GameObject)o;
-            defaultLocations.Add(new KeyValuePair<string, Vector3>(g.name, g.transform.position));
-        }
-        */
+
     }
 
     // Update is called once per frame
@@ -250,6 +243,21 @@ public class GUIscript : MonoBehaviour
                 keyLocations.Clear();
                 resetObjects();
                 keysSaved = false;
+            }
+        }
+
+        // Check if a controllable object ever touches a hostile object if it does, lose
+        if (controller.playingGame == true && hostileObjects.Count != 0)
+        {
+            foreach (GameObject g in controllableObjects)
+            {
+                foreach (GameObject h in hostileObjects)
+                {
+                    if (g.transform.position == h.transform.position)
+                    {
+                        controller.triggerLose();
+                    }
+                }
             }
         }
     }
@@ -569,6 +577,23 @@ public class GUIscript : MonoBehaviour
             if (buttonSymbol == "▶")
             {
                 buttonSymbol = "| |";
+
+                // Make a list of all hostile objects
+                hostileObjects.Clear();
+                foreach (GameObject g in controller.objectList)
+                {
+                    if ((g.GetComponentsInChildren<objectProperties>())[0].isHostile)
+                        hostileObjects.Add(g);
+
+                }
+
+                controllableObjects.Clear();
+                foreach (GameObject g in controller.objectList)
+                {
+                    if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
+                        controllableObjects.Add(g);
+
+                }
 
                 saveObjects();
 

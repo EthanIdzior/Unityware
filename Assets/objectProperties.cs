@@ -28,6 +28,7 @@ public class objectProperties : MonoBehaviour
     public bool isTarget = false;
     public bool isKey = false;
     public bool collisions = true;
+    public bool isHostile = false;
 
     // store position of the object when in editor mode
     public Vector3 oldPosition;
@@ -196,6 +197,17 @@ public class objectProperties : MonoBehaviour
                 movement.moveRight = false;
                 movement.moveUp = false;
                 movement.moveDown = false;
+            }
+
+            isHostile = GUILayout.Toggle(isHostile, "Hostile");
+            if (isHostile)
+            {
+                controllable = false;
+                isImmobile = false;
+                collisions = false;
+                isKey = false;
+                isTarget = false;
+                
             }
 
             // Change Sprites
