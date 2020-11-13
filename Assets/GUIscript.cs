@@ -246,6 +246,7 @@ public class GUIscript : MonoBehaviour
             }
         }
 
+        
         // Check if a controllable object ever touches a hostile object if it does, lose
         if (controller.playingGame == true && hostileObjects.Count != 0)
         {
@@ -253,13 +254,19 @@ public class GUIscript : MonoBehaviour
             {
                 foreach (GameObject h in hostileObjects)
                 {
-                    if (g.transform.position == h.transform.position)
+                    Vector3 gPosition = new Vector3(Mathf.RoundToInt(g.transform.position.x), g.transform.position.y, Mathf.RoundToInt(g.transform.position.z));
+                    Vector3 hPosition = new Vector3(Mathf.RoundToInt(h.transform.position.x), h.transform.position.y, Mathf.RoundToInt(h.transform.position.z));
+
+                    // Compare rounded vectors for exact
+                    if (gPosition.x == hPosition.x && gPosition.y == hPosition.y)
                     {
                         controller.triggerLose();
+                        resetObjects();
                     }
                 }
             }
         }
+        
     }
     /**
      * Helper method to create the level identifier
@@ -585,7 +592,9 @@ public class GUIscript : MonoBehaviour
                 foreach (GameObject g in controller.objectList)
                 {
                     if ((g.GetComponentsInChildren<objectProperties>())[0].isHostile)
+                    {
                         hostileObjects.Add(g);
+                    }
 
                 }
 
@@ -593,7 +602,9 @@ public class GUIscript : MonoBehaviour
                 foreach (GameObject g in controller.objectList)
                 {
                     if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
+                    {
                         controllableObjects.Add(g);
+                    }
 
                 }
 
