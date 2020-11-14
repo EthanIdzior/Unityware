@@ -24,10 +24,9 @@ public class objectProperties : MonoBehaviour
     Vector2 mousePos;
     public bool hasGravity = false;
     public bool isImmobile = false; // object does not move when other objects touch it
-    public bool isSolid = false; // objects can pass through it
     public bool isTarget = false;
     public bool isKey = false;
-    public bool collisions = true;
+    public bool collisions = true; // objects can't pass through it
     public bool isHostile = false;
 
     // store position of the object when in editor mode
@@ -105,7 +104,7 @@ public class objectProperties : MonoBehaviour
         if (menuOpen && !playGUI.controller.playingGame)
         {
             mousePos = Input.mousePosition;
-            GUILayout.BeginArea(new Rect(0, 4, 200, 350), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(0, 4, 230, 400), GUI.skin.box);
             GUILayout.Label("Object Properties for " + transform.root.name);
             isDraggable = GUILayout.Toggle(isDraggable, "Draggable");
             isClickable = GUILayout.Toggle(isClickable, "Clickable");
@@ -115,22 +114,15 @@ public class objectProperties : MonoBehaviour
             GUILayout.BeginHorizontal("box");
             hasGravity = GUILayout.Toggle(hasGravity, "Gravity");
             isImmobile = GUILayout.Toggle(isImmobile, "Immobile");
-            isSolid = GUILayout.Toggle(isSolid, "Solid");
-            GUILayout.EndHorizontal();
-
-            // Edit Collisions
             collisions = GUILayout.Toggle(collisions, "Collisions");
+            GUILayout.EndHorizontal();
 
             // Win Condition Properties
             GUILayout.BeginHorizontal("box");
             isTarget = GUILayout.Toggle(isTarget, "Is Goal");
             if (isTarget)
             {
-                isKey = false;
-                controllable = false;
-                hasGravity = false;
-                isImmobile = true;
-                collisions = false;
+                enableGoal();
             }
                 
             isKey = GUILayout.Toggle(isKey, "Is Key");
@@ -311,7 +303,14 @@ public class objectProperties : MonoBehaviour
         }
 
     }
-
+    public void enableGoal()
+    {
+        isKey = false;
+        controllable = false;
+        hasGravity = false;
+        isImmobile = true;
+        collisions = false;
+    }
     /* 
      * Helper method to delete the current object.
      */

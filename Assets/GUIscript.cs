@@ -372,6 +372,14 @@ public class GUIscript : MonoBehaviour
 
         controller.objectTotal = 0; // reset total
     }
+    public Vector3 roundVector3(Vector3 vector)
+    {
+        vector.x = (float) System.Math.Round((double)vector.x, 0);
+        vector.y = (float)System.Math.Round((double)vector.y, 0);
+        vector.z = (float)System.Math.Round((double)vector.z, 0);
+
+        return vector;
+    }
     // Save the properties of each object before playing the game
     void saveObjects()
     {
@@ -383,11 +391,11 @@ public class GUIscript : MonoBehaviour
             objprop = obj.transform.GetChild(0).GetComponent<objectProperties>();
 
             // save the posiitons of all objects
-            objprop.oldPosition = obj.transform.position;
-            objprop.oldPositionSprite = obj.transform.GetChild(0).transform.position;
+            objprop.oldPosition = roundVector3(obj.transform.position);
+            objprop.oldPositionSprite = roundVector3(obj.transform.GetChild(0).transform.position);
 
             // save the scale of all objects
-            objprop.oldScale = obj.transform.GetChild(0).transform.localScale;
+            objprop.oldScale = roundVector3(obj.transform.GetChild(0).transform.localScale);
         }
     }
     // resets the position of objects as playinggame is set to false
@@ -404,6 +412,7 @@ public class GUIscript : MonoBehaviour
             obj.transform.GetChild(0).transform.position = objProp.oldPositionSprite;
 
             // reset rotation
+            obj.transform.rotation = Quaternion.identity;
             obj.transform.GetChild(0).transform.rotation = Quaternion.identity;
 
             // reset velocity to 0

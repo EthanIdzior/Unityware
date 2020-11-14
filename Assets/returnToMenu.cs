@@ -38,6 +38,7 @@ public class returnToMenu : MonoBehaviour
 
     private bool fileChanged = false;
     private String change = "";
+    private String lastFile = "";
 
     private bool oldLevelChanged = false;
 
@@ -206,7 +207,7 @@ public class returnToMenu : MonoBehaviour
                     else
                     {
                         error = true;
-                        errorMessage = "The imported level is not valid";
+                        errorMessage = errorMessage + "\nThe imported level is not valid";
                     }
                 }
             }
@@ -232,7 +233,7 @@ public class returnToMenu : MonoBehaviour
         if (error)
         {
             // display error messages on the user end. ex: level needs to be named, etc
-            GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 210, 60), GUI.skin.box);
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (230 / 2), (Screen.height / 2) - (120 / 2), 230, 120), GUI.skin.box);
             GUILayout.Label("ERROR: " + errorMessage);
             if (GUILayout.Button("Close"))
             {
@@ -243,8 +244,8 @@ public class returnToMenu : MonoBehaviour
         if (fileChanged)
         {
             // Display a message saying that the level was saved successfully
-            GUILayout.BeginArea(new Rect((Screen.width / 2) - (210 / 2), (Screen.height / 2) - (60 / 2), 210, 60), GUI.skin.box);
-            GUILayout.Label("Level " + change + " successfully");
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (400 / 2), (Screen.height / 2) - (60 / 2), 400, 60), GUI.skin.box);
+            GUILayout.Label("Level at path " + lastFile + " " + change + " successfully");
             if (GUILayout.Button("Close"))
             {
                 fileChanged = false;
@@ -278,7 +279,7 @@ public class returnToMenu : MonoBehaviour
     /**
      * Helper method to ensure the name is valid
      */
-    private bool validKey(String currentLine)
+    public bool validName(String currentLine)
     {
         String key = "name";
         // verify first half of line
@@ -299,7 +300,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validID(String currentLine)
+    public bool validID(String currentLine)
     {
         String key = "id";
         // verify second line has key
@@ -317,7 +318,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validWin(String currentLine)
+    public bool validWin(String currentLine)
     {
         String key = "win";
         if (hasKey(currentLine, key))
@@ -332,7 +333,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validTime(String currentLine)
+    public bool validTime(String currentLine)
     {
         String key = "time";
         if (hasKey(currentLine, key))
@@ -346,7 +347,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validInstruction(String currentLine)
+    public bool validInstruction(String currentLine)
     {
         String key = "instruction";
         if (hasKey(currentLine, key))
@@ -360,7 +361,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjectTotal(String currentLine, ref int objTotal)
+    public bool validObjectTotal(String currentLine, ref int objTotal)
     {
         String key = "objectTotal";
         if (hasKey(currentLine, key))
@@ -375,7 +376,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjectNum(String currentLine, int objTotal, ref int objNum)
+    public bool validObjectNum(String currentLine, int objTotal, ref int objNum)
     {
         String key = "objectNum";
         if (hasKey(currentLine, key))
@@ -390,7 +391,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validMaxProperties(String currentLine, ref int maxProperties)
+    public bool validMaxProperties(String currentLine, ref int maxProperties)
     {
         String key = "maxProperties";
         if (hasKey(currentLine, key))
@@ -405,7 +406,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validMaxWidth(String currentLine, ref int maxWidth)
+    public bool validMaxWidth(String currentLine, ref int maxWidth)
     {
         String key = "maxWidth";
         if (hasKey(currentLine, key))
@@ -421,7 +422,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validMaxHeight(String currentLine, ref int maxHeight)
+    public bool validMaxHeight(String currentLine, ref int maxHeight)
     {
         String key = "maxHeight";
         if (hasKey(currentLine, key))
@@ -437,7 +438,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validBgSpriteIndex(String currentLine)
+    public bool validBgSpriteIndex(String currentLine)
     {
         String key = "bgSpriteIndex";
         if (hasKey(currentLine, key))
@@ -453,7 +454,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validBgColorIndex(String currentLine)
+    public bool validBgColorIndex(String currentLine)
     {
         String key = "bgColorIndex";
         if (hasKey(currentLine, key))
@@ -469,7 +470,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validBgHasMusic(String currentLine)
+    public bool validBgHasMusic(String currentLine)
     {
         String key = "bgHasMusic";
         if (hasKey(currentLine, key))
@@ -485,7 +486,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validBgMusicIndex(String currentLine)
+    public bool validBgMusicIndex(String currentLine)
     {
         String key = "bgMusicIndex";
         if (hasKey(currentLine, key))
@@ -501,7 +502,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjName(String currentLine, int i)
+    public bool validObjName(String currentLine, int i)
     {
         String key = "objName";
         if (hasKey(currentLine, key))
@@ -519,7 +520,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjPositionX(String currentLine, int maxWidth)
+    public bool validObjPositionX(String currentLine, int maxWidth)
     {
         String key = "objPositionX";
         if (hasKey(currentLine, key))
@@ -535,7 +536,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjPositionY(String currentLine, int maxHeight)
+    public bool validObjPositionY(String currentLine, int maxHeight)
     {
         String key = "objPositionY";
         if (hasKey(currentLine, key))
@@ -551,7 +552,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjPositionZ(String currentLine)
+    public bool validObjPositionZ(String currentLine)
     {
         String key = "objPositionZ";
         if (hasKey(currentLine, key))
@@ -568,7 +569,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjRotation(String currentLine, String letter)
+    public bool validObjRotation(String currentLine, String letter)
     {
         String key = "objRotation" + letter;
         if (hasKey(currentLine, key))
@@ -587,7 +588,7 @@ public class returnToMenu : MonoBehaviour
             return false;
         }
     }
-    private bool validObjScale(String currentLine, String letter)
+    public bool validObjScale(String currentLine, String letter)
     {
         String key = "objScale" + letter;
         if (hasKey(currentLine, key))
@@ -606,7 +607,7 @@ public class returnToMenu : MonoBehaviour
             return false;
         }
     }
-    private bool validObjDraggable(String currentLine)
+    public bool validObjDraggable(String currentLine)
     {
         String key = "objDraggable";
         if (hasKey(currentLine, key))
@@ -620,7 +621,7 @@ public class returnToMenu : MonoBehaviour
         } else
             return false;
     }
-    private bool validObjClickable (String currentLine)
+    public bool validObjClickable (String currentLine)
     {
         String key = "objClickable";
         if (hasKey(currentLine, key))
@@ -635,7 +636,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjSpace(String currentLine)
+    public bool validObjSpace(String currentLine)
     {
         String key = "objSpace";
         if (hasKey(currentLine, key))
@@ -650,7 +651,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjGravity(String currentLine, ref bool gravity)
+    public bool validObjGravity(String currentLine, ref bool gravity)
     {
         String key = "objGravity";
         if (hasKey(currentLine, key))
@@ -667,7 +668,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjImmobile(String currentLine, bool gravity, ref bool immobile)
+    public bool validObjImmobile(String currentLine, bool gravity, ref bool immobile)
     {
         String key = "objImmobile";
         if (hasKey(currentLine, key))
@@ -688,7 +689,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjSolid(String currentLine)
+    public bool validObjSolid(String currentLine)
     {
         String key = "objSolid";
         if (hasKey(currentLine, key))
@@ -703,7 +704,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjGoal(String currentLine, bool immobile, ref bool goal)
+    public bool validObjGoal(String currentLine, bool immobile, ref bool goal)
     {
         String key = "objGoal";
         if (hasKey(currentLine, key))
@@ -715,16 +716,21 @@ public class returnToMenu : MonoBehaviour
 
             goal = stringToBool(currentLine);
 
-            // both must be active at the same time
-            if (immobile != goal)
-                return false;
+            // for goal to be true immobile must also be true
+            if (goal)
+            {
+                if (!immobile)
+                {
+                    return false;
+                }
+            }
 
             return true;
         }
         else
             return false;
     }
-    private bool validObjKey(String currentLine, bool immobile, ref bool objKey)
+    public bool validObjKey(String currentLine, bool immobile, ref bool objKey)
     {
         String key = "objKey";
         if (hasKey(currentLine, key))
@@ -745,7 +751,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjControllable(String currentLine, bool goal, bool objKey)
+    public bool validObjControllable(String currentLine, bool goal, bool objKey)
     {
         String key = "objControllable";
         if (hasKey(currentLine, key))
@@ -766,7 +772,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjSpriteIndex(String currentLine)
+    public bool validObjSpriteIndex(String currentLine)
     {
         String key = "objSpriteIndex";
         if (hasKey(currentLine, key))
@@ -782,7 +788,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjColorIndex(String currentLine)
+    public bool validObjColorIndex(String currentLine)
     {
         String key = "objColorIndex";
         if (hasKey(currentLine, key))
@@ -798,7 +804,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validObjHasSound(String currentLine)
+    public bool validObjHasSound(String currentLine)
     {
         String key = "objHasSound";
         if (hasKey(currentLine, key))
@@ -813,7 +819,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    private bool validobjSoundIndex(String currentLine)
+    public bool validobjSoundIndex(String currentLine)
     {
         String key = "objSoundIndex";
 
@@ -831,7 +837,7 @@ public class returnToMenu : MonoBehaviour
             return false;
            
     }
-    private bool validObjSoundIndex(String currentLine)
+    public bool validObjSoundIndex(String currentLine)
     {
         String key = "objSoundIndex";
         if (hasKey(currentLine, key))
@@ -849,7 +855,7 @@ public class returnToMenu : MonoBehaviour
     /**
      * Method to ensure that levels are valid
      */
-    private bool validLevel(String path)
+    public bool validLevel(String path)
     {
         bool result = true;
         String currentLine = "";
@@ -873,75 +879,118 @@ public class returnToMenu : MonoBehaviour
 
                 // verify name
                 currentLine = file.ReadLine();
-                if (!validKey(currentLine))
+                if (!validName(currentLine))
+                {
+                    levelError("name");
                     return false;
+                }
+                    
 
                 // verify id
                 currentLine = file.ReadLine();
                 if (!validID(currentLine))
+                {
+                    levelError("id");
                     return false;
+                }
                 
                 // verify win condition
                 currentLine = file.ReadLine();
                 if (!validWin(currentLine))
+                {
+                    levelError("win condition");
                     return false;
+                }
 
                 // verify time
                 currentLine = file.ReadLine();
                 if (!validTime(currentLine))
+                {
+                    levelError("time");
                     return false;
+                }
 
                 // verify instruction
                 currentLine = file.ReadLine();
                 if (!validInstruction(currentLine))
+                {
+                    levelError("instruction");
                     return false;
+                }
 
                 // verify objectTotal
                 currentLine = file.ReadLine();
                 if (!validObjectTotal(currentLine, ref objTotal))
+                {
+                    levelError("object total");
                     return false;
+                }
 
                 // verify objectNum
                 currentLine = file.ReadLine();
                 if (!validObjectNum(currentLine, objTotal, ref objNum))
+                {
+                    levelError("object number");
                     return false;
-                    
+                }
+
 
                 // verify maxProperties
                 currentLine = file.ReadLine();
                 if (!validMaxProperties(currentLine, ref maxProperties))
+                {
+                    levelError("max properties");
                     return false;
+                }
 
                 // verify maxWidth
                 currentLine = file.ReadLine();
                 if (!validMaxWidth(currentLine, ref maxWidth))
+                {
+                    levelError("max width");
                     return false;
+                }
 
                 // verify maxHeight
                 currentLine = file.ReadLine();
                 if (!validMaxHeight(currentLine, ref maxHeight))
+                {
+                    levelError("max height");
                     return false;
+                }
 
                 // verify background properties
                 // verify bgSpriteIndex
                 currentLine = file.ReadLine();
                 if (!validBgSpriteIndex(currentLine))
+                {
+                    backgroundError("sprite index");
                     return false;
+                }
 
                 // verify bgColorIndex
                 currentLine = file.ReadLine();
                 if (!validBgColorIndex(currentLine))
+                {
+                    backgroundError("color index");
                     return false;
+                }
 
                 // verify bgHasMusic
                 currentLine = file.ReadLine();
                 if (!validBgHasMusic(currentLine))
+                {
+                    backgroundError("has music");
                     return false;
+                }
 
                 // verify bgMusicIndex
                 currentLine = file.ReadLine();
                 if (!validBgMusicIndex(currentLine))
+                {
+                    backgroundError("music index");
                     return false;
+                }
 
                 // verify object properties
                 // add for loop once it works for one object
@@ -954,117 +1003,186 @@ public class returnToMenu : MonoBehaviour
 
                     // verify objName
                     if (!validObjName(currentLine, i))
+                    {
+                        objectError("name", i);
                         return false;
+                    }
 
                     // verify objPositionX
                     currentLine = file.ReadLine();
                     if (!validObjPositionX(currentLine, maxWidth))
+                    {
+                        objectError("position x", i);
                         return false;
+                    }
 
                     // verify objPositionY
                     currentLine = file.ReadLine();
                     if (!validObjPositionY(currentLine, maxHeight))
+                    {
+                        objectError("position y", i);
                         return false;
+                    }
 
                     // verify objPositionZ
                     currentLine = file.ReadLine();
                     if (!validObjPositionZ(currentLine))
+                    {
+                        objectError("position z", i);
                         return false;
+                    }
 
                     // verify objRotationX
                     currentLine = file.ReadLine();
                     if (!validObjRotation(currentLine, "X"))
+                    {
+                        objectError("rotation x", i);
                         return false;
+                    }
 
                     // verify objRotationY
                     currentLine = file.ReadLine();
                     if (!validObjRotation(currentLine, "Y"))
+                    {
+                        objectError("rotation y", i);
                         return false;
+                    }
 
                     // verify objRotationZ
                     currentLine = file.ReadLine();
                     if (!validObjRotation(currentLine, "Z"))
+                    {
+                        objectError("rotation z", i);
                         return false;
+                    }
 
                     // verify objScaleX
                     currentLine = file.ReadLine();
                     if (!validObjScale(currentLine, "X"))
+                    {
+                        objectError("scale x", i);
                         return false;
+                    }
 
                     // verify objScaleY
                     currentLine = file.ReadLine();
                     if (!validObjScale(currentLine, "Y"))
+                    {
+                        objectError("scale y", i);
                         return false;
+                    }
 
                     // verify objScaleZ
                     currentLine = file.ReadLine();
                     if (!validObjScale(currentLine, "Z"))
+                    {
+                        objectError("scale z", i);
                         return false;
+                    }
 
                     // verify objDraggable
                     currentLine = file.ReadLine();
                     if (!validObjDraggable(currentLine))
+                    {
+                        objectError("draggable", i);
                         return false;
+                    }
 
                     // verify objClickable
                     currentLine = file.ReadLine();
                     if (!validObjClickable(currentLine))
+                    {
+                        objectError("clickable", i);
                         return false;
+                    }
 
                     // verify objSpace
                     currentLine = file.ReadLine();
                     if (!validObjSpace(currentLine))
+                    {
+                        objectError("space", i);
                         return false;
+                    }
 
                     // verify objGravity
                     currentLine = file.ReadLine();
                     if (!validObjGravity(currentLine, ref gravity))
+                    {
+                        objectError("gravity", i);
                         return false;
+                    }
 
                     // verify objImmobile
                     currentLine = file.ReadLine();
                     if (!validObjImmobile(currentLine, gravity, ref immobile))
+                    {
+                        objectError("immobile", i);
                         return false;
+                    }
 
                     // verify objSolid
                     currentLine = file.ReadLine();
                     if (!validObjSolid(currentLine))
+                    {
+                        objectError("solid", i);
                         return false;
+                    }
 
                     // verify objGoal
                     currentLine = file.ReadLine();
                     if (!validObjGoal(currentLine, immobile, ref goal))
+                    {
+                        objectError("goal", i);
                         return false;
+                    }
 
                     // verify objKey
                     currentLine = file.ReadLine();
                     if (!validObjKey(currentLine, immobile, ref key))
+                    {
+                        objectError("key", i);
                         return false;
+                    }
 
                     // verify objControllable
                     currentLine = file.ReadLine();
                     if (!validObjControllable(currentLine, goal, key))
+                    {
+                        objectError("controllable", i);
                         return false;
+                    }
 
                     // verify objSpriteIndex
                     currentLine = file.ReadLine();
                     if (!validObjSpriteIndex(currentLine))
+                    {
+                        objectError("sprite index", i);
                         return false;
+                    }
 
                     // verify objColorIndex
                     currentLine = file.ReadLine();
                     if (!validObjColorIndex(currentLine))
+                    {
+                        objectError("color index", i);
                         return false;
+                    }
 
                     // verify objHasSound
                     currentLine = file.ReadLine();
                     if (!validObjHasSound(currentLine))
+                    {
+                        objectError("has sound", i);
                         return false;
+                    }
 
                     // verify objSoundIndex
                     currentLine = file.ReadLine();
                     if (!validObjSoundIndex(currentLine))
+                    {
+                        objectError("sound index", i);
                         return false;
+                    }
 
                     String nameKey = "objName";
                     // while the next line is not a new object
@@ -1072,7 +1190,10 @@ public class returnToMenu : MonoBehaviour
                     {
                         // if there are no more lines
                         if (file.Peek() == -1)
+                        {
+                            objectError("number of lines", i);
                             return false;
+                        }
 
                         // read in the next line
                         currentLine = file.ReadLine();
@@ -1086,6 +1207,21 @@ public class returnToMenu : MonoBehaviour
         }
 
         return result;
+    }
+    private void levelError(String variable)
+    {
+        error = true;
+        errorMessage = "Error when level was " + change + ". " + "Level " + variable + " is not valid.";
+    }
+    private void backgroundError(String variable)
+    {
+        error = true;
+        errorMessage = "Error when level was " + change + ". " + "Level background " + variable + " is not valid.";
+    }
+    private void objectError(String variable, int i)
+    {
+        error = true;
+        errorMessage = "Error when level was " + change + ". " + "Object " + variable + " for object" + (i + 1) + " is not valid.";
     }
     /**
      * Helper method for validLevel, checks if the key is 0 or 1
@@ -1325,7 +1461,7 @@ public class returnToMenu : MonoBehaviour
             // immobile bool
             save.WriteLine("objImmobile:" + boolToString(objprop.isImmobile));
             // solid bool
-            save.WriteLine("objSolid:" + boolToString(objprop.isSolid));
+            save.WriteLine("objSolid:" + boolToString(objprop.collisions));
             // goal bool
             save.WriteLine("objGoal:" + boolToString(objprop.isTarget));
             // key bool
@@ -1342,9 +1478,9 @@ public class returnToMenu : MonoBehaviour
             save.WriteLine("objSoundIndex:" + objprop.audioClipIndex);
         }
 
-
         save.Close();
 
+        lastFile = path;
         fileChanged = true;
         return true;
     }
@@ -1354,7 +1490,7 @@ public class returnToMenu : MonoBehaviour
     }
     private void loadRandomLevel()
     {
-        string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt");
+        string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt", SearchOption.AllDirectories);
 
         if (filePaths.Length == 0)
         {
@@ -1371,6 +1507,7 @@ public class returnToMenu : MonoBehaviour
         // verify level
         if (!validLevel(path))
         {
+            errorMessage = "Error loading level from " + path + ".\n" + errorMessage;
             return;
         }
 
@@ -1649,23 +1786,23 @@ public class returnToMenu : MonoBehaviour
                     key = "objSolid";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
-                    objProp.isSolid = stringToBool(currentLine);
+                    objProp.collisions = stringToBool(currentLine);
 
                     // TODO: Replace solid with collisions in save/load
 
-                    // TODO: read in objGoal
+                    // read in objGoal
                     key = "objGoal";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.isTarget = stringToBool(currentLine);
 
-                    // TODO: read in objKey
+                    // read in objKey
                     key = "objKey";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.isKey = stringToBool(currentLine);
 
-                    // TODO: read in objControllable
+                    // read in objControllable
                     key = "objControllable";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
@@ -1687,21 +1824,21 @@ public class returnToMenu : MonoBehaviour
                         objMovement.moveDown = false;
                     }
 
-                    // TODO: read in objSpriteIndex
+                    // read in objSpriteIndex
                     key = "objSpriteIndex";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.objectSpriteIndex = int.Parse(currentLine);
                     objProp.spriteRenderer.sprite = objProp.objectSprites[objProp.objectSpriteIndex]; // render new background
 
-                    // TODO: read in objColorIndex
+                    // read in objColorIndex
                     key = "objColorIndex";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.colorIndex = int.Parse(currentLine);
                     objProp.spriteRenderer.color = objProp.colors[objProp.colorIndex]; // render new color
 
-                    // TODO: read in objHasSound
+                    // read in objHasSound
                     key = "objHasSound";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
@@ -1735,6 +1872,9 @@ public class returnToMenu : MonoBehaviour
         {
             return;
         }
+
+        lastFile = path;
+        fileChanged = true;
     }
     private void saveAndLoad()
     {

@@ -173,7 +173,7 @@ MonoBehaviour:
   objectList: []
   maxWidth: 14
   maxHeight: 8
-  winImage: {fileID: 2800000, guid: 58f0be60692d1804e92af2afbe59bfde, type: 3}
+  winImage: {fileID: 2800000, guid: 4dec7d1c3b3fc1d489e27d75f5077650, type: 3}
   loseImage: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!20 &519420031
 Camera:
@@ -486,6 +486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b7d3ca440bca9c49a090f305f146222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Object: {fileID: 0}
   menu: TitleScreen
   playGUI: {fileID: 519420033}
   controller: {fileID: 519420030}
@@ -565,10 +566,10 @@ MonoBehaviour:
   mouseOver: 0
   hasGravity: 0
   isImmobile: 0
-  isSolid: 0
   isTarget: 0
   isKey: 0
   collisions: 1
+  isHostile: 0
   oldPosition: {x: 0, y: 0, z: 0}
   oldPositionSprite: {x: 0, y: 0, z: 0}
   oldScale: {x: 0, y: 0, z: 0}
@@ -851,15 +852,17 @@ MonoBehaviour:
   mouseOver: 0
   hasGravity: 0
   isImmobile: 0
-  isSolid: 0
   isTarget: 0
   isKey: 0
   collisions: 1
+  isHostile: 0
   oldPosition: {x: 0, y: 0, z: 0}
   oldPositionSprite: {x: 0, y: 0, z: 0}
   oldScale: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 0}
-  audioClips: []
+  audioClips:
+  - {fileID: 8300000, guid: 32088ae544d0d334f85ab4f4f56bb88f, type: 3}
+  - {fileID: 8300000, guid: ce4f6e4d4c8569c478135a17e1e0971e, type: 3}
   audioClipIndex: 0
   hasSound: 0
   spriteRenderer: {fileID: 1437997045}
