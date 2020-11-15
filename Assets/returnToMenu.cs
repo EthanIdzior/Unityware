@@ -1662,7 +1662,7 @@ public class returnToMenu : MonoBehaviour
                     // get object properties
                     objProp = newObject.transform.GetChild(0).GetComponent<objectProperties>();
                     objMovement = newObject.GetComponent<playerMoveScript>();
-                    body = newObject.GetComponent<Rigidbody2D>();
+                    body = newObject.transform.GetChild(0).GetComponent<Rigidbody2D>();
 
                     // read in objName
                     key = "objName";
