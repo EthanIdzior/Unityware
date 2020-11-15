@@ -381,7 +381,7 @@ public class GUIscript : MonoBehaviour
         return vector;
     }
     // Save the properties of each object before playing the game
-    void saveObjects()
+    public void saveObjects()
     {
 
         objectProperties objprop;
@@ -399,7 +399,7 @@ public class GUIscript : MonoBehaviour
         }
     }
     // resets the position of objects as playinggame is set to false
-    void resetObjects()
+    public void resetObjects()
     {
         objectProperties objProp;
 

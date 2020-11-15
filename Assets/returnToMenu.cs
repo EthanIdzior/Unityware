@@ -1756,16 +1756,6 @@ public class returnToMenu : MonoBehaviour
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.hasGravity = stringToBool(currentLine);
 
-                    // enable/disable gravity
-                    if (objProp.hasGravity)
-                    {
-                        body.gravityScale = 1;
-                    }
-                    else
-                    {
-                        body.gravityScale = 0;
-                    }
-
                     // TODO: read in objImmobile
                     key = "objImmobile";
                     currentLine = file.ReadLine();
@@ -1866,6 +1856,10 @@ public class returnToMenu : MonoBehaviour
                         currentLine = file.ReadLine();
                     }
                 }
+                // reset the level to round down positions
+                Physics2D.autoSimulation = false;
+                playGUI.saveObjects();
+                playGUI.resetObjects();
             }
         }
         catch (IOException)

@@ -40,6 +40,9 @@ public class objectProperties : MonoBehaviour
     public int audioClipIndex = 0;
     public bool hasSound = false;
 
+    public Rigidbody2D body;
+    public BoxCollider2D collisionBox;
+
     // Create an array to hold the sprites
     public SpriteRenderer spriteRenderer;
     public Sprite[] objectSprites;
@@ -138,27 +141,11 @@ public class objectProperties : MonoBehaviour
 
             GUILayout.EndHorizontal();
 
-            Rigidbody2D body = gameObject.GetComponent<Rigidbody2D>();
-            BoxCollider2D collisionBox = gameObject.GetComponent<BoxCollider2D>();
-
             if (collisions)
                 collisionBox.isTrigger = false;
 
             else
                 collisionBox.isTrigger = true;
-
-            // turn the gravity on/off
-            if (hasGravity && body.gravityScale != 1)
-            {
-                body.gravityScale = 1;
-
-                // turn off immobile
-                isImmobile = false;
-            }
-            else if (!hasGravity && body.gravityScale != 0)
-            {
-                body.gravityScale = 0;
-            }
 
             // turn immobility on
             if (isImmobile && !body.isKinematic)
@@ -354,6 +341,21 @@ public class objectProperties : MonoBehaviour
             }
 			
             menuOpen = true;
+        }
+        // turn the gravity on/off
+        if (playGUI.controller.playingGame)
+        {
+            if (hasGravity && body.gravityScale != 1)
+            {
+                body.gravityScale = 1;
+
+                // turn off immobile
+                isImmobile = false;
+            }
+            else if (!hasGravity && body.gravityScale != 0)
+            {
+                body.gravityScale = 0;
+            }
         }
         //what happens with isDraggable
         /* Allows objects to be dragged in two cases
