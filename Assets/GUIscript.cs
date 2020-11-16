@@ -314,7 +314,7 @@ public class GUIscript : MonoBehaviour
      */
     public int objectCapacity()
     {
-        return ((controller.maxWidth - 1) * (controller.maxHeight - 1));
+        return ((controller.maxWidth + 1) * (controller.maxHeight + 1));
     }
     /**
      * Helper method to add an object
@@ -325,8 +325,8 @@ public class GUIscript : MonoBehaviour
         if (controller.objectList.Count <= objectCapacity())
         {
             GameObject newObject = (GameObject)Instantiate(Object) as GameObject;
-            float x = UnityEngine.Random.Range(0 + 2 + paddingx, controller.maxWidth + 2);
-            float y = UnityEngine.Random.Range(0 + paddingy, controller.maxHeight);
+            float x = UnityEngine.Random.Range(0 + 1 + paddingx, controller.maxWidth + 3);
+            float y = UnityEngine.Random.Range(0 + paddingy - 1, controller.maxHeight + 1);
 
             // make objects not land on top of each other
             int i = 0;
@@ -337,8 +337,8 @@ public class GUIscript : MonoBehaviour
                 if (obj.transform.position.x == x && obj.transform.position.y == y)
                 {
                     // reroll
-                    x = UnityEngine.Random.Range(0 + 2 + paddingx, controller.maxWidth + 2);
-                    y = UnityEngine.Random.Range(0 + paddingy, controller.maxHeight);
+                    x = UnityEngine.Random.Range(0 + 1 + paddingx, controller.maxWidth + 3);
+                    y = UnityEngine.Random.Range(0 + paddingy - 1, controller.maxHeight + 1);
 
                     // start over
                     i = 0;
