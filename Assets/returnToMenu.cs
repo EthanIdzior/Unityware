@@ -16,7 +16,7 @@ public class returnToMenu : MonoBehaviour
     public GameObject Object;
 
     // Variables used for saving to help compatiblity later on
-    int maxProperties = 13; // the number of properties that can be set, used for saving
+    int maxProperties = 14; // the number of properties that can be set, used for saving. Change manually as more properties are added
 
     // Variables related to the menu itself
     int height = 150;
@@ -144,6 +144,7 @@ public class returnToMenu : MonoBehaviour
 
                             fileChanged = true;
                             change = "imported";
+                            lastFile = path;
                         }
                         // if file exists
                         else
@@ -207,7 +208,6 @@ public class returnToMenu : MonoBehaviour
                     else
                     {
                         error = true;
-                        errorMessage = errorMessage + "\nThe imported level is not valid";
                     }
                 }
             }
@@ -689,7 +689,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    public bool validObjSolid(String currentLine)
+    public bool validObjSolid(String currentLine, ref bool solid)
     {
         String key = "objSolid";
         if (hasKey(currentLine, key))
@@ -699,6 +699,7 @@ public class returnToMenu : MonoBehaviour
             if (!isIntBoolean(currentLine, key))
                 return false;
 
+            solid = stringToBool(currentLine);
             return true;
         }
         else
@@ -751,7 +752,7 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
-    public bool validObjControllable(String currentLine, bool goal, bool objKey)
+    public bool validObjControllable(String currentLine, bool goal, bool objKey, ref bool controllable)
     {
         String key = "objControllable";
         if (hasKey(currentLine, key))
@@ -761,7 +762,7 @@ public class returnToMenu : MonoBehaviour
             if (!isIntBoolean(currentLine, key))
                 return false;
 
-            bool controllable = stringToBool(currentLine);
+            controllable = stringToBool(currentLine);
 
             // controllable cannot be active at the same time as goal or key
             if ((goal && controllable) || (objKey && controllable))
@@ -852,6 +853,32 @@ public class returnToMenu : MonoBehaviour
         else
             return false;
     }
+    public bool validObjHostile(String currentLine, bool controllable, bool immobile, bool solid, bool objKey, bool goal)
+    {
+        String key = "objHostile";
+        if (hasKey(currentLine, key))
+        {
+            currentLine = currentLine.Substring(key.Length + 1);
+
+            if (!isIntBoolean(currentLine, key))
+                return false;
+
+            bool hostile = stringToBool(currentLine);
+
+            // check if when hostile is true controllable, immobile, solid, key, and goal should be false
+            if (hostile)
+            {
+                if (controllable || immobile || solid || objKey || goal)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        else
+            return false;
+    }
     /**
      * Method to ensure that levels are valid
      */
@@ -862,11 +889,13 @@ public class returnToMenu : MonoBehaviour
 
         int objTotal = 0;
         int objNum = 0;
-        int maxProperties = 0;
+        int fileProperties = 0;
         int maxWidth = 0;
         int maxHeight = 0;
         bool gravity = false;
         bool immobile = false;
+        bool controllable = false;
+        bool solid = false;
         bool goal = false;
         bool key = false;
 
@@ -934,10 +963,9 @@ public class returnToMenu : MonoBehaviour
                     return false;
                 }
 
-
                 // verify maxProperties
                 currentLine = file.ReadLine();
-                if (!validMaxProperties(currentLine, ref maxProperties))
+                if (!validMaxProperties(currentLine, ref fileProperties))
                 {
                     levelError("max properties");
                     return false;
@@ -1122,7 +1150,7 @@ public class returnToMenu : MonoBehaviour
 
                     // verify objSolid
                     currentLine = file.ReadLine();
-                    if (!validObjSolid(currentLine))
+                    if (!validObjSolid(currentLine, ref solid))
                     {
                         objectError("solid", i);
                         return false;
@@ -1146,7 +1174,7 @@ public class returnToMenu : MonoBehaviour
 
                     // verify objControllable
                     currentLine = file.ReadLine();
-                    if (!validObjControllable(currentLine, goal, key))
+                    if (!validObjControllable(currentLine, goal, key, ref controllable))
                     {
                         objectError("controllable", i);
                         return false;
@@ -1182,6 +1210,17 @@ public class returnToMenu : MonoBehaviour
                     {
                         objectError("sound index", i);
                         return false;
+                    }
+
+                    if (fileProperties >= 14)
+                    {
+                        // verify objHostile
+                        currentLine = file.ReadLine();
+                        if (!validObjHostile(currentLine, controllable, immobile, solid, key, goal))
+                        {
+                            objectError("hostile", i);
+                            return false;
+                        }
                     }
 
                     String nameKey = "objName";
@@ -1476,6 +1515,8 @@ public class returnToMenu : MonoBehaviour
             save.WriteLine("objHasSound:" + boolToString(objprop.hasSound));
             // sound index
             save.WriteLine("objSoundIndex:" + objprop.audioClipIndex);
+            // hostility
+            save.WriteLine("objHostile:" + boolToString(objprop.isHostile));
         }
 
         save.Close();
@@ -1498,7 +1539,7 @@ public class returnToMenu : MonoBehaviour
             errorMessage = "No save files found";
             return;
         }
-
+        
         int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
         loadLevel(filePaths[randomIndex]);
     }
@@ -1510,6 +1551,7 @@ public class returnToMenu : MonoBehaviour
             errorMessage = "Error loading level from " + path + ".\n" + errorMessage;
             return;
         }
+        int fileProperties = 0;
 
         // clear old level stuff
         playGUI.resetLevel();
@@ -1524,7 +1566,7 @@ public class returnToMenu : MonoBehaviour
             // read in level
             using (StreamReader file = new StreamReader(path))
             {
-                // TODO: read in level properties
+                // read in level properties
                 // turn off physics
                 Physics2D.autoSimulation = true;
 
@@ -1587,11 +1629,11 @@ public class returnToMenu : MonoBehaviour
                 currentLine = currentLine.Substring(key.Length + 1);
                 objNum = int.Parse(currentLine); // store for later
 
-                // read in maxProperties
+                // read in maxProperties for the time when this save file was made
                 key = "maxProperties";
                 currentLine = file.ReadLine();
                 currentLine = currentLine.Substring(key.Length + 1);
-                maxProperties = int.Parse(currentLine);
+                fileProperties = int.Parse(currentLine);
 
                 // read in maxWidth
                 key = "maxWidth";
@@ -1620,13 +1662,13 @@ public class returnToMenu : MonoBehaviour
                 background.colorIndex = int.Parse(currentLine);
                 background.spriteRenderer.color = background.colors[background.colorIndex]; // render new color
 
-                // TODO: read in bgHasMusic
+                // read in bgHasMusic
                 key = "bgHasMusic";
                 currentLine = file.ReadLine();
                 currentLine = currentLine.Substring(key.Length + 1);
                 background.hasSound = stringToBool(currentLine);
 
-                // TODO: read in bgMusicIndex
+                // read in bgMusicIndex
                 key = "bgMusicIndex";
                 currentLine = file.ReadLine();
                 currentLine = currentLine.Substring(key.Length + 1);
@@ -1647,7 +1689,7 @@ public class returnToMenu : MonoBehaviour
                 float y = 0;
                 float z = 0;
 
-                // TODO: read in object properties
+                // read in object properties
                 // add for loop once it works for one object
                 for (int i = 0; i < objNum; i++)
                 {
@@ -1732,31 +1774,31 @@ public class returnToMenu : MonoBehaviour
                     // transform object scale
                     newObject.transform.GetChild(0).transform.localScale = new Vector3(x, y, z);
 
-                    // TODO: read in objDraggable
+                    // read in objDraggable
                     key = "objDraggable";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.isDraggable = stringToBool(currentLine);
 
-                    // TODO: read in objClickable
+                    // read in objClickable
                     key = "objClickable";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.isClickable = stringToBool(currentLine);
 
-                    // TODO: read in objSpace
+                    // read in objSpace
                     key = "objSpace";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.kbInputOn = stringToBool(currentLine);
 
-                    // TODO: read in objGravity
+                    // read in objGravity
                     key = "objGravity";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.hasGravity = stringToBool(currentLine);
 
-                    // TODO: read in objImmobile
+                    // read in objImmobile
                     key = "objImmobile";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
@@ -1772,13 +1814,11 @@ public class returnToMenu : MonoBehaviour
                         body.isKinematic = false;
                     }
 
-                    // TODO: read in objSolid
+                    // read in objSolid
                     key = "objSolid";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.collisions = stringToBool(currentLine);
-
-                    // TODO: Replace solid with collisions in save/load
 
                     // read in objGoal
                     key = "objGoal";
@@ -1834,12 +1874,22 @@ public class returnToMenu : MonoBehaviour
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.hasSound = stringToBool(currentLine);
 
-                    // TODO: read in objSoundIndex
+                    // read in objSoundIndex
                     key = "objSoundIndex";
                     currentLine = file.ReadLine();
                     currentLine = currentLine.Substring(key.Length + 1);
                     objProp.audioClipIndex = int.Parse(currentLine);
                     objProp.audioSource.clip = objProp.audioClips[objProp.audioClipIndex];
+
+                    // if the save file should have more properties
+                    if (fileProperties >= 14)
+                    {
+                        // read in hostile property
+                        key = "objHostile";
+                        currentLine = file.ReadLine();
+                        currentLine = currentLine.Substring(key.Length + 1);
+                        objProp.isHostile = stringToBool(currentLine);
+                    }
 
                     // add new object to the list
                     controller.objectList.Add(newObject);
