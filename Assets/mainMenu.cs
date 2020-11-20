@@ -60,7 +60,10 @@ public class mainMenu : MonoBehaviour
 
     public void playThree()
     {
-
+        SceneManager.LoadScene(levelEditor);
+        GameObject camera = GameObject.Find("Main Camera");
+        camera.GetComponent<GUIscript>().playMode = true;
+        camera.GetComponent<GUIscript>().levelsLeft = 3;
     }
     
     public void goBack()

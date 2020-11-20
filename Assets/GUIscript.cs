@@ -22,6 +22,10 @@ public class GUIscript : MonoBehaviour
     bool settingsReset = false; // if true a confirmation prompt for resetting the settings will appear
     bool levelReset = false; // if true a confirmation prompt for resetting the level will appear 
 
+    // Set levels left and play mode
+    public bool playMode = false;
+    public int levelsLeft = 0;
+
     private objectProperties objProperties;
 
     // Variables related to retrieving the background music
