@@ -104,7 +104,7 @@ public class objectProperties : MonoBehaviour
     private void OnGUI()
     {
 
-        if (menuOpen && !playGUI.controller.playingGame)
+        if (menuOpen && (!mechanics.playingGame && mechanics.showGUI))
         {
             mousePos = Input.mousePosition;
             GUILayout.BeginArea(new Rect(0, 4, 230, 400), GUI.skin.box);

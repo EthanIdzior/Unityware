@@ -13,6 +13,8 @@ public class gameMechanics : MonoBehaviour
     public Boolean hasTimer = false;
     public Boolean hasPoints = false;
 
+    public Boolean showGUI = true; // boolean to show the gui, allows it to be hidden
+
     // Values that can be set externally
     public float timerStart = 0;
     public float initialStartTime; // initial start time from the editor, use to reset the start time

@@ -424,7 +424,20 @@ public class GUIscript : MonoBehaviour
     }
     void OnGUI()
     {
-        if (!controller.playingGame)
+        /*
+        // TODO: delete these two buttons, exists only to test disabling gui
+        if (controller.showGUI && GUILayout.Button("Hide GUI"))
+        {
+            controller.showGUI = false;
+        }
+        if(!controller.showGUI && GUILayout.Button("Show GUI"))
+        {
+            controller.showGUI = true;
+        }
+        // TODO: delete these buttons
+        */
+
+        if (controller.showGUI && !controller.playingGame)
         {
 
             // Create the level Menu
@@ -588,76 +601,80 @@ public class GUIscript : MonoBehaviour
                 GUILayout.EndArea();
             }
         }
-        // Play/Pause Button
-        if (GUI.Button(new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
+        if (controller.showGUI)
         {
-            // Change from edit to play
-            if (buttonSymbol == "▶")
+            // Play/Pause Button
+            if (GUI.Button(new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
             {
-                buttonSymbol = "| |";
-
-                // Make a list of all hostile objects
-                hostileObjects.Clear();
-                foreach (GameObject g in controller.objectList)
+                // Change from edit to play
+                if (buttonSymbol == "▶")
                 {
-                    if ((g.GetComponentsInChildren<objectProperties>())[0].isHostile)
+                    buttonSymbol = "| |";
+
+                    // Make a list of all hostile objects
+                    hostileObjects.Clear();
+                    foreach (GameObject g in controller.objectList)
                     {
-                        hostileObjects.Add(g);
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].isHostile)
+                        {
+                            hostileObjects.Add(g);
+                        }
+
                     }
 
-                }
-
-                controllableObjects.Clear();
-                foreach (GameObject g in controller.objectList)
-                {
-                    if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
+                    controllableObjects.Clear();
+                    foreach (GameObject g in controller.objectList)
                     {
-                        controllableObjects.Add(g);
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
+                        {
+                            controllableObjects.Add(g);
+                        }
+
                     }
 
+                    saveObjects();
+
+                    // Set game variables
+                    keyAmount = 0;
+                    keysSaved = false;
+                    positionsSaved = false;
+                    goalLocations.Clear();
+                    startingLocation.Clear();
+                    keyLocations.Clear();
+
+
+                    controller.playingGame = true;
+                    Physics2D.autoSimulation = true;
+
+                    // Refresh the background music
+                    audioSource = background.GetComponent<AudioSource>();
+                    hasSound = background.GetComponent<changeBackground>().hasSound;
+
+                    if (hasSound)
+                    {
+                        audioSource.Play();
+                    }
                 }
 
-                saveObjects();
-
-                // Set game variables
-                keyAmount = 0;
-                keysSaved = false;
-                positionsSaved = false;
-                goalLocations.Clear();
-                startingLocation.Clear();
-                keyLocations.Clear();
-
-
-                controller.playingGame = true;
-                Physics2D.autoSimulation = true;
-
-                // Refresh the background music
-                audioSource = background.GetComponent<AudioSource>();
-                hasSound = background.GetComponent<changeBackground>().hasSound;
-
-                if (hasSound)
+                // Change from play to edit
+                else if (buttonSymbol == "| |")
                 {
-                    audioSource.Play();
+                    buttonSymbol = "▶";
+                    controller.playingGame = false;
+                    Physics2D.autoSimulation = false;
+
+                    // reset the position of all objects
+                    resetObjects();
+
+                    if (hasSound)
+                    {
+                        audioSource.Pause();
+                    }
                 }
+
             }
-
-            // Change from play to edit
-            else if (buttonSymbol == "| |")
-            {
-                buttonSymbol = "▶";
-                controller.playingGame = false;
-                Physics2D.autoSimulation = false;
-
-                // reset the position of all objects
-                resetObjects();
-
-                if (hasSound)
-                {
-                    audioSource.Pause();
-                }
-            }
-
         }
+       
 
         // Play instruction
         if (controller.playingGame && (controller.timerStart - controller.timeLeft < 3) && instruction != "")

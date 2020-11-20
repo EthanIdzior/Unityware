@@ -58,222 +58,225 @@ public class returnToMenu : MonoBehaviour
 
     private void OnGUI()
     {
-        if (menuOpen && !playGUI.controller.playingGame)
+        if (controller.showGUI && !controller.playingGame)
         {
-            GUILayout.BeginArea(new Rect(Screen.width - width-width, Screen.height - height, width, height), GUI.skin.box);
-
-            GUILayout.BeginHorizontal("box");
-            GUILayout.Label("Menu Controls");
-            if (GUILayout.Button("_"))
+            if (menuOpen)
             {
-                menuOpen = false;
-            }
-            GUILayout.EndHorizontal();
+                GUILayout.BeginArea(new Rect(Screen.width - width-width, Screen.height - height, width, height), GUI.skin.box);
 
-            // Save/Load locally
-            GUILayout.BeginHorizontal("box");
-            if (GUILayout.Button("Save Level"))
-            {
-                change = "saved";
-                saveLevel();
+                GUILayout.BeginHorizontal("box");
+                GUILayout.Label("Menu Controls");
+                if (GUILayout.Button("_"))
+                {
+                    menuOpen = false;
+                }
+                GUILayout.EndHorizontal();
+
+                // Save/Load locally
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Save Level"))
+                {
+                    change = "saved";
+                    saveLevel();
                 
-            }
-            if (GUILayout.Button("Load Level"))
-            {
-                change = "loaded";
-
-                // if level changed, ask the user if they are sure they would like to continue
-                if (playGUI.levelChanged())
-                {
-                    oldLevelChanged = true;
                 }
-                else
+                if (GUILayout.Button("Load Level"))
                 {
-                    loadRandomLevel(); // TODO: change to loadLevel once a way to select is implemented
-                }
-            }
-            GUILayout.EndHorizontal();
+                    change = "loaded";
 
-            // Save/Load to/from a user defined location
-            GUILayout.BeginHorizontal("box");
-            if (GUILayout.Button("Export Level"))
-            {
-                change = "exported";
-                if (!String.IsNullOrEmpty(playGUI.levelName))
-                {
-                    String path;
-
-                    path = EditorUtility.SaveFilePanel(
-                        "Export level",
-                        "",
-                        nameToFileName(playGUI.levelName) + ".txt",
-                        "txt");
-                    if (path.Length != 0)
+                    // if level changed, ask the user if they are sure they would like to continue
+                    if (playGUI.levelChanged())
                     {
-                        saveLevel(path);
+                        oldLevelChanged = true;
+                    }
+                    else
+                    {
+                        loadRandomLevel(); // TODO: change to loadLevel once a way to select is implemented
                     }
                 }
-                else
+                GUILayout.EndHorizontal();
+
+                // Save/Load to/from a user defined location
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Export Level"))
                 {
-                    error = true;
-                    errorMessage = "Level must be named before exporting";
-                }
-
-            }
-            if (GUILayout.Button("Import Level"))
-            {
-                change = "imported";
-                String path;
-
-                // get the path of the level
-                path = EditorUtility.OpenFilePanel(
-                    "Import a level",
-                    "",
-                    "txt");
-
-                if (path.Length != 0)
-                {
-                    // verify imported level
-                    if (validLevel(path))
+                    change = "exported";
+                    if (!String.IsNullOrEmpty(playGUI.levelName))
                     {
-                        // if file does not exist
-                        if (!File.Exists("Assets/Saves/" + Path.GetFileName(path)))
+                        String path;
+
+                        path = EditorUtility.SaveFilePanel(
+                            "Export level",
+                            "",
+                            nameToFileName(playGUI.levelName) + ".txt",
+                            "txt");
+                        if (path.Length != 0)
                         {
-                            // copy file to local saves
-                            File.Copy(path, "Assets/Saves/" + Path.GetFileName(path));
-
-                            fileChanged = true;
-                            change = "imported";
-                            lastFile = path;
-                        }
-                        // if file exists
-                        else
-                        {
-                            // compare level files to see if the id matches
-
-                            String localSecondLine = "";
-                            String importSecondLine = "";
-                            bool localHasSecond = true;
-                            bool importHasSecond = true;
-
-                            try
-                            {
-                                // get the second line for the first file
-                                using (StreamReader localFile = new StreamReader("Assets/Saves/" + Path.GetFileName(path)))
-                                {
-                                    localFile.ReadLine(); // Skip first line
-                                    localSecondLine = localFile.ReadLine();
-                                    // if something goes wrong reading these lines
-                                }
-                            }
-                            catch (IOException)
-                            {
-                                localHasSecond = false;
-                            }
-
-                            // get the second line for the second file if the first was successful
-                            if (localHasSecond)
-                            {
-                                try
-                                {
-                                    using (StreamReader importFile = new StreamReader(path))
-                                    {
-                                        importFile.ReadLine(); // Skip first line
-                                        importSecondLine = importFile.ReadLine();
-                                    }
-                                }
-                                catch (IOException)
-                                {
-                                    importHasSecond = false;
-                                }
-
-                            }
-
-                            if (localHasSecond && importHasSecond)
-                            {
-                                // if the id of both levels is the same
-                                if (String.Equals(localSecondLine, importSecondLine))
-                                {
-                                    error = true;
-                                    errorMessage = "This level already exists";
-                                }
-                            }
-                            else
-                            {
-                                error = true;
-                                errorMessage = "A level already exists with the same name";
-                            }
+                            saveLevel(path);
                         }
                     }
                     else
                     {
                         error = true;
+                        errorMessage = "Level must be named before exporting";
+                    }
+
+                }
+                if (GUILayout.Button("Import Level"))
+                {
+                    change = "imported";
+                    String path;
+
+                    // get the path of the level
+                    path = EditorUtility.OpenFilePanel(
+                        "Import a level",
+                        "",
+                        "txt");
+
+                    if (path.Length != 0)
+                    {
+                        // verify imported level
+                        if (validLevel(path))
+                        {
+                            // if file does not exist
+                            if (!File.Exists("Assets/Saves/" + Path.GetFileName(path)))
+                            {
+                                // copy file to local saves
+                                File.Copy(path, "Assets/Saves/" + Path.GetFileName(path));
+
+                                fileChanged = true;
+                                change = "imported";
+                                lastFile = path;
+                            }
+                            // if file exists
+                            else
+                            {
+                                // compare level files to see if the id matches
+
+                                String localSecondLine = "";
+                                String importSecondLine = "";
+                                bool localHasSecond = true;
+                                bool importHasSecond = true;
+
+                                try
+                                {
+                                    // get the second line for the first file
+                                    using (StreamReader localFile = new StreamReader("Assets/Saves/" + Path.GetFileName(path)))
+                                    {
+                                        localFile.ReadLine(); // Skip first line
+                                        localSecondLine = localFile.ReadLine();
+                                        // if something goes wrong reading these lines
+                                    }
+                                }
+                                catch (IOException)
+                                {
+                                    localHasSecond = false;
+                                }
+
+                                // get the second line for the second file if the first was successful
+                                if (localHasSecond)
+                                {
+                                    try
+                                    {
+                                        using (StreamReader importFile = new StreamReader(path))
+                                        {
+                                            importFile.ReadLine(); // Skip first line
+                                            importSecondLine = importFile.ReadLine();
+                                        }
+                                    }
+                                    catch (IOException)
+                                    {
+                                        importHasSecond = false;
+                                    }
+
+                                }
+
+                                if (localHasSecond && importHasSecond)
+                                {
+                                    // if the id of both levels is the same
+                                    if (String.Equals(localSecondLine, importSecondLine))
+                                    {
+                                        error = true;
+                                        errorMessage = "This level already exists";
+                                    }
+                                }
+                                else
+                                {
+                                    error = true;
+                                    errorMessage = "A level already exists with the same name";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            error = true;
+                        }
                     }
                 }
-            }
-            GUILayout.EndHorizontal();
+                GUILayout.EndHorizontal();
 
-            if (GUILayout.Button("Return To Menu"))
-            {
-                SceneManager.LoadScene(menu);
-            }
+                if (GUILayout.Button("Return To Menu"))
+                {
+                    SceneManager.LoadScene(menu);
+                }
 
 
-            GUILayout.EndArea();
-        }
-        else if (!playGUI.controller.playingGame)
-        {
-            GUILayout.BeginArea(new Rect(Screen.width - 40-width, Screen.height - 30, 40, 30), GUI.skin.box);
-            if (GUILayout.Button("_"))
-            {
-                menuOpen = true;
+                GUILayout.EndArea();
             }
-            GUILayout.EndArea();
-        }
-        if (error)
-        {
-            // display error messages on the user end. ex: level needs to be named, etc
-            GUILayout.BeginArea(new Rect((Screen.width / 2) - (230 / 2), (Screen.height / 2) - (120 / 2), 230, 120), GUI.skin.box);
-            GUILayout.Label("ERROR: " + errorMessage);
-            if (GUILayout.Button("Close"))
+            else if (!playGUI.controller.playingGame)
             {
-                error = false;
+                GUILayout.BeginArea(new Rect(Screen.width - 40-width, Screen.height - 30, 40, 30), GUI.skin.box);
+                if (GUILayout.Button("_"))
+                {
+                    menuOpen = true;
+                }
+                GUILayout.EndArea();
             }
-            GUILayout.EndArea();
-        }
-        if (fileChanged)
-        {
-            // Display a message saying that the level was saved successfully
-            GUILayout.BeginArea(new Rect((Screen.width / 2) - (400 / 2), (Screen.height / 2) - (60 / 2), 400, 60), GUI.skin.box);
-            GUILayout.Label("Level at path " + lastFile + " " + change + " successfully");
-            if (GUILayout.Button("Close"))
+            if (error)
             {
-                fileChanged = false;
+                // display error messages on the user end. ex: level needs to be named, etc
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (230 / 2), (Screen.height / 2) - (120 / 2), 230, 120), GUI.skin.box);
+                GUILayout.Label("ERROR: " + errorMessage);
+                if (GUILayout.Button("Close"))
+                {
+                    error = false;
+                }
+                GUILayout.EndArea();
             }
-            GUILayout.EndArea();
-        }
-        if (oldLevelChanged)
-        {
-            GUILayout.BeginArea(new Rect((Screen.width / 2) - (400 / 2), (Screen.height / 2) - (60 / 2), 400, 80), GUI.skin.box);
+            if (fileChanged)
+            {
+                // Display a message saying that the level was saved successfully
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (400 / 2), (Screen.height / 2) - (60 / 2), 400, 60), GUI.skin.box);
+                GUILayout.Label("Level at path " + lastFile + " " + change + " successfully");
+                if (GUILayout.Button("Close"))
+                {
+                    fileChanged = false;
+                }
+                GUILayout.EndArea();
+            }
+            if (oldLevelChanged)
+            {
+                GUILayout.BeginArea(new Rect((Screen.width / 2) - (400 / 2), (Screen.height / 2) - (60 / 2), 400, 80), GUI.skin.box);
 
-            GUILayout.Label("Would you like to save the current level before loading another?");
-            GUILayout.BeginHorizontal("box");
-            if (GUILayout.Button("Save and Load"))
-            {
-                saveAndLoad();
-                oldLevelChanged = false; // hide menu
+                GUILayout.Label("Would you like to save the current level before loading another?");
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Save and Load"))
+                {
+                    saveAndLoad();
+                    oldLevelChanged = false; // hide menu
+                }
+                if (GUILayout.Button("Load without Saving"))
+                {
+                    loadRandomLevel(); // TODO: change to loadLevel when a way to select a level is implemented
+                    oldLevelChanged = false; // hide menu
+                }
+                if (GUILayout.Button("Cancel"))
+                {
+                    oldLevelChanged = false; // hide menu
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.EndArea();
             }
-            if (GUILayout.Button("Load without Saving"))
-            {
-                loadRandomLevel(); // TODO: change to loadLevel when a way to select a level is implemented
-                oldLevelChanged = false; // hide menu
-            }
-            if (GUILayout.Button("Cancel"))
-            {
-                oldLevelChanged = false; // hide menu
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.EndArea();
         }
     }
     /**
