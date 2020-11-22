@@ -58,8 +58,19 @@ public class returnToMenu : MonoBehaviour
 
     private void OnGUI()
     {
+        
+
         if (controller.showGUI && !controller.playingGame)
         {
+            // TODO: delete button, temp
+            if (GUILayout.Button("Take Screenshots"))
+            {
+                controller.showGUI = false;
+                createScreenshots();
+                controller.showGUI = true;
+            }
+            // TODO: delete button, temp
+
             if (menuOpen)
             {
                 GUILayout.BeginArea(new Rect(Screen.width - width-width, Screen.height - height, width, height), GUI.skin.box);
@@ -282,7 +293,7 @@ public class returnToMenu : MonoBehaviour
     /**
      * Helper method to ensure the name is valid
      */
-    public bool validName(String currentLine)
+    public bool validName(String currentLine, String path)
     {
         String key = "name";
         // verify first half of line
@@ -291,9 +302,12 @@ public class returnToMenu : MonoBehaviour
             // strip key
             currentLine = currentLine.Substring(key.Length + 1);
 
-            // check if name is empty or null
-            if (String.IsNullOrEmpty(currentLine))
-                return false;
+            // check if name is empty or null, skip check if the path is the temp level
+            if (path != "Assets/Saves/temp level.txt")
+            {
+                if (String.IsNullOrEmpty(currentLine))
+                    return false;
+            }
 
             if (currentLine.Length > playGUI.maxNameLength)
                 return false;
@@ -911,7 +925,7 @@ public class returnToMenu : MonoBehaviour
 
                 // verify name
                 currentLine = file.ReadLine();
-                if (!validName(currentLine))
+                if (!validName(currentLine, path))
                 {
                     levelError("name");
                     return false;
@@ -1395,16 +1409,20 @@ public class returnToMenu : MonoBehaviour
 
         return saveLevel(fileName);
     }
-    /**
-     * Method to save levels given the path
-     */
     private bool saveLevel(String path)
     {
-        if (String.IsNullOrEmpty(playGUI.levelName))
+        return saveLevel(path, false);
+    }
+    private bool saveLevel(String path, bool skipName)
+    {
+        if (!skipName)
         {
-            error = true;
-            errorMessage = "Level must be named before saving";
-            return false;
+            if (String.IsNullOrEmpty(playGUI.levelName))
+            {
+                error = true;
+                errorMessage = "Level must be named before saving";
+                return false;
+            }
         }
 
         // check if the file exists
@@ -1527,6 +1545,58 @@ public class returnToMenu : MonoBehaviour
         lastFile = path;
         fileChanged = true;
         return true;
+    }
+    private IEnumerator takeScreenshot(String path)
+    {
+        String imagePath = path.Replace(".txt", ".png");
+        // load level
+        loadLevel(path);
+
+        UnityEngine.Debug.Log("aaaa " + path);
+
+        // delete old screenshot
+        if (System.IO.File.Exists(imagePath))
+        {
+            System.IO.File.Delete(imagePath);
+        }
+
+        // take screenshot
+        ScreenCapture.CaptureScreenshot(imagePath);
+        // TODO: find out how to make it take more than one 
+        //ScreenCapture.CaptureScreenshot("SomeLevel.png");
+
+        
+        // wait for the screenshot to be done
+        while (!System.IO.File.Exists(imagePath)){
+            yield return new WaitForSeconds(1);
+        }
+
+        UnityEditor.AssetDatabase.Refresh();
+    }
+    private void createScreenshots()
+    {
+        String oldLevel = "Assets/Saves/temp level.txt";
+        // hide gui
+
+        // save the old level as temp
+        saveLevel(oldLevel, true);
+
+        // get all levels
+        string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt", SearchOption.AllDirectories);
+
+        foreach (String currentPath in filePaths)
+        {
+            if (currentPath != oldLevel)
+            {
+                // TODO: take screenshot
+                StartCoroutine(takeScreenshot(currentPath));
+            }
+
+        }
+        // TO DO reload level and delete temp
+        loadLevel(oldLevel);
+
+        fileChanged = false;
     }
     private void loadLevel()
     {
