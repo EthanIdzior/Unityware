@@ -42,9 +42,17 @@ public class returnToMenu : MonoBehaviour
 
     private bool oldLevelChanged = false;
 
+    // boolean variables to track progress for operations that need multiple frames to execute, aka screenshots
+    private bool screenshotSetUp = false;
+    private bool screenshotTaken = false;
+    private String oldLevelPath = "Assets/Saves/temp level.txt";
+    private bool importing = false;
+
     // Start is called before the first frame update
     private void Start()
     {
+        QualitySettings.vSyncCount = 1;
+
         // Retrieve variables from other scripts
         GameObject mainCamera = GameObject.Find("Main Camera");
         playGUI = mainCamera.GetComponent<GUIscript>();
@@ -62,14 +70,6 @@ public class returnToMenu : MonoBehaviour
 
         if (controller.showGUI && !controller.playingGame)
         {
-            // TODO: delete button, temp
-            if (GUILayout.Button("Take Screenshots"))
-            {
-                controller.showGUI = false;
-                createScreenshots();
-                controller.showGUI = true;
-            }
-            // TODO: delete button, temp
 
             if (menuOpen)
             {
@@ -158,6 +158,10 @@ public class returnToMenu : MonoBehaviour
                                 fileChanged = true;
                                 change = "imported";
                                 lastFile = path;
+
+                                // start taking a screenshot if successful
+                                // importing = true;
+                                setupScreenshot();
                             }
                             // if file exists
                             else
@@ -288,6 +292,21 @@ public class returnToMenu : MonoBehaviour
                 GUILayout.EndHorizontal();
                 GUILayout.EndArea();
             }
+        }
+
+
+    }
+    void Update()
+    {
+        // if a screenshot was just taken
+        if (screenshotTaken)
+        {
+            teardownScreenshot();
+        }
+        // if the scene is set up to take a screenshot
+        if (screenshotSetUp)
+        {
+            createScreenshot();
         }
     }
     /**
@@ -1542,6 +1561,9 @@ public class returnToMenu : MonoBehaviour
 
         save.Close();
 
+        // start setting up the screenshot
+        setupScreenshot();
+
         lastFile = path;
         fileChanged = true;
         return true;
@@ -1549,10 +1571,6 @@ public class returnToMenu : MonoBehaviour
     private IEnumerator takeScreenshot(String path)
     {
         String imagePath = path.Replace(".txt", ".png");
-        // load level
-        loadLevel(path);
-
-        UnityEngine.Debug.Log("aaaa " + path);
 
         // delete old screenshot
         if (System.IO.File.Exists(imagePath))
@@ -1560,43 +1578,64 @@ public class returnToMenu : MonoBehaviour
             System.IO.File.Delete(imagePath);
         }
 
+        // wait for the next frame
+        yield return new WaitForEndOfFrame();
+
         // take screenshot
         ScreenCapture.CaptureScreenshot(imagePath);
-        // TODO: find out how to make it take more than one 
-        //ScreenCapture.CaptureScreenshot("SomeLevel.png");
 
-        
-        // wait for the screenshot to be done
-        while (!System.IO.File.Exists(imagePath)){
-            yield return new WaitForSeconds(1);
-        }
+        // wait for the next frame
+        yield return new WaitForEndOfFrame();
 
         UnityEditor.AssetDatabase.Refresh();
     }
-    private void createScreenshots()
+    private void createScreenshot()
     {
-        String oldLevel = "Assets/Saves/temp level.txt";
-        // hide gui
+        // take the screenshot
+        String currentPath = "Assets/Saves/" + playGUI.levelName + ".txt";
+        StartCoroutine(takeScreenshot(currentPath));
 
-        // save the old level as temp
-        saveLevel(oldLevel, true);
-
-        // get all levels
-        string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt", SearchOption.AllDirectories);
-
-        foreach (String currentPath in filePaths)
+        // reset boolean value
+        screenshotSetUp = false;
+        screenshotTaken = true;
+    }
+    private void setupScreenshot()
+    {
+        // if set to true, save old level
+        if (importing)
         {
-            if (currentPath != oldLevel)
-            {
-                // TODO: take screenshot
-                StartCoroutine(takeScreenshot(currentPath));
-            }
-
+            saveLevel(oldLevelPath, true);
         }
-        // TO DO reload level and delete temp
-        loadLevel(oldLevel);
 
+        /*// load new level
+        if (importing)
+        {
+            loadLevel(path);
+        }*/
+
+        // hide gui
+        controller.showGUI = false;
+
+        // set this boolean value for the next step
+        screenshotSetUp = true;
+    }
+    private void teardownScreenshot()
+    {
+        // if set to true, load old level
+        // TODO: uncomment once saving the old level is figured out
+        /* if (importing)
+        {
+            loadLevel(oldLevelPath);
+            
+        } */
+
+        // show gui
+        controller.showGUI = true;
+
+        // reset booleans
         fileChanged = false;
+        screenshotTaken = false;
+        importing = false;
     }
     private void loadLevel()
     {
