@@ -42,9 +42,8 @@ public class returnToMenu : MonoBehaviour
 
     private bool oldLevelChanged = false;
 
-    // boolean variables to track progress for operations that need multiple frames to execute, aka screenshots
-    private bool screenshotSetUp = false;
-    private bool screenshotTaken = false;
+    // variables to track progress for operations that need multiple frames to execute, aka screenshots
+    private int screenshotstage = 0;
     private String oldLevelPath = "Assets/Saves/temp level.txt";
     private bool importing = false;
 
@@ -66,14 +65,11 @@ public class returnToMenu : MonoBehaviour
 
     private void OnGUI()
     {
-        
-
         if (controller.showGUI && !controller.playingGame)
         {
-
             if (menuOpen)
             {
-                GUILayout.BeginArea(new Rect(Screen.width - width-width, Screen.height - height, width, height), GUI.skin.box);
+                GUILayout.BeginArea(new Rect(Screen.width - width - width, Screen.height - height, width, height), GUI.skin.box);
 
                 GUILayout.BeginHorizontal("box");
                 GUILayout.Label("Menu Controls");
@@ -87,9 +83,14 @@ public class returnToMenu : MonoBehaviour
                 GUILayout.BeginHorizontal("box");
                 if (GUILayout.Button("Save Level"))
                 {
-                    change = "saved";
                     saveLevel();
-                
+
+                    fileChanged = true;
+                    change = "saved";
+                    lastFile = playGUI.levelName;
+
+                    // start setting up the screenshot
+                    screenshotstage = 2;
                 }
                 if (GUILayout.Button("Load Level"))
                 {
@@ -102,7 +103,7 @@ public class returnToMenu : MonoBehaviour
                     }
                     else
                     {
-                        loadRandomLevel(); // TODO: change to loadLevel once a way to select is implemented
+                        lastFile = loadRandomLevel(); // TODO: change to loadLevel once a way to select is implemented
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -155,13 +156,11 @@ public class returnToMenu : MonoBehaviour
                                 // copy file to local saves
                                 File.Copy(path, "Assets/Saves/" + Path.GetFileName(path));
 
-                                fileChanged = true;
-                                change = "imported";
                                 lastFile = path;
 
                                 // start taking a screenshot if successful
-                                // importing = true;
-                                setupScreenshot();
+                                importing = true;
+                                screenshotstage = 1;
                             }
                             // if file exists
                             else
@@ -240,7 +239,7 @@ public class returnToMenu : MonoBehaviour
             }
             else if (!playGUI.controller.playingGame)
             {
-                GUILayout.BeginArea(new Rect(Screen.width - 40-width, Screen.height - 30, 40, 30), GUI.skin.box);
+                GUILayout.BeginArea(new Rect(Screen.width - 40 - width, Screen.height - 30, 40, 30), GUI.skin.box);
                 if (GUILayout.Button("_"))
                 {
                     menuOpen = true;
@@ -298,15 +297,58 @@ public class returnToMenu : MonoBehaviour
     }
     void Update()
     {
-        // if a screenshot was just taken
-        if (screenshotTaken)
+        switch (screenshotstage)
         {
-            teardownScreenshot();
-        }
-        // if the scene is set up to take a screenshot
-        if (screenshotSetUp)
-        {
-            createScreenshot();
+            case 1:
+                saveOldLevelPath(lastFile);
+                screenshotstage++; // increment
+                break;
+            case 2:
+                // set up screenshot
+                setupScreenshot();
+                screenshotstage++; // increment
+
+                if (importing)
+                {
+                    StartCoroutine(endOfFrame());
+                }
+                break;
+            case 3:
+                // take screenshot
+                createScreenshot();
+                screenshotstage++; // increment
+                break;
+            case 4:
+                teardownScreenshot();
+
+                if (importing)
+                {
+                    screenshotstage++; // increment
+                }
+                else
+                {
+                    screenshotstage = 0;
+                }
+                
+                break;
+            case 5:
+                // load temp level
+                loadLevel(oldLevelPath);
+                screenshotstage++;
+                break;
+            case 6:
+                // delete old level
+                File.Delete(oldLevelPath + ".meta");
+                File.Delete(oldLevelPath);
+
+                // reset
+                importing = false;
+                screenshotstage = 0;
+
+                // set up message
+                fileChanged = true;
+                change = "imported";
+                break;
         }
     }
     /**
@@ -322,7 +364,7 @@ public class returnToMenu : MonoBehaviour
             currentLine = currentLine.Substring(key.Length + 1);
 
             // check if name is empty or null, skip check if the path is the temp level
-            if (path != "Assets/Saves/temp level.txt")
+            if (path != oldLevelPath)
             {
                 if (String.IsNullOrEmpty(currentLine))
                     return false;
@@ -657,7 +699,7 @@ public class returnToMenu : MonoBehaviour
         } else
             return false;
     }
-    public bool validObjClickable (String currentLine)
+    public bool validObjClickable(String currentLine)
     {
         String key = "objClickable";
         if (hasKey(currentLine, key))
@@ -719,7 +761,7 @@ public class returnToMenu : MonoBehaviour
             // both cannot be active at the same time
             if (immobile && gravity)
                 return false;
-            
+
             return true;
         }
         else
@@ -872,7 +914,7 @@ public class returnToMenu : MonoBehaviour
         }
         else
             return false;
-           
+
     }
     public bool validObjSoundIndex(String currentLine)
     {
@@ -949,7 +991,7 @@ public class returnToMenu : MonoBehaviour
                     levelError("name");
                     return false;
                 }
-                    
+
 
                 // verify id
                 currentLine = file.ReadLine();
@@ -958,7 +1000,7 @@ public class returnToMenu : MonoBehaviour
                     levelError("id");
                     return false;
                 }
-                
+
                 // verify win condition
                 currentLine = file.ReadLine();
                 if (!validWin(currentLine))
@@ -1449,7 +1491,7 @@ public class returnToMenu : MonoBehaviour
         {
             // TODO: optional, implement a way to save over
             // If so check if it has the same level id
-                // if no, throw an error stating that the level already exists and return
+            // if no, throw an error stating that the level already exists and return
         }
         // set up the file to save to
         StreamWriter save = File.CreateText(path);
@@ -1462,40 +1504,40 @@ public class returnToMenu : MonoBehaviour
 
 
         // Save level settings
-            // Level name
-            save.WriteLine("name:" + playGUI.levelName); 
-            // level id
-            save.WriteLine("id:" + playGUI.levelID); 
-            // Win condition (as int)
-            save.Write("win:");
-            if (playGUI.dontMove)
-            {
-                save.Write("0");
-            }else if (playGUI.collectKeys)
-            {
-                save.Write("1");
-            }else if (playGUI.goToTarget)
-            {
-                save.Write("2");
-            }
-            save.Write("\n");
-            // level time
-            save.WriteLine("time:" + controller.timerStart);
-            // level instruction
-            save.WriteLine("instruction:" + playGUI.instruction);
+        // Level name
+        save.WriteLine("name:" + playGUI.levelName);
+        // level id
+        save.WriteLine("id:" + playGUI.levelID);
+        // Win condition (as int)
+        save.Write("win:");
+        if (playGUI.dontMove)
+        {
+            save.Write("0");
+        } else if (playGUI.collectKeys)
+        {
+            save.Write("1");
+        } else if (playGUI.goToTarget)
+        {
+            save.Write("2");
+        }
+        save.Write("\n");
+        // level time
+        save.WriteLine("time:" + controller.timerStart);
+        // level instruction
+        save.WriteLine("instruction:" + playGUI.instruction);
 
 
         // Save general background/object properties
-            // object Total (next int index for new objects, total objects created)
-            save.WriteLine("objectTotal:" + controller.objectTotal);
-            // current number of objects
-            save.WriteLine("objectNum:" + controller.objectList.Count);
-            // number of properties per object
-            save.WriteLine("maxProperties:" + maxProperties);
-            // max width
-            save.WriteLine("maxWidth:" + controller.maxWidth);
-            // max height
-            save.WriteLine("maxHeight:" + controller.maxHeight);
+        // object Total (next int index for new objects, total objects created)
+        save.WriteLine("objectTotal:" + controller.objectTotal);
+        // current number of objects
+        save.WriteLine("objectNum:" + controller.objectList.Count);
+        // number of properties per object
+        save.WriteLine("maxProperties:" + maxProperties);
+        // max width
+        save.WriteLine("maxWidth:" + controller.maxWidth);
+        // max height
+        save.WriteLine("maxHeight:" + controller.maxHeight);
 
 
         // background properties
@@ -1561,12 +1603,12 @@ public class returnToMenu : MonoBehaviour
 
         save.Close();
 
-        // start setting up the screenshot
-        setupScreenshot();
-
-        lastFile = path;
-        fileChanged = true;
+        // fileChanged = true;
         return true;
+    }
+    private IEnumerator endOfFrame()
+    {
+        yield return new WaitForEndOfFrame();
     }
     private IEnumerator takeScreenshot(String path)
     {
@@ -1576,6 +1618,7 @@ public class returnToMenu : MonoBehaviour
         if (System.IO.File.Exists(imagePath))
         {
             System.IO.File.Delete(imagePath);
+            System.IO.File.Delete(imagePath + ".meta");
         }
 
         // wait for the next frame
@@ -1584,64 +1627,35 @@ public class returnToMenu : MonoBehaviour
         // take screenshot
         ScreenCapture.CaptureScreenshot(imagePath);
 
+        yield return new WaitForSeconds(1);
+
         // wait for the next frame
         yield return new WaitForEndOfFrame();
 
-        UnityEditor.AssetDatabase.Refresh();
+        // UnityEditor.AssetDatabase.Refresh();
     }
     private void createScreenshot()
     {
         // take the screenshot
         String currentPath = "Assets/Saves/" + playGUI.levelName + ".txt";
         StartCoroutine(takeScreenshot(currentPath));
-
-        // reset boolean value
-        screenshotSetUp = false;
-        screenshotTaken = true;
     }
     private void setupScreenshot()
     {
-        // if set to true, save old level
-        if (importing)
-        {
-            saveLevel(oldLevelPath, true);
-        }
-
-        /*// load new level
-        if (importing)
-        {
-            loadLevel(path);
-        }*/
-
         // hide gui
         controller.showGUI = false;
-
-        // set this boolean value for the next step
-        screenshotSetUp = true;
     }
     private void teardownScreenshot()
     {
-        // if set to true, load old level
-        // TODO: uncomment once saving the old level is figured out
-        /* if (importing)
-        {
-            loadLevel(oldLevelPath);
-            
-        } */
-
         // show gui
         controller.showGUI = true;
-
-        // reset booleans
-        fileChanged = false;
-        screenshotTaken = false;
-        importing = false;
     }
-    private void loadLevel()
+    private String loadLevel()
     {
         // TODO: allow a way to choose levels later
+        return "";
     }
-    private void loadRandomLevel()
+    private String loadRandomLevel()
     {
         string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt", SearchOption.AllDirectories);
 
@@ -1649,19 +1663,19 @@ public class returnToMenu : MonoBehaviour
         {
             error = true;
             errorMessage = "No save files found";
-            return;
+            return "";
         }
-        
+
         int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
-        loadLevel(filePaths[randomIndex]);
+        return loadLevel(filePaths[randomIndex]);
     }
-    private void loadLevel(String path)
+    private String loadLevel(String path)
     {
         // verify level
         if (!validLevel(path))
         {
             errorMessage = "Error loading level from " + path + ".\n" + errorMessage;
-            return;
+            return "";
         }
         int fileProperties = 0;
 
@@ -2012,7 +2026,7 @@ public class returnToMenu : MonoBehaviour
                     {
                         // if there are no more lines
                         if (file.Peek() == -1)
-                            return;
+                            return "";
 
                         // read in the next line
                         currentLine = file.ReadLine();
@@ -2026,11 +2040,25 @@ public class returnToMenu : MonoBehaviour
         }
         catch (IOException)
         {
-            return;
+            return "";
         }
 
-        lastFile = path;
-        fileChanged = true;
+        return path;
+        // lastFile = path;
+        // fileChanged = true;
+    }
+    private void saveOldLevelPath(String newLevel)
+    {
+        if (saveLevel(oldLevelPath, true))
+        {
+            loadLevel(newLevel);
+        }
+    }
+    private void saveAndLoad(String oldLevel, String newLevel)
+    {
+        if(saveLevel(oldLevel)){
+            loadLevel(newLevel);
+        }
     }
     private void saveAndLoad()
     {
