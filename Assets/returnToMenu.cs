@@ -14,6 +14,8 @@ using System.ComponentModel.Design;
 public class returnToMenu : MonoBehaviour
 {
     public GameObject Object;
+    public GameObject mainCamera;
+    public levelMenu loadMenu;
 
     // Variables used for saving to help compatiblity later on
     int maxProperties = 14; // the number of properties that can be set, used for saving. Change manually as more properties are added
@@ -53,11 +55,12 @@ public class returnToMenu : MonoBehaviour
         QualitySettings.vSyncCount = 1;
 
         // Retrieve variables from other scripts
-        GameObject mainCamera = GameObject.Find("Main Camera");
+        mainCamera = GameObject.Find("Main Camera");
         playGUI = mainCamera.GetComponent<GUIscript>();
         controller = mainCamera.GetComponent<gameMechanics>();
         background = (GameObject.Find("background")).GetComponent<changeBackground>();
         objZeroProperties = ((GameObject.Find("Object0")).transform.GetChild(0)).GetComponent<objectProperties>();
+        loadMenu = (GameObject.Find("displaybackground")).GetComponent<levelMenu>();
 
         // retrieve the prototype gameobject
         Object = GameObject.Find("Object0");
@@ -103,7 +106,8 @@ public class returnToMenu : MonoBehaviour
                     }
                     else
                     {
-                        lastFile = loadRandomLevel(); // TODO: change to loadLevel once a way to select is implemented
+                        // lastFile = loadRandomLevel(); // TODO: change to loadLevel once a way to select is implemented
+                        lastFile = loadLevel();
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -281,7 +285,8 @@ public class returnToMenu : MonoBehaviour
                 }
                 if (GUILayout.Button("Load without Saving"))
                 {
-                    loadRandomLevel(); // TODO: change to loadLevel when a way to select a level is implemented
+                    lastFile = loadLevel();
+                    // loadRandomLevel(); // TODO: change to loadLevel when a way to select a level is implemented
                     oldLevelChanged = false; // hide menu
                 }
                 if (GUILayout.Button("Cancel"))
@@ -1652,6 +1657,10 @@ public class returnToMenu : MonoBehaviour
     }
     private String loadLevel()
     {
+        loadMenu.enterMenu();
+
+        // move camera to level selector view
+
         // TODO: allow a way to choose levels later
         return "";
     }
