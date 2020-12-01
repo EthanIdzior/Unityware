@@ -1,11 +1,12 @@
 ﻿using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class levelMenu : MonoBehaviour
 {
     public GameObject mainCamera;
-    public GameObject editor;
+    public returnToMenu editor;
 
     public changeBackground editorBackground;
     public GameObject displayBackground;
@@ -15,8 +16,12 @@ public class levelMenu : MonoBehaviour
     private string lastLevelName = "";
 
     public GameObject selectedLevel;
+    public string selectedLevelPath;
     public bool selected = false;
     private bool menuOpen = false;
+
+    public List<GameObject> panelList; // list to hold all panels
+    private int panelCount = 30; // number of panels
 
     Vector3 cameraNewPosition = new Vector3(30.25f, 4.0f, -10.0f); // camera position for this menu
     Vector3 cameraOldPosition = new Vector3(9.0f, 4.0f, -10.0f); // normal camera position
@@ -24,17 +29,25 @@ public class levelMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // get editor objects
         editorBackground = (GameObject.Find("background")).GetComponent<changeBackground>();
         editorAudio = (GameObject.Find("background")).GetComponent<AudioSource>();
+        editor = (GameObject.Find("background")).GetComponent<returnToMenu>();
 
         // get camera object
         mainCamera = GameObject.Find("Main Camera");
 
         // get background
-        displayBackground = GameObject.Find("displayBackground");
+        displayBackground = GameObject.Find("displaybackground");
 
         // get play gui
         controller = mainCamera.GetComponent<gameMechanics>();
+
+        // add all panels to the panel list
+        for (int i = 0; i < panelCount; i++)
+        {
+            panelList.Add(GameObject.Find("panel" + (i + 1)));
+        }
     }
 
     // Update is called once per frame
@@ -72,6 +85,7 @@ public class levelMenu : MonoBehaviour
     public void loadLevel()
     {
         // TODO: set lastLevelName to the path of the selected level if a level is selected
+        editor.loadLevel(selectedLevelPath);
 
         // exit the menu
         exitMenu();
@@ -79,11 +93,29 @@ public class levelMenu : MonoBehaviour
     public void deleteLevel()
     {
         // TODO: Add a way to select levels
+        (selectedLevel.GetComponent<levelThumbnails>()).unsetObject();
 
         selected = false;
     }
     public void enterMenu()
     {
+        // load the level files
+        string[] levelPaths = Directory.GetFiles("Assets/Resources/Saves/", "*.txt", SearchOption.AllDirectories);
+
+        for (int i = 0; i < panelCount; i++)
+        {
+            // if i < levelPaths.length
+            if (i < levelPaths.Length)
+            {
+                (panelList[i].GetComponent<levelThumbnails>()).setObject(levelPaths[i]);
+            }
+            else
+            {
+                // set to blank image
+                (panelList[i].GetComponent<levelThumbnails>()).unsetObject();
+            }
+        }
+
         // move the camera to the level select menu
         mainCamera.transform.position = cameraNewPosition;
 

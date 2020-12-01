@@ -46,7 +46,7 @@ public class returnToMenu : MonoBehaviour
 
     // variables to track progress for operations that need multiple frames to execute, aka screenshots
     private int screenshotstage = 0;
-    private String oldLevelPath = "Assets/Saves/temp level.txt";
+    private String oldLevelPath = "Assets/Resources/Saves/temp level.txt";
     private bool importing = false;
 
     // Start is called before the first frame update
@@ -155,10 +155,10 @@ public class returnToMenu : MonoBehaviour
                         if (validLevel(path))
                         {
                             // if file does not exist
-                            if (!File.Exists("Assets/Saves/" + Path.GetFileName(path)))
+                            if (!File.Exists("Assets/Resources/Saves/" + Path.GetFileName(path)))
                             {
                                 // copy file to local saves
-                                File.Copy(path, "Assets/Saves/" + Path.GetFileName(path));
+                                File.Copy(path, "Assets/Resources/Saves/" + Path.GetFileName(path));
 
                                 lastFile = path;
 
@@ -179,7 +179,7 @@ public class returnToMenu : MonoBehaviour
                                 try
                                 {
                                     // get the second line for the first file
-                                    using (StreamReader localFile = new StreamReader("Assets/Saves/" + Path.GetFileName(path)))
+                                    using (StreamReader localFile = new StreamReader("Assets/Resources/Saves/" + Path.GetFileName(path)))
                                     {
                                         localFile.ReadLine(); // Skip first line
                                         localSecondLine = localFile.ReadLine();
@@ -1471,7 +1471,7 @@ public class returnToMenu : MonoBehaviour
 
         fileName = nameToFileName(fileName);
         fileName += ".txt";
-        fileName = "Assets/Saves/" + fileName; // add subfolder the saves go to for the full path
+        fileName = "Assets/Resources/Saves/" + fileName; // add subfolder the saves go to for the full path
 
         return saveLevel(fileName);
     }
@@ -1642,7 +1642,7 @@ public class returnToMenu : MonoBehaviour
     private void createScreenshot()
     {
         // take the screenshot
-        String currentPath = "Assets/Saves/" + playGUI.levelName + ".txt";
+        String currentPath = "Assets/Resources/Saves/" + playGUI.levelName + ".txt";
         StartCoroutine(takeScreenshot(currentPath));
     }
     private void setupScreenshot()
@@ -1666,7 +1666,7 @@ public class returnToMenu : MonoBehaviour
     }
     private String loadRandomLevel()
     {
-        string[] filePaths = Directory.GetFiles("Assets/Saves/", "*.txt", SearchOption.AllDirectories);
+        string[] filePaths = Directory.GetFiles("Assets/Resources/Saves/", "*.txt", SearchOption.AllDirectories);
 
         if (filePaths.Length == 0)
         {
@@ -1678,7 +1678,7 @@ public class returnToMenu : MonoBehaviour
         int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
         return loadLevel(filePaths[randomIndex]);
     }
-    private String loadLevel(String path)
+    public String loadLevel(String path)
     {
         // verify level
         if (!validLevel(path))
