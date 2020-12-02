@@ -270,6 +270,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &206191561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 206191563}
+  - component: {fileID: 206191562}
+  m_Layer: 0
+  m_Name: PlayModeObj
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &206191562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206191561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71c451140f0915e4380e32cd6164a629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isPlay3: 0
+  isPlayLevel: 0
+--- !u!4 &206191563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206191561}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.602255, y: 3.2974858, z: -1.7224495}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &308759361
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,7 +505,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 322070171}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40de3fa0234794e4e81e189c3677d6d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d19edb87dbf69c4b86ba45125cef772, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelEditor: SampleScene
@@ -546,8 +591,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 322070176}
-        m_MethodName: playLevel
+      - m_Target: {fileID: 0}
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -754,7 +799,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 322070176}
+      - m_Target: {fileID: 0}
         m_MethodName: quitGame
         m_Mode: 1
         m_Arguments:
@@ -1040,7 +1085,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 322070176}
+      - m_Target: {fileID: 0}
         m_MethodName: createLevel
         m_Mode: 1
         m_Arguments:

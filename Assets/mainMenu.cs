@@ -8,7 +8,15 @@ public class mainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GameObject canvas = GameObject.Find("Canvas");
         
+        GameObject playButton = canvas.gameObject.transform.GetChild(1).gameObject;
+        GameObject play3Button = canvas.gameObject.transform.GetChild(2).gameObject;
+        GameObject quitButton = canvas.gameObject.transform.GetChild(3).gameObject;
+
+        playButton.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(playLevel);
+        play3Button.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(createLevel);
+        quitButton.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(quitGame);
     }
 
     // Update is called once per frame
@@ -55,15 +63,18 @@ public class mainMenu : MonoBehaviour
 
     public void selectLevel()
     {
-
+        
     }
 
     public void playThree()
     {
+        GameObject playobj = GameObject.Find("PlayModeObj");
+        playobj.GetComponent<playTrack>().setPlay3();
+
+        DontDestroyOnLoad (playobj.transform.gameObject);
         SceneManager.LoadScene(levelEditor);
-        GameObject camera = GameObject.Find("Main Camera");
-        camera.GetComponent<GUIscript>().playMode = true;
-        camera.GetComponent<GUIscript>().levelsLeft = 3;
+        //camera.GetComponent<GUIscript>().playMode = true;
+        //camera.GetComponent<GUIscript>().levelsLeft = 3;
     }
     
     public void goBack()

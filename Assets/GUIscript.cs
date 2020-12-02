@@ -23,7 +23,8 @@ public class GUIscript : MonoBehaviour
     bool levelReset = false; // if true a confirmation prompt for resetting the level will appear 
 
     // Set levels left and play mode
-    public bool playMode = false;
+    public bool play3Mode = false;
+    public bool playLevelMode = false;
     public int levelsLeft = 0;
 
     private objectProperties objProperties;
@@ -84,6 +85,7 @@ public class GUIscript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (controller.playingGame == false && buttonSymbol == "| |")
         {
             buttonSymbol = "▶";
