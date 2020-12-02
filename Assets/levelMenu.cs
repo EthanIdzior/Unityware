@@ -11,6 +11,7 @@ public class levelMenu : MonoBehaviour
     public changeBackground editorBackground;
     public GameObject displayBackground;
 
+    public GUIscript playGUI;
     private gameMechanics controller;
     private AudioSource editorAudio;
     private string lastLevelName = "";
@@ -19,6 +20,8 @@ public class levelMenu : MonoBehaviour
     public string selectedLevelPath;
     public bool selected = false;
     private bool menuOpen = false;
+
+    public AudioSource audioSource;
 
     public List<GameObject> panelList; // list to hold all panels
     private int panelCount = 30; // number of panels
@@ -34,6 +37,8 @@ public class levelMenu : MonoBehaviour
         editorAudio = (GameObject.Find("background")).GetComponent<AudioSource>();
         editor = (GameObject.Find("background")).GetComponent<returnToMenu>();
 
+        audioSource = gameObject.GetComponent<AudioSource>();
+
         // get camera object
         mainCamera = GameObject.Find("Main Camera");
 
@@ -42,6 +47,7 @@ public class levelMenu : MonoBehaviour
 
         // get play gui
         controller = mainCamera.GetComponent<gameMechanics>();
+        playGUI = mainCamera.GetComponent<GUIscript>();
 
         // add all panels to the panel list
         for (int i = 0; i < panelCount; i++)
@@ -92,8 +98,15 @@ public class levelMenu : MonoBehaviour
     }
     public void deleteLevel()
     {
-        // TODO: Add a way to select levels
-        (selectedLevel.GetComponent<levelThumbnails>()).unsetObject();
+        string deleted = "";
+
+        // deselect level
+        deleted = (selectedLevel.GetComponent<levelThumbnails>()).unsetObject();
+
+        if (deleted == editor.currentLevel)
+        {
+            playGUI.resetLevel();
+        }
 
         selected = false;
     }
@@ -128,6 +141,8 @@ public class levelMenu : MonoBehaviour
             editorAudio.Pause();
         }
 
+        audioSource.Play();
+
         // open the display menu
         menuOpen = true;
     }
@@ -139,6 +154,8 @@ public class levelMenu : MonoBehaviour
         // show editor gui
         controller.showGUI = true;
 
+        audioSource.Stop();
+
         // if there is music, start it
         if (editorBackground.hasSound)
         {
@@ -149,7 +166,11 @@ public class levelMenu : MonoBehaviour
         menuOpen = false;
 
         // clear any selected menus
-        selected = false;
+        if (selected)
+        {
+            (selectedLevel.GetComponent<levelThumbnails>()).deselectObject();
+            selected = false;
+        }
 
         return lastLevelName;
     }

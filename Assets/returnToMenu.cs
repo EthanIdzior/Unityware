@@ -26,6 +26,7 @@ public class returnToMenu : MonoBehaviour
 
     //needed to return to menu
     public string menu;
+    public string currentLevel;
 
     private bool menuOpen = true;
 
@@ -86,14 +87,18 @@ public class returnToMenu : MonoBehaviour
                 GUILayout.BeginHorizontal("box");
                 if (GUILayout.Button("Save Level"))
                 {
-                    saveLevel();
+                    if (saveLevel())
+                    {
+                        // start setting up the screenshot
+                        screenshotstage = 2;
 
-                    fileChanged = true;
-                    change = "saved";
-                    lastFile = playGUI.levelName;
+                        fileChanged = true;
+                        change = "saved";
+                        lastFile = playGUI.levelName;
+                    }
+                    
 
-                    // start setting up the screenshot
-                    screenshotstage = 2;
+
                 }
                 if (GUILayout.Button("Load Level"))
                 {
@@ -1487,6 +1492,8 @@ public class returnToMenu : MonoBehaviour
             {
                 error = true;
                 errorMessage = "Level must be named before saving";
+                // reset screenshot stage
+                screenshotstage = 0;
                 return false;
             }
         }
@@ -1608,6 +1615,7 @@ public class returnToMenu : MonoBehaviour
 
         save.Close();
 
+        currentLevel = path;
         // fileChanged = true;
         return true;
     }
@@ -1637,7 +1645,7 @@ public class returnToMenu : MonoBehaviour
         // wait for the next frame
         yield return new WaitForEndOfFrame();
 
-        // UnityEditor.AssetDatabase.Refresh();
+        UnityEditor.AssetDatabase.Refresh();
     }
     private void createScreenshot()
     {
@@ -2051,6 +2059,8 @@ public class returnToMenu : MonoBehaviour
         {
             return "";
         }
+
+        currentLevel = path;
 
         return path;
         // lastFile = path;

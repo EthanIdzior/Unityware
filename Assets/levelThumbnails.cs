@@ -14,6 +14,10 @@ public class levelThumbnails : MonoBehaviour
     public SpriteRenderer thumbnail;
     public SpriteRenderer outline;
     Sprite defaultSprite;
+    private float originalSpriteX;
+    private float originalOutlineX;
+    private int thumbnailIndex = 0;
+    private int outlineIndex = 1;
 
     Color unset; // original color
     private Color noColor = new Color(1, 1, 1, 1);
@@ -22,9 +26,12 @@ public class levelThumbnails : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        thumbnail = this.gameObject.GetComponent<SpriteRenderer>();
-        outline = (this.gameObject.transform.GetChild(0)).GetComponent<SpriteRenderer>();
+        thumbnail = (this.gameObject.transform.GetChild(thumbnailIndex)).GetComponent<SpriteRenderer>();
+        outline = (this.gameObject.transform.GetChild(outlineIndex)).GetComponent<SpriteRenderer>();
+        outline.color = new Color(255, 216, 0, 0);
         defaultSprite = thumbnail.sprite;
+        originalSpriteX = thumbnail.bounds.size.x;
+        originalOutlineX = outline.bounds.size.x;
 
         // retrieve menu properties
         menu = (GameObject.Find("displaybackground")).GetComponent<levelMenu>();
@@ -48,10 +55,17 @@ public class levelThumbnails : MonoBehaviour
             selectObject();
         }
     }
+    private void resizeSprite(float targetSize, SpriteRenderer renderer, int index)
+    {
+        // resize the thumbnail
+        var bounds = renderer.sprite.bounds;
+        var factor = targetSize / bounds.size.x;
+        // this.gameObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f); // can't do or bounds will be skewed
+        (this.gameObject.transform.GetChild(index)).transform.localScale = new Vector3(factor * 4, factor * 4, factor * 4);
+    }
     public void setObject(string path)
     {
         string imagePath;
-        Texture2D texture;
         Sprite sprite;
 
         // save the original level path
@@ -65,14 +79,19 @@ public class levelThumbnails : MonoBehaviour
         thumbnail.sprite = sprite;
         thumbnail.color = noColor;
 
+        // resize the thumbnail and outline
+        resizeSprite(originalOutlineX, outline, outlineIndex);
+        resizeSprite(originalSpriteX, thumbnail, thumbnailIndex);
+
         set = true;
     }
-    public void unsetObject()
+    public string unsetObject()
     {
+        string deletedPath = "";
         // clear up thumbnail
         thumbnail.sprite = defaultSprite;
         thumbnail.color = defaultColor;
-        
+
         // if it was previously set
         if (set)
         {
@@ -80,24 +99,30 @@ public class levelThumbnails : MonoBehaviour
             File.Delete(levelPath + ".meta");
             File.Delete(levelPath);
 
+            // delete the thumbnail
+            // delete the .meta files for the level and thumbnail
             string thumbnailPath = levelPath.Replace(".txt", ".png");
             File.Delete(thumbnailPath + ".meta");
             File.Delete(thumbnailPath);
 
+            deletedPath = levelPath;
             levelPath = "";
 
-            // delete the thumbnail
-            // delete the .meta files for the level and thumbnail
+            // reset the scale for the sprites
+            thumbnail.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            outline.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
             selected = false;
             set = false;
         }
+
+        return deletedPath;
     }
     private void selectObject()
     {
         levelThumbnails current;
 
-        // TODO: loop through rest of objects to make sure that they are not active
+        // loop through rest of objects to make sure that they are not active
         foreach (GameObject obj in menu.panelList)
         {
             current = obj.GetComponent<levelThumbnails>();
@@ -119,7 +144,7 @@ public class levelThumbnails : MonoBehaviour
         menu.selectedLevelPath = levelPath;
         selectUpdated = true;
     }
-    private void deselectObject()
+    public void deselectObject()
     {
         // set outline transparency to be transparent
         Color color = outline.color;
