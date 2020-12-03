@@ -162,14 +162,17 @@ public class returnToMenu : MonoBehaviour
                             // if file does not exist
                             if (!File.Exists("Assets/Resources/Saves/" + Path.GetFileName(path)))
                             {
-                                // copy file to local saves
-                                File.Copy(path, "Assets/Resources/Saves/" + Path.GetFileName(path));
+                                if (!levelCapacityReached())
+                                {
+                                    // copy file to local saves
+                                    File.Copy(path, "Assets/Resources/Saves/" + Path.GetFileName(path));
 
-                                lastFile = path;
+                                    lastFile = path;
 
-                                // start taking a screenshot if successful
-                                importing = true;
-                                screenshotstage = 1;
+                                    // start taking a screenshot if successful
+                                    importing = true;
+                                    screenshotstage = 1;
+                                }
                             }
                             // if file exists
                             else
@@ -1498,6 +1501,11 @@ public class returnToMenu : MonoBehaviour
             }
         }
 
+        if (levelCapacityReached())
+        {
+            return false;
+        }
+
         // check if the file exists
         if (File.Exists(path))
         {
@@ -2086,5 +2094,25 @@ public class returnToMenu : MonoBehaviour
         {
             loadRandomLevel(); // TODO: change to load level after a way to select is implemented
         }
+    }
+    private bool levelCapacityReached()
+    {
+        if (numberOfLevels() < 30)
+        {
+            return false;
+        }
+        else
+        {
+            error = true;
+            errorMessage = "No more levels can be created, capacity reached";
+            screenshotstage = 0;
+            return true;
+        }
+    }
+    private int numberOfLevels()
+    {
+        string[] filePaths = Directory.GetFiles("Assets/Resources/Saves/", "*.txt", SearchOption.AllDirectories);
+
+        return filePaths.Length;
     }
 }

@@ -23,6 +23,8 @@ public class levelMenu : MonoBehaviour
 
     public AudioSource audioSource;
 
+    private bool deleting = false;
+
     public List<GameObject> panelList; // list to hold all panels
     private int panelCount = 30; // number of panels
 
@@ -83,9 +85,27 @@ public class levelMenu : MonoBehaviour
                 // button to delete level
                 if (GUI.Button(new Rect(Screen.width - 123, Screen.height - 35, 90, 20), "Delete Level"))
                 {
-                    deleteLevel();
+                    deleting = true;
                 }
             }
+        }
+        if (deleting)
+        {
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - (400 / 2), (Screen.height / 2) - (60 / 2), 400, 80), GUI.skin.box);
+
+            GUILayout.Label("Are you sure you'd like to delete this level?");
+            GUILayout.BeginHorizontal("box");
+            if (GUILayout.Button("Confirm"))
+            {
+                deleteLevel();
+                deleting = false; // hide menu
+            }
+            if (GUILayout.Button("Cancel"))
+            {
+                deleting = false; // hide menu
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
         }
     }
     public void loadLevel()
