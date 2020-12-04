@@ -24,7 +24,7 @@ public class playTrack : MonoBehaviour
     // Add a level to the levelList
     int addLevel(string levelPath) {
         if (!levelList.Contains(levelPath)) {
-            levelPath.Add(levelPath);
+            levelList.Add(levelPath);
             return 0;
         }
 
@@ -43,11 +43,11 @@ public class playTrack : MonoBehaviour
     }
 
     void clearLevels() {
-        levelList.clear();
+        levelList.Clear();
     }
 
     int levelsLeft() {
-        return levelPath.Count;
+        return levelList.Count;
     }
 
     public bool getPlay3() {
