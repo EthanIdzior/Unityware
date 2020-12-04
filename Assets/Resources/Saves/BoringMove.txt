@@ -1,0 +1,14 @@
+name:BoringMove
+id:0Y97X5Dj46fbsI87CfIIUF05q
+win:0
+time:10
+instruction:Don't Move!
+objectTotal:3
+objectNum:0
+maxProperties:14
+maxWidth:14
+maxHeight:8
+bgSpriteIndex:0
+bgColorIndex:0
+bgHasMusic:0
+bgMusicIndex:0

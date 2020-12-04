@@ -6,6 +6,7 @@ public class playTrack : MonoBehaviour
 {
     public bool isPlay3;
     public bool isPlayLevel;
+    public int wonGames;
     public List<string> levelList = new List<string>();
     
     // Start is called before the first frame update
@@ -13,6 +14,7 @@ public class playTrack : MonoBehaviour
     {
         isPlay3 = false;
         isPlayLevel = false;
+        wonGames = 0;
     }
 
     // Update is called once per frame
@@ -61,15 +63,26 @@ public class playTrack : MonoBehaviour
     public void setPlay3() {
         isPlay3 = true;
         isPlayLevel = false;
+        wonGames = 0;
     }
 
     public void setPlayLevel() {
         isPlay3 = false;
         isPlayLevel = true;
+        wonGames = 0;
     }
 
     public void clearPlayLevel() {
         isPlay3 = false;
         isPlayLevel = false;
+        wonGames = 0;
+    }
+
+    public int getWonGames() {
+        return wonGames;
+    }
+
+    public void incrementWins() {
+        wonGames = wonGames + 1;
     }
 }

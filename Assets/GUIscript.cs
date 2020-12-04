@@ -23,11 +23,6 @@ public class GUIscript : MonoBehaviour
     bool settingsReset = false; // if true a confirmation prompt for resetting the settings will appear
     bool levelReset = false; // if true a confirmation prompt for resetting the level will appear 
 
-    // Set levels left and play mode
-    public bool play3Mode = false;
-    public bool playLevelMode = false;
-    public int levelsLeft = 0;
-
     private objectProperties objProperties;
 
     // Variables related to retrieving the background music
@@ -159,6 +154,9 @@ public class GUIscript : MonoBehaviour
                 resetObjects();
                 positionsSaved = false;
                 startingLocation.Clear();
+
+                if (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())
+                    playObj.GetComponent<playTrack>().incrementWins();
             }
 
             else if (positionsSaved)

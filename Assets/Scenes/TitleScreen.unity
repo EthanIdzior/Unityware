@@ -296,11 +296,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 206191561}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 745e4c824cfaaf745a9c2c75818a0741, type: 3}
+  m_Script: {fileID: 11500000, guid: 71c451140f0915e4380e32cd6164a629, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isPlay3: 0
   isPlayLevel: 0
+  levelList: []
 --- !u!4 &206191563
 Transform:
   m_ObjectHideFlags: 0
@@ -505,10 +506,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 322070171}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40de3fa0234794e4e81e189c3677d6d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d19edb87dbf69c4b86ba45125cef772, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelEditor: SampleScene
+  levelEditor: sampleScene
 --- !u!1 &567468449
 GameObject:
   m_ObjectHideFlags: 0
