@@ -52,6 +52,8 @@ public class mainMenu : MonoBehaviour
 
     public void createLevel()
     {
+        GameObject playobj = GameObject.Find("PlayModeObj");
+        playobj.GetComponent<playTrack>().clearPlayLevel();
         SceneManager.LoadScene(levelEditor);
     }
 

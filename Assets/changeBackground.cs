@@ -28,6 +28,8 @@ public class changeBackground : MonoBehaviour
     public bool soundToggled = false;
     private bool clearBackground = false;
 
+    GameObject playObj;
+
     // Create an array with preset colors
     public Color[] colors = {/* White: */ new Color(1, 1, 1, 1), /* Magenta: */ new Color(1, 0, 1, 1), /* Red: */ new Color(1, 0, 0, 1), /* Yellow: */ new Color(1, 1, 0, 1), /* Green: */ new Color(0, 1, 0, 1), /* Cyan: */ new Color(0, 1, 1, 1), /* Blue: */ new Color(0, 0, 1, 1), /* Black: */ new Color(0, 0, 0, 1) };
     public int colorIndex = 0;
@@ -42,11 +44,12 @@ public class changeBackground : MonoBehaviour
         audioSource = gameObject.GetComponent<AudioSource>();
         GameObject mainCamera = GameObject.Find("Main Camera");
         playGUI = mainCamera.GetComponent<GUIscript>();
+        playObj = GameObject.Find("PlayModeObj");
     }
 
     private void OnGUI()
     {
-        if (menuOpen && (!playGUI.controller.playingGame && playGUI.controller.showGUI))
+        if (menuOpen && (!playGUI.controller.playingGame && playGUI.controller.showGUI) && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
         {
             GUILayout.BeginArea(new Rect(Screen.width - width, Screen.height - height, width, height), GUI.skin.box);
 
@@ -162,7 +165,7 @@ public class changeBackground : MonoBehaviour
 
             GUILayout.EndArea();
         }
-        else if(!playGUI.controller.playingGame && playGUI.controller.showGUI)
+        else if(!playGUI.controller.playingGame && playGUI.controller.showGUI && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
         {
             GUILayout.BeginArea(new Rect(Screen.width - 40, Screen.height - 30, 40, 30), GUI.skin.box);
             if (GUILayout.Button("_"))

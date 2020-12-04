@@ -48,6 +48,7 @@ public class GUIscript : MonoBehaviour
     private List<GameObject> hostileObjects = new List<GameObject>();
     private List<GameObject> controllableObjects = new List<GameObject>();
     Dictionary<Vector3, GameObject> keyLocations = new Dictionary<Vector3, GameObject>();
+    GameObject playObj;
 
     // Variables related to object spawn positions
     private int paddingx = 1;
@@ -76,6 +77,8 @@ public class GUIscript : MonoBehaviour
         controller = GetComponent<gameMechanics>();
         background = GameObject.Find("background");
 
+        playObj = GameObject.Find("PlayModeObj");
+
         // generate levelID
         generateID();
 
@@ -86,7 +89,7 @@ public class GUIscript : MonoBehaviour
     void Update()
     {
 
-        if (controller.playingGame == false && buttonSymbol == "| |")
+        if (controller.playingGame == false && buttonSymbol == "| |" && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
         {
             buttonSymbol = "▶";
         }
@@ -428,6 +431,18 @@ public class GUIscript : MonoBehaviour
             obj.transform.GetChild(0).transform.localScale = objProp.oldScale;
         }
     }
+
+    // Play specified level
+    // @level: path to level
+    /*
+     * Will be more polished
+    void startLevelPlay(string levelPath) {
+        // Load the level
+
+
+    }
+    */
+
     void OnGUI()
     {
         /*
@@ -443,7 +458,7 @@ public class GUIscript : MonoBehaviour
         // TODO: delete these buttons
         */
 
-        if (controller.showGUI && !controller.playingGame)
+        if (controller.showGUI && !controller.playingGame && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
         {
 
             // Create the level Menu
@@ -607,7 +622,7 @@ public class GUIscript : MonoBehaviour
                 GUILayout.EndArea();
             }
         }
-        if (controller.showGUI)
+        if (controller.showGUI && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
         {
             // Play/Pause Button
             if (GUI.Button(new Rect(Screen.width - 100, 0, 80, 20), buttonSymbol))
