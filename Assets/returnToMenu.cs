@@ -16,6 +16,7 @@ public class returnToMenu : MonoBehaviour
     public GameObject Object;
     public GameObject mainCamera;
     public levelMenu loadMenu;
+    GameObject playObj;
 
     // Variables used for saving to help compatiblity later on
     int maxProperties = 14; // the number of properties that can be set, used for saving. Change manually as more properties are added
@@ -63,13 +64,15 @@ public class returnToMenu : MonoBehaviour
         objZeroProperties = ((GameObject.Find("Object0")).transform.GetChild(0)).GetComponent<objectProperties>();
         loadMenu = (GameObject.Find("displaybackground")).GetComponent<levelMenu>();
 
+        playObj = GameObject.Find("PlayModeObj");
+
         // retrieve the prototype gameobject
         Object = GameObject.Find("Object0");
     }
 
     private void OnGUI()
     {
-        if (controller.showGUI && !controller.playingGame)
+        if (controller.showGUI && !controller.playingGame && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
         {
             if (menuOpen)
             {

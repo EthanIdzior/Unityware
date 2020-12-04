@@ -4244,9 +4244,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 996398511}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b7d3ca440bca9c49a090f305f146222, type: 3}
+  m_Script: {fileID: 11500000, guid: 7fb216731e5798f47942851cbf2c3086, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Object: {fileID: 0}
+  mainCamera: {fileID: 0}
+  loadMenu: {fileID: 0}
+  menu: TitleScreen
+  currentLevel: 
+  playGUI: {fileID: 0}
+  controller: {fileID: 0}
+  background: {fileID: 0}
+  objZeroProperties: {fileID: 0}
+  objZero: {fileID: 0}
 --- !u!1 &1036067590
 GameObject:
   m_ObjectHideFlags: 0
