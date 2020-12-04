@@ -2250,8 +2250,8 @@ MonoBehaviour:
   objectList: []
   maxWidth: 14
   maxHeight: 8
-  winImage: {fileID: 2800000, guid: baf875e9ec7f74d4d81e2bba6cd28c28, type: 3}
-  loseImage: {fileID: 2800000, guid: 1455f85b1f3d86e43bdebb3e20342949, type: 3}
+  winImage: {fileID: 2800000, guid: 4dec7d1c3b3fc1d489e27d75f5077650, type: 3}
+  loseImage: {fileID: 2800000, guid: 4b8baa174829af840a3c98fa63366498, type: 3}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
