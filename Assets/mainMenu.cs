@@ -1,7 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
+using System.Linq.Expressions;
+using System.ComponentModel.Design;
+
 public class mainMenu : MonoBehaviour
 {
     public string levelEditor;
@@ -52,9 +58,9 @@ public class mainMenu : MonoBehaviour
 
     public void createLevel()
     {
-        GameObject playobj = GameObject.Find("PlayModeObj");
-        playobj.GetComponent<playTrack>().clearPlayLevel();
-        DontDestroyOnLoad (playobj.transform.gameObject);
+        GameObject playObj = GameObject.Find("PlayModeObj");
+        playObj.GetComponent<playTrack>().clearPlayLevel();
+        DontDestroyOnLoad (playObj.transform.gameObject);
         SceneManager.LoadScene(levelEditor);
     }
 
@@ -71,6 +77,11 @@ public class mainMenu : MonoBehaviour
 
     public void playThree()
     {
+        if (prepareLevels() == -1) {
+            print("Couldn't load 3 levels!");
+            return;
+        }
+        
         GameObject playobj = GameObject.Find("PlayModeObj");
         playobj.GetComponent<playTrack>().setPlay3();
 
@@ -103,5 +114,25 @@ public class mainMenu : MonoBehaviour
         playButton.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(playLevel);
         play3Button.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(createLevel);
         quitButton.GetComponentInChildren<UnityEngine.UI.Button>().onClick.AddListener(quitGame);
+    }
+
+    private int prepareLevels() {
+        string[] filePaths = Directory.GetFiles("Assets/Resources/Saves/", "*.txt", SearchOption.AllDirectories);
+        GameObject playobj = GameObject.Find("PlayModeObj");
+
+        playobj.GetComponent<playTrack>().clearLevels();
+
+        // If there aren't 3 levels, don't work
+        if (filePaths.Length < 3)
+            return -1;
+
+        // Choose 3 random levels
+        while (playobj.GetComponent<playTrack>().levelsLeft() < 3) {
+            int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
+            playobj.GetComponent<playTrack>().addLevel(filePaths[randomIndex]);
+        }
+            
+
+        return 0;
     }
 }

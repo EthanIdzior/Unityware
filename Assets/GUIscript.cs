@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using UnityEngine.SceneManagement;
 //using System.Runtime.Remoting.Channels;
 //using System.Runtime.Remoting.Channels;
 using UnityEngine;
@@ -33,6 +34,8 @@ public class GUIscript : MonoBehaviour
     private GameObject background;
     private bool hasSound = false;
     private AudioSource audioSource;
+
+    private float loadInTime = 0;
 
     // Types of win
     public bool dontMove = true;
@@ -88,6 +91,28 @@ public class GUIscript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (!controller.playingGame && playObj.GetComponent<playTrack>().levelsLeft() > 0 && (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())) {
+            
+
+            if (loadInTime == 0) {
+                string nextLevel = playObj.GetComponent<playTrack>().nextLevel();
+                print(nextLevel);
+                GameObject.Find("background").GetComponent<returnToMenu>().loadLevel(nextLevel);
+                loadInTime = Time.time;
+            }
+
+            else if (Time.time - loadInTime > 3) {
+                controller.playingGame = true;
+                loadInTime = 0;
+            }
+
+        }
+
+        // Case if done in play mode
+        else if (!controller.playingGame && playObj.GetComponent<playTrack>().levelsLeft() == 0 && (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())) {
+            SceneManager.LoadScene("TitleScreen");
+        }
 
         if (controller.playingGame == false && buttonSymbol == "| |" && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
         {
@@ -797,4 +822,5 @@ public class GUIscript : MonoBehaviour
 
         return result;
     }
+
 }

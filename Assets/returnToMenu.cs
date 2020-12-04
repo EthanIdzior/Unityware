@@ -1674,6 +1674,8 @@ public class returnToMenu : MonoBehaviour
         // show gui
         controller.showGUI = true;
     }
+
+    
     private String loadLevel()
     {
         loadMenu.enterMenu();
@@ -1683,6 +1685,9 @@ public class returnToMenu : MonoBehaviour
         // TODO: allow a way to choose levels later
         return "";
     }
+    
+
+    
     private String loadRandomLevel()
     {
         string[] filePaths = Directory.GetFiles("Assets/Resources/Saves/", "*.txt", SearchOption.AllDirectories);
@@ -1697,6 +1702,8 @@ public class returnToMenu : MonoBehaviour
         int randomIndex = UnityEngine.Random.Range(0, filePaths.Length);
         return loadLevel(filePaths[randomIndex]);
     }
+
+
     public String loadLevel(String path)
     {
         // verify level

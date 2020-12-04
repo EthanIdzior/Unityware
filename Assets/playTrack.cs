@@ -6,7 +6,7 @@ public class playTrack : MonoBehaviour
 {
     public bool isPlay3;
     public bool isPlayLevel;
-    private List<string> levelList = new List<string>();
+    public List<string> levelList = new List<string>();
     
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,7 @@ public class playTrack : MonoBehaviour
     }
 
     // Add a level to the levelList
-    int addLevel(string levelPath) {
+    public int addLevel(string levelPath) {
         if (!levelList.Contains(levelPath)) {
             levelList.Add(levelPath);
             return 0;
@@ -35,18 +35,18 @@ public class playTrack : MonoBehaviour
     }
 
     // Pop level from levelList
-    string nextLevel() {
+    public string nextLevel() {
         string newLevel = levelList[0];
         levelList.RemoveAt(0);
 
         return newLevel;
     }
 
-    void clearLevels() {
+    public void clearLevels() {
         levelList.Clear();
     }
 
-    int levelsLeft() {
+    public int levelsLeft() {
         return levelList.Count;
     }
 
