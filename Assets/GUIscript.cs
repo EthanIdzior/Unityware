@@ -63,6 +63,7 @@ public class GUIscript : MonoBehaviour
     public int winConditions = 3; // edit if more win conditions are added
     public int maxInstructionLength = 25;
     public int maxNameLength = 25;
+    private bool lastLevel;
 
     bool deleteObjects = false; // boolean controlling prompt asking if the user is sure about deleting objects
 
@@ -80,32 +81,82 @@ public class GUIscript : MonoBehaviour
         // generate levelID
         generateID();
 
+        lastLevel = false;
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (!controller.playingGame && playObj.GetComponent<playTrack>().levelsLeft() > 0 && (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())) {
+        
+        if (!controller.playingGame && playObj.GetComponent<playTrack>().levelsLeft() >= 0 && !lastLevel && (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())) {
             
 
             if (loadInTime == 0) {
                 string nextLevel = playObj.GetComponent<playTrack>().nextLevel();
+                print("Preparing to load: ");
                 print(nextLevel);
                 GameObject.Find("background").GetComponent<returnToMenu>().loadLevel(nextLevel);
                 loadInTime = Time.time;
             }
 
-            else if (Time.time - loadInTime > 3) {
-                controller.playingGame = true;
-                loadInTime = 0;
+            else if (Time.time - loadInTime > 1) {
+                    if (playObj.GetComponent<playTrack>().levelsLeft() == 0)
+                        lastLevel = true;
+                    
+                    // Make a list of all hostile objects
+                    print("Starting to play");
+                    hostileObjects.Clear();
+                    foreach (GameObject g in controller.objectList)
+                    {
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].isHostile)
+                        {
+                            hostileObjects.Add(g);
+                        }
+
+                    }
+
+                    controllableObjects.Clear();
+                    foreach (GameObject g in controller.objectList)
+                    {
+                        if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
+                        {
+                            controllableObjects.Add(g);
+                        }
+
+                    }
+
+                    saveObjects();
+
+                    // Set game variables
+                    keyAmount = 0;
+                    keysSaved = false;
+                    positionsSaved = false;
+                    goalLocations.Clear();
+                    startingLocation.Clear();
+                    keyLocations.Clear();
+
+
+                    controller.playingGame = true;
+                    Physics2D.autoSimulation = true;
+
+                    // Refresh the background music
+                    audioSource = background.GetComponent<AudioSource>();
+                    hasSound = background.GetComponent<changeBackground>().hasSound;
+
+                    if (hasSound)
+                    {
+                        audioSource.Play();
+                    }
+
+                    loadInTime = 0;
             }
 
         }
 
         // Case if done in play mode
-        else if (!controller.playingGame && playObj.GetComponent<playTrack>().levelsLeft() == 0 && (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())) {
+        else if (!controller.playingGame && lastLevel && loadInTime == 0 && (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())) {
             SceneManager.LoadScene("TitleScreen");
         }
 
@@ -140,6 +191,7 @@ public class GUIscript : MonoBehaviour
         {
             if (!positionsSaved)
             {
+                startingLocation.Clear();
                 foreach (GameObject g in controller.objectList)
                 {
                     startingLocation.Add(g.transform.position);
@@ -185,6 +237,7 @@ public class GUIscript : MonoBehaviour
             // Bulid a collection of all of the goal positions
             if (goalLocations.Count == 0)
             {
+                goalLocations.Clear();
                 foreach (GameObject g in controller.objectList)
                 {
                     string objName = g.name.ToUpper();
@@ -210,8 +263,8 @@ public class GUIscript : MonoBehaviour
                         if ((g.GetComponentsInChildren<objectProperties>())[0].controllable)
                             if (goalLocations.Contains(new Vector3(Mathf.RoundToInt(g.transform.position.x), Mathf.RoundToInt(g.transform.position.y), Mathf.RoundToInt(g.transform.position.z))))
                             {
-                                controller.triggerWin();
                                 goalLocations.Clear();
+                                controller.triggerWin();
                                 resetObjects();
                             }
                 }
@@ -224,6 +277,8 @@ public class GUIscript : MonoBehaviour
                 controller.triggerWin();
                 goalLocations.Clear();
                 resetObjects();
+
+                print("Win No Goals");
             }
         }
 
@@ -481,7 +536,7 @@ public class GUIscript : MonoBehaviour
         // TODO: delete these buttons
         */
 
-        if (controller.showGUI && !controller.playingGame && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
+        if (controller.showGUI && (!controller.playingGame && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())))
         {
 
             // Create the level Menu
