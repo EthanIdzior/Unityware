@@ -16,8 +16,8 @@ public class levelThumbnails : MonoBehaviour
     Sprite defaultSprite;
     private float originalSpriteX;
     private float originalOutlineX;
-    private int thumbnailIndex = 0;
-    private int outlineIndex = 1;
+    public int thumbnailIndex = 0;
+    public int outlineIndex = 1;
 
     Color unset; // original color
     private Color noColor = new Color(1, 1, 1, 1);

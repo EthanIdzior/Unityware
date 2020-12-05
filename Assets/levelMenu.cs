@@ -51,10 +51,13 @@ public class levelMenu : MonoBehaviour
         controller = mainCamera.GetComponent<gameMechanics>();
         playGUI = mainCamera.GetComponent<GUIscript>();
 
+        GameObject currentObj;
+
         // add all panels to the panel list
         for (int i = 0; i < panelCount; i++)
         {
-            panelList.Add(GameObject.Find("panel" + (i + 1)));
+            currentObj = GameObject.Find("panel" + (i + 1));
+            panelList.Add(currentObj);
         }
     }
 

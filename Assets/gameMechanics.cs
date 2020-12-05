@@ -23,7 +23,7 @@ public class gameMechanics : MonoBehaviour
     public float timeLeft = 0;
     private float lastTime = 0;
     private Boolean timeSet = false;
-    private int pointVal = 0;
+    // private int pointVal = 0; // never used
     public Boolean playingGame = false;
     private Boolean winMarker = false;
     private float winSeconds = 0;
@@ -85,7 +85,7 @@ public class gameMechanics : MonoBehaviour
         // if there are points, set points.
         if (hasPoints && playingGame)
         {
-            pointVal = 0;
+            // pointVal = 0;
 
             // Code for when events happen
         }

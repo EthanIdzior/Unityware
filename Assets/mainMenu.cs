@@ -72,7 +72,12 @@ public class mainMenu : MonoBehaviour
 
     public void selectLevel()
     {
-        
+        GameObject playObj = GameObject.Find("PlayModeObj");
+
+        playObj.GetComponent<playTrack>().loading = true;
+
+        DontDestroyOnLoad(playObj.transform.gameObject);
+        SceneManager.LoadScene(levelEditor);
     }
 
     public void playThree()
