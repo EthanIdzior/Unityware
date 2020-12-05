@@ -17,6 +17,7 @@ public class returnToMenu : MonoBehaviour
     public GameObject mainCamera;
     public levelMenu loadMenu;
     GameObject playObj;
+    public playTrack track;
 
     // Variables used for saving to help compatiblity later on
     int maxProperties = 14; // the number of properties that can be set, used for saving. Change manually as more properties are added
@@ -68,11 +69,18 @@ public class returnToMenu : MonoBehaviour
 
         // retrieve the prototype gameobject
         Object = GameObject.Find("Object0");
+
+        playObj = GameObject.Find("PlayModeObj");
+        // if the playmodeobj is loaded
+        if (playObj != null)
+        {
+            track = playObj.GetComponent<playTrack>();
+        }
     }
 
     private void OnGUI()
     {
-        if (controller.showGUI && !controller.playingGame && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
+        if (controller.showGUI && !controller.playingGame && ((playObj != null) && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())))
         {
             if (menuOpen)
             {
@@ -313,7 +321,15 @@ public class returnToMenu : MonoBehaviour
     }
     void Update()
     {
-        switch (screenshotstage)
+        if (playObj != null)
+        {
+            if (track.loading)
+            {
+                loadLevel();
+                track.loading = false;
+            }
+        }
+            switch (screenshotstage)
         {
             case 1:
                 saveOldLevelPath(lastFile);
@@ -419,7 +435,7 @@ public class returnToMenu : MonoBehaviour
         {
             currentLine = currentLine.Substring(key.Length + 1);
 
-            if (!isPositiveBelowEnd(currentLine, key, playGUI.winConditions - 1))
+            if (!isPositiveBelowEnd(currentLine, key, playGUI.winConditions))
                 return false;
 
             return true;

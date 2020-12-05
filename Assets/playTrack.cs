@@ -7,6 +7,7 @@ public class playTrack : MonoBehaviour
     public bool isPlay3;
     public bool isPlayLevel;
     public int wonGames;
+    public bool loading = false;
     public List<string> levelList = new List<string>();
     
     // Start is called before the first frame update

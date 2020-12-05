@@ -86,7 +86,7 @@ public class GUIscript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
         if (!controller.playingGame && playObj.GetComponent<playTrack>().levelsLeft() > 0 && (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())) {
             
 

@@ -49,7 +49,7 @@ public class changeBackground : MonoBehaviour
 
     private void OnGUI()
     {
-        if (menuOpen && (!playGUI.controller.playingGame && playGUI.controller.showGUI) && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
+        if (menuOpen && (!playGUI.controller.playingGame && playGUI.controller.showGUI) && ((playObj != null) && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())))
         {
             GUILayout.BeginArea(new Rect(Screen.width - width, Screen.height - height, width, height), GUI.skin.box);
 
@@ -165,7 +165,7 @@ public class changeBackground : MonoBehaviour
 
             GUILayout.EndArea();
         }
-        else if(!playGUI.controller.playingGame && playGUI.controller.showGUI && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel()))
+        else if(!playGUI.controller.playingGame && playGUI.controller.showGUI && ((playObj != null) && !(playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())))
         {
             GUILayout.BeginArea(new Rect(Screen.width - 40, Screen.height - 30, 40, 30), GUI.skin.box);
             if (GUILayout.Button("_"))
