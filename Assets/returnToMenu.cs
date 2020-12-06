@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement; // used to switch scenes
 using System.Runtime.InteropServices;
 using System.Linq.Expressions;
 using System.ComponentModel.Design;
+using SFB; // standalone file browser, replace unityeditor version so it can build
 
 public class returnToMenu : MonoBehaviour
 {
@@ -107,7 +108,7 @@ public class returnToMenu : MonoBehaviour
                         change = "saved";
                         lastFile = playGUI.levelName;
                     }
-                    
+
 
 
                 }
@@ -137,11 +138,25 @@ public class returnToMenu : MonoBehaviour
                     {
                         String path;
 
-                        path = EditorUtility.SaveFilePanel(
+                        // Replaced with build friendly version, keeping unity editor version to be safe
+
+                        /**
+                        if (Application.isEditor)
+                        {
+                            path = EditorUtility.SaveFilePanel(
                             "Export level",
                             "",
                             nameToFileName(playGUI.levelName) + ".txt",
                             "txt");
+                        }
+                        else
+                        {
+                            path = (StandaloneFileBrowser.OpenFilePanel("Open File", "", "txt", false))[0];
+                        }
+                        */
+
+                        path = StandaloneFileBrowser.SaveFilePanel("Save File", "", playGUI.levelName, "txt");
+
                         if (path.Length != 0)
                         {
                             saveLevel(path);
@@ -157,13 +172,21 @@ public class returnToMenu : MonoBehaviour
                 if (GUILayout.Button("Import Level"))
                 {
                     change = "imported";
-                    String path;
+                    String path = "";
 
                     // get the path of the level
+                    var paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", "txt", false);
+                    if (paths.Length != 0)
+                    {
+                        path = paths[0]; // copy the first one
+                    }
+
+                    /*
                     path = EditorUtility.OpenFilePanel(
                         "Import a level",
                         "",
                         "txt");
+                    */
 
                     if (path.Length != 0)
                     {
@@ -329,7 +352,7 @@ public class returnToMenu : MonoBehaviour
                 track.loading = false;
             }
         }
-            switch (screenshotstage)
+        switch (screenshotstage)
         {
             case 1:
                 saveOldLevelPath(lastFile);
@@ -361,7 +384,7 @@ public class returnToMenu : MonoBehaviour
                 {
                     screenshotstage = 0;
                 }
-                
+
                 break;
             case 5:
                 // load temp level
@@ -728,7 +751,8 @@ public class returnToMenu : MonoBehaviour
                 return false;
 
             return true;
-        } else
+        }
+        else
             return false;
     }
     public bool validObjClickable(String currentLine)
@@ -1552,10 +1576,12 @@ public class returnToMenu : MonoBehaviour
         if (playGUI.dontMove)
         {
             save.Write("0");
-        } else if (playGUI.collectKeys)
+        }
+        else if (playGUI.collectKeys)
         {
             save.Write("1");
-        } else if (playGUI.goToTarget)
+        }
+        else if (playGUI.goToTarget)
         {
             save.Write("2");
         }
@@ -1672,8 +1698,11 @@ public class returnToMenu : MonoBehaviour
         // wait for the next frame
         yield return new WaitForEndOfFrame();
 
-        UnityEditor.AssetDatabase.Refresh();
+        // Only works in unity editor, not in build
+        // UnityEditor.AssetDatabase.Refresh();
+
     }
+
     private void createScreenshot()
     {
         // take the screenshot
@@ -1691,7 +1720,7 @@ public class returnToMenu : MonoBehaviour
         controller.showGUI = true;
     }
 
-    
+
     private String loadLevel()
     {
         loadMenu.enterMenu();
@@ -1701,9 +1730,9 @@ public class returnToMenu : MonoBehaviour
         // TODO: allow a way to choose levels later
         return "";
     }
-    
 
-    
+
+
     private String loadRandomLevel()
     {
         string[] filePaths = Directory.GetFiles("Assets/Resources/Saves/", "*.txt", SearchOption.AllDirectories);
@@ -2109,7 +2138,8 @@ public class returnToMenu : MonoBehaviour
     }
     private void saveAndLoad(String oldLevel, String newLevel)
     {
-        if(saveLevel(oldLevel)){
+        if (saveLevel(oldLevel))
+        {
             loadLevel(newLevel);
         }
     }

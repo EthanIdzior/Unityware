@@ -81,11 +81,23 @@ public class levelThumbnails : MonoBehaviour
 
         // resize the thumbnail and outline
         resizeSprite(originalOutlineX, outline, outlineIndex);
-        resizeSprite(originalSpriteX, thumbnail, thumbnailIndex);
+        if (thumbnail.sprite != null)
+        {
+            resizeSprite(originalSpriteX, thumbnail, thumbnailIndex);
+        }
+        else
+        {
+            unsetObject();
+            return;
+        }
 
         set = true;
     }
     public string unsetObject()
+    {
+        return unsetObject(false);
+    }
+    public string unsetObject(bool loadingThumbnail)
     {
         string deletedPath = "";
         // clear up thumbnail
@@ -95,18 +107,26 @@ public class levelThumbnails : MonoBehaviour
         // if it was previously set
         if (set)
         {
-            // delete the level
-            File.Delete(levelPath + ".meta");
-            File.Delete(levelPath);
+            if (!loadingThumbnail)
+            {
+                // delete the level
+                File.Delete(levelPath + ".meta");
+                File.Delete(levelPath);
 
-            // delete the thumbnail
-            // delete the .meta files for the level and thumbnail
-            string thumbnailPath = levelPath.Replace(".txt", ".png");
-            File.Delete(thumbnailPath + ".meta");
-            File.Delete(thumbnailPath);
+                // delete the thumbnail
+                // delete the .meta files for the level and thumbnail
+                string thumbnailPath = levelPath.Replace(".txt", ".png");
+                File.Delete(thumbnailPath + ".meta");
+                File.Delete(thumbnailPath);
 
-            deletedPath = levelPath;
-            levelPath = "";
+                deletedPath = levelPath;
+                levelPath = "";
+            }
+            else
+            {
+                Resources.Load<Sprite>("loading.png"); // set sprite to the loading image
+                thumbnail.color = noColor;
+            }
 
             // reset the scale for the sprites
             thumbnail.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);

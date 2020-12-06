@@ -143,7 +143,19 @@ public class levelMenu : MonoBehaviour
             // if i < levelPaths.length
             if (i < levelPaths.Length)
             {
-                (panelList[i].GetComponent<levelThumbnails>()).setObject(levelPaths[i]);
+                // if the path has a corresponding screenshot yet
+                if (System.IO.File.Exists(levelPaths[i].Replace(".txt", ".png")))
+                {
+                    (panelList[i].GetComponent<levelThumbnails>()).setObject(levelPaths[i]);
+                }
+                else
+                {
+                    // set current panel to a blank image 
+                    (panelList[i].GetComponent<levelThumbnails>()).unsetObject(true);
+
+                    UnityEngine.Debug.Log("Corresponding screenshot does not exist for  " + levelPaths[i] + " the screenshot may not be done saving if recently saved/imported");
+                }
+                
             }
             else
             {

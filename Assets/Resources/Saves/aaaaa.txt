@@ -1,15 +1,15 @@
-name:levelwithlotsofobjects
+name:aaaaa
 id:tXjSS2GDxc8UhfUC9w21Xa1A8
 win:0
 time:300
 instruction:
 objectTotal:9
 objectNum:9
-maxProperties:13
+maxProperties:14
 maxWidth:14
 maxHeight:8
-bgSpriteIndex:1
-bgColorIndex:1
+bgSpriteIndex:2
+bgColorIndex:3
 bgHasMusic:1
 bgMusicIndex:0
 objName:Object1
@@ -35,6 +35,7 @@ objSpriteIndex:4
 objColorIndex:1
 objHasSound:0
 objSoundIndex:0
+objHostile:0
 objName:Object2
 objPositionX:4
 objPositionY:1
@@ -58,6 +59,7 @@ objSpriteIndex:2
 objColorIndex:6
 objHasSound:0
 objSoundIndex:0
+objHostile:0
 objName:Object3
 objPositionX:7
 objPositionY:5
@@ -81,6 +83,7 @@ objSpriteIndex:15
 objColorIndex:3
 objHasSound:0
 objSoundIndex:0
+objHostile:0
 objName:Object4
 objPositionX:3
 objPositionY:7
@@ -104,6 +107,7 @@ objSpriteIndex:1
 objColorIndex:2
 objHasSound:0
 objSoundIndex:0
+objHostile:0
 objName:Object5
 objPositionX:6
 objPositionY:1
@@ -127,6 +131,7 @@ objSpriteIndex:13
 objColorIndex:4
 objHasSound:0
 objSoundIndex:0
+objHostile:0
 objName:Object6
 objPositionX:6
 objPositionY:6
@@ -150,6 +155,7 @@ objSpriteIndex:14
 objColorIndex:7
 objHasSound:1
 objSoundIndex:1
+objHostile:0
 objName:Object7
 objPositionX:13
 objPositionY:5
@@ -173,6 +179,7 @@ objSpriteIndex:3
 objColorIndex:2
 objHasSound:0
 objSoundIndex:0
+objHostile:0
 objName:Object8
 objPositionX:10
 objPositionY:7
@@ -196,6 +203,7 @@ objSpriteIndex:13
 objColorIndex:0
 objHasSound:0
 objSoundIndex:0
+objHostile:0
 objName:Object9
 objPositionX:8
 objPositionY:1
@@ -219,3 +227,4 @@ objSpriteIndex:3
 objColorIndex:5
 objHasSound:0
 objSoundIndex:0
+objHostile:0
