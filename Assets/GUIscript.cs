@@ -266,6 +266,9 @@ public class GUIscript : MonoBehaviour
                                 goalLocations.Clear();
                                 controller.triggerWin();
                                 resetObjects();
+
+                                if (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())
+                                    playObj.GetComponent<playTrack>().incrementWins();
                             }
                 }
             }
@@ -330,6 +333,9 @@ public class GUIscript : MonoBehaviour
                 keyLocations.Clear();
                 resetObjects();
                 keysSaved = false;
+
+                if (playObj.GetComponent<playTrack>().getPlay3() || playObj.GetComponent<playTrack>().getPlayLevel())
+                    playObj.GetComponent<playTrack>().incrementWins();
             }
         }
 
